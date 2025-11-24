@@ -1,0 +1,36 @@
+.venv
+myvenev/
+.myvenv
+.pytest_cache/
+__pycache__/
+.ipynb_checkpoints/
+.vscode/
+.env
+tests/
+htmlcov/
+cov_html/
+ci/
+.venv
+myvenv/
+.coverage
+coverage.xml
+venv/
+=4.2
+src/all_generation.zip
+.coverage
+coverage.xml
+# Ignore all JSON files
+*.json
+
+# Debug prompt folders/files
+debug_prompts/
+debug_prompt.txt
+
+# Codebase index generated directory
+.codebase_index/
+
+# Sonar scanner output directory
+.scannerwork/
+
+# Test result files
+test-results.xml

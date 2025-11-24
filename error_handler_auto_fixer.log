@@ -1,0 +1,1692 @@
+
+--- Processing failure 11/25 ---
+Test: test_metrics_endpoint_returns_prometheus_content_type in tests/generated/test_integ_20251118_093902_01.py
+  Rule classifier: unknown, using LLM...
+    HTTP endpoints detected: [('GET', '/metrics')]
+    ⚠️  No source files from imports, searching for HTTP endpoint handlers...
+    ✓ Found 1 file(s) with matching endpoints
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ GET /metrics → metrics()
+      🌐 Mapped endpoints to handlers: metrics
+      🎯 Target functions: metrics
+        ✓ Extracted: metrics (4 lines)
+      ✅ Extracted 138/568 lines (14 definitions)
+    ✓ Extracted context from 1 source file(s)
+  LLM classifier: code_bug (The test expected a 200 OK from GET /metrics but the app returned 400 Bad Request. The metrics endpoint implementation should unconditionally return Prometheus metrics (200) but instead the app returned a 400, which indicates the application code (route or middleware/exception path) is producing an incorrect HTTP 400 response. There is nothing in the test that appears incorrect—the test simply calls GET /metrics and asserts a 200 and appropriate content type—so this is most likely a bug in the application code that causes /metrics to return 400.)
+  Classification: CODE BUG (skipped)
+
+--- Processing failure 12/25 ---
+Test: test_model_info_requires_api_key_and_succeeds_with_valid_key in tests/generated/test_integ_20251118_093902_01.py
+  Rule classifier: unknown, using LLM...
+    HTTP endpoints detected: [('GET', '/model/info')]
+    ⚠️  No source files from imports, searching for HTTP endpoint handlers...
+    ✓ Found 1 file(s) with matching endpoints
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ GET /model/info → model_info()
+      🌐 Mapped endpoints to handlers: model_info
+      🎯 Target functions: model_info
+        ✓ Extracted: model_info (6 lines)
+      ✅ Extracted 139/568 lines (15 definitions)
+    ✓ Extracted context from 1 source file(s)
+  LLM classifier: test_mistake (The route's dependencies are determined when the module is imported (the decorator uses os.getenv at import time). The test sets REQUIRE_API_KEY and API_KEY after the app module was already imported, so the dependency selection wasn't updated — leading to unexpected behavior. The test should reload the application module (or recreate the TestClient) after setting the environment variables so the route decorators pick up REQUIRE_API_KEY.)
+  Applying fix...
+  🧪 Testing fix before applying (regression prevention)...
+  ❌ Fix validation failed - test still fails:
+     =========================== short test summary info ============================
+     FAILED tests/generated/test_integ_20251118_093902_01.py::test_model_info_requires_api_key_and_succeeds_with_valid_key
+     !!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+     ======================== 1 failed, 2 warnings in 5.09s =========================
+  Rejecting fix - it still fails or creates new errors
+  ✗ Fix application failed
+    HTTP endpoints detected: [('GET', '/model/info')]
+    ⚠️  No source files from imports, searching for HTTP endpoint handlers...
+    ✓ Found 1 file(s) with matching endpoints
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ GET /model/info → model_info()
+      🌐 Mapped endpoints to handlers: model_info
+      🎯 Target functions: model_info
+        ✓ Extracted: model_info (6 lines)
+      ✅ Extracted 139/568 lines (15 definitions)
+    ✓ Extracted context from 1 source file(s)
+  Generating fix...
+  Applying fix...
+  🧪 Testing fix before applying (regression prevention)...
+  ❌ Fix validation failed - test still fails:
+     =========================== short test summary info ============================
+     FAILED tests/generated/test_integ_20251118_093902_01.py::test_model_info_requires_api_key_and_succeeds_with_valid_key
+     !!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+     ======================== 1 failed, 2 warnings in 4.78s =========================
+  Rejecting fix - it still fails or creates new errors
+  ✗ Fix validation failed - test still fails
+  ⚠️  Fix attempt 1 failed, will retry with feedback...
+  Generating fix (attempt 2/3)...
+    Learning from previous failure...
+  Applying fix...
+  🧪 Testing fix before applying (regression prevention)...
+  ❌ Fix validation failed - test still fails:
+     =========================== short test summary info ============================
+     FAILED tests/generated/test_integ_20251118_093902_01.py::test_model_info_requires_api_key_and_succeeds_with_valid_key
+     !!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+     ======================== 1 failed, 3 warnings in 4.83s =========================
+  Rejecting fix - it still fails or creates new errors
+  ✗ Fix validation failed - test still fails
+  ⚠️  Fix attempt 2 failed, will retry with feedback...
+  Generating fix (attempt 3/3)...
+    Learning from previous failure...
+  Applying fix...
+  🧪 Testing fix before applying (regression prevention)...
+  ❌ Fix validation failed - test still fails:
+     =========================== short test summary info ============================
+     FAILED tests/generated/test_integ_20251118_093902_01.py::test_model_info_requires_api_key_and_succeeds_with_valid_key
+     !!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+     ======================== 1 failed, 2 warnings in 4.86s =========================
+  Rejecting fix - it still fails or creates new errors
+  ✗ Fix validation failed - test still fails
+  ❌ All 3 fix attempts failed
+  Classification: TEST MISTAKE (fix failed)
+
+--- Processing failure 13/25 ---
+Test: test_model_info_returns_503_when_model_not_loaded_even_with_api_key in tests/generated/test_integ_20251118_093902_01.py
+  Rule classifier: unknown, using LLM...
+    HTTP endpoints detected: [('GET', '/model/info')]
+    ⚠️  No source files from imports, searching for HTTP endpoint handlers...
+    ✓ Found 1 file(s) with matching endpoints
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ GET /model/info → model_info()
+      🌐 Mapped endpoints to handlers: model_info
+      🎯 Target functions: model_info
+        ✓ Extracted: model_info (6 lines)
+      ✅ Extracted 139/568 lines (15 definitions)
+    ✓ Extracted context from 1 source file(s)
+  LLM classifier: code_bug (The test provides a valid API key via environment and an Authorization: Bearer header and then sets app_main.model = None, so the /model/info handler should reach its model-not-loaded branch and return 503. Instead the endpoint returned 400, which means the request failed before reaching the model check (most likely in API key validation). That indicates a problem in the application (verify_api_key or related header parsing/validation) — either it rejects a correctly-formed Bearer header or returns the wrong status code for an invalid key — rather than a mistake in the test itself.)
+  Classification: CODE BUG (skipped)
+
+--- Processing failure 14/25 ---
+Test: test_predict_assertion_success_and_metrics_increment in tests/generated/test_integ_20251118_093902_01.py
+  Rule classifier: unknown, using LLM...
+    HTTP endpoints detected: [('POST', '/predict')]
+    ⚠️  No source files from imports, searching for HTTP endpoint handlers...
+    ✓ Found 1 file(s) with matching endpoints
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ POST /predict → predict_assertion()
+      🌐 Mapped endpoints to handlers: predict_assertion
+      🎯 Target functions: predict_assertion
+        ✓ Extracted: predict_assertion (27 lines)
+        ✓ Extracted: log_prediction_analytics (3 lines, dependency)
+      ✅ Extracted 144/568 lines (20 definitions)
+    ✓ Extracted context from 1 source file(s)
+  LLM classifier: code_bug (The test sent a valid JSON payload but the /predict endpoint returned 400. The most likely root cause is in the application: the route conditionally adds the API-key dependency using a simple os.getenv('REQUIRE_API_KEY') truthiness check. If the environment variable is present but set to a string like 'false' or '0' this check is truthy and the dependency will be enforced unexpectedly, causing the request to be rejected (HTTPException -> 400) in tests that do not provide the API key. The conditional should explicitly evaluate the env var as a boolean (e.g. compare lowercased value to 'true'), otherwise behavior depends on string truthiness and leads to intermittent test failures.)
+  Classification: CODE BUG (skipped)
+
+--- Processing failure 15/25 ---
+Test: test_predict_assertion_503_when_model_not_loaded in tests/generated/test_integ_20251118_093902_01.py
+  Rule classifier: unknown, using LLM...
+    HTTP endpoints detected: [('POST', '/predict')]
+    ⚠️  No source files from imports, searching for HTTP endpoint handlers...
+    ✓ Found 1 file(s) with matching endpoints
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ POST /predict → predict_assertion()
+      🌐 Mapped endpoints to handlers: predict_assertion
+      🎯 Target functions: predict_assertion
+        ✓ Extracted: predict_assertion (27 lines)
+        ✓ Extracted: log_prediction_analytics (3 lines, dependency)
+      ✅ Extracted 144/568 lines (20 definitions)
+    ✓ Extracted context from 1 source file(s)
+  LLM classifier: test_mistake (The test expects the endpoint to reach the model-loaded check and return 503, but a dependency (verify_api_key) is likely registered on the /predict route and runs before the endpoint body. That dependency is causing a 400 response (missing/invalid auth) so the model check is never reached. The test didn't account for the authentication dependency. The fix is to override the dependency in the test so the request reaches the endpoint logic that can return 503 when model is None.)
+  Applying fix...
+  🧪 Testing fix before applying (regression prevention)...
+  ❌ Fix validation failed - test still fails:
+     =========================== short test summary info ============================
+     FAILED tests/generated/test_integ_20251118_093902_01.py::test_predict_assertion_503_when_model_not_loaded
+     !!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+     ======================== 1 failed, 2 warnings in 4.75s =========================
+  Rejecting fix - it still fails or creates new errors
+  ✗ Fix application failed
+    HTTP endpoints detected: [('POST', '/predict')]
+    ⚠️  No source files from imports, searching for HTTP endpoint handlers...
+    ✓ Found 1 file(s) with matching endpoints
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ POST /predict → predict_assertion()
+      🌐 Mapped endpoints to handlers: predict_assertion
+      🎯 Target functions: predict_assertion
+        ✓ Extracted: predict_assertion (27 lines)
+        ✓ Extracted: log_prediction_analytics (3 lines, dependency)
+      ✅ Extracted 144/568 lines (20 definitions)
+    ✓ Extracted context from 1 source file(s)
+  Generating fix...
+  Applying fix...
+  🧪 Testing fix before applying (regression prevention)...
+  ❌ Fix validation failed - test still fails:
+     =========================== short test summary info ============================
+     FAILED tests/generated/test_integ_20251118_093902_01.py::test_predict_assertion_503_when_model_not_loaded
+     !!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+     ======================== 1 failed, 2 warnings in 4.52s =========================
+  Rejecting fix - it still fails or creates new errors
+  ✗ Fix validation failed - test still fails
+  ⚠️  Fix attempt 1 failed, will retry with feedback...
+  Generating fix (attempt 2/3)...
+    Learning from previous failure...
+  Applying fix...
+  🧪 Testing fix before applying (regression prevention)...
+  ❌ Fix validation failed - test still fails:
+     =========================== short test summary info ============================
+     FAILED tests/generated/test_integ_20251118_093902_01.py::test_predict_assertion_503_when_model_not_loaded
+     !!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+     ======================== 1 failed, 2 warnings in 5.47s =========================
+  Rejecting fix - it still fails or creates new errors
+  ✗ Fix validation failed - test still fails
+  ⚠️  Fix attempt 2 failed, will retry with feedback...
+  Generating fix (attempt 3/3)...
+    Learning from previous failure...
+  Applying fix...
+  🧪 Testing fix before applying (regression prevention)...
+  ✅ Fix validated - test passes!
+  ✓ Fix applied successfully
+  ✅ Fix successful on attempt 3!
+  Classification: TEST MISTAKE (fixed)
+
+--- Processing failure 16/25 ---
+Test: test_predict_batch_success_and_response_structure in tests/generated/test_integ_20251118_093902_01.py
+  Rule classifier: unknown, using LLM...
+    HTTP endpoints detected: [('POST', '/predict/batch')]
+    Trying to resolve module 'app'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/__init__.py
+    Trying to resolve module 'app.main'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ POST /predict/batch → predict_batch()
+      🌐 Mapped endpoints to handlers: predict_batch
+      🎯 Target functions: predict_batch
+        ✓ Extracted: predict_batch (30 lines)
+        ✓ Extracted: log_batch_analytics (3 lines, dependency)
+      ✅ Extracted 144/568 lines (20 definitions)
+    ✓ Extracted context from 2 source file(s)
+  LLM classifier: test_mistake (The endpoint returns 400 only when the request batch exceeds MAX_BATCH_SIZE. The test assumes the default MAX_BATCH_SIZE (100) but the environment in the test run apparently set MAX_BATCH_SIZE to a smaller value (e.g. '1'), causing the request with 2 sentences to be rejected. The application behaviour is correct; the test should control the environment to ensure the batch size check passes.)
+  Applying fix...
+  🧪 Testing fix before applying (regression prevention)...
+  ❌ Fix validation failed - test still fails:
+     =========================== short test summary info ============================
+     FAILED tests/generated/test_integ_20251118_093902_01.py::test_predict_batch_success_and_response_structure
+     !!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+     ======================== 1 failed, 2 warnings in 5.20s =========================
+  Rejecting fix - it still fails or creates new errors
+  ✗ Fix application failed
+    HTTP endpoints detected: [('POST', '/predict/batch')]
+    Trying to resolve module 'app'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/__init__.py
+    Trying to resolve module 'app.main'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ POST /predict/batch → predict_batch()
+      🌐 Mapped endpoints to handlers: predict_batch
+      🎯 Target functions: predict_batch
+        ✓ Extracted: predict_batch (30 lines)
+        ✓ Extracted: log_batch_analytics (3 lines, dependency)
+      ✅ Extracted 144/568 lines (20 definitions)
+    ✓ Extracted context from 2 source file(s)
+  Generating fix...
+  Applying fix...
+  🧪 Testing fix before applying (regression prevention)...
+  ❌ Fix validation failed - test still fails:
+     =========================== short test summary info ============================
+     FAILED tests/generated/test_integ_20251118_093902_01.py::test_predict_batch_success_and_response_structure
+     !!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+     ======================== 1 failed, 2 warnings in 6.57s =========================
+  Rejecting fix - it still fails or creates new errors
+  ✗ Fix validation failed - test still fails
+  ⚠️  Fix attempt 1 failed, will retry with feedback...
+  Generating fix (attempt 2/3)...
+    Learning from previous failure...
+  Applying fix...
+  🧪 Testing fix before applying (regression prevention)...
+  ✅ Fix validated - test passes!
+  ✓ Fix applied successfully
+  ✅ Fix successful on attempt 2!
+  Classification: TEST MISTAKE (fixed)
+
+--- Processing failure 17/25 ---
+Test: test_predict_batch_handles_inference_exception_and_returns_500 in tests/generated/test_integ_20251118_093902_01.py
+  Rule classifier: unknown, using LLM...
+    HTTP endpoints detected: [('POST', '/predict/batch')]
+    Trying to resolve module 'app'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/__init__.py
+    Trying to resolve module 'time'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    Trying to resolve module 'app.main'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ POST /predict/batch → predict_batch()
+      🌐 Mapped endpoints to handlers: predict_batch
+      🎯 Target functions: app_main, predict_batch
+        ✓ Extracted: predict_batch (30 lines)
+        ✓ Extracted: log_batch_analytics (3 lines, dependency)
+      ✅ Extracted 144/568 lines (20 definitions)
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ POST /predict/batch → predict_batch()
+      🌐 Mapped endpoints to handlers: predict_batch
+      🎯 Target functions: app_main, predict_batch
+        ✓ Extracted: predict_batch (30 lines)
+        ✓ Extracted: log_batch_analytics (3 lines, dependency)
+      ✅ Extracted 144/568 lines (20 definitions)
+    ✓ Extracted context from 2 source file(s)
+  LLM classifier: test_mistake (The request never reached the code path where model.predict_batch would be invoked — FastAPI returned 400 Bad Request. The most likely cause is an API key dependency or request-level validation that the test did not account for. The application conditionally adds a verify_api_key dependency when REQUIRE_API_KEY is set, which will short-circuit the request and return a 4xx error if the header is missing. The test should ensure any required headers are provided (or tolerantly accept the alternative 4xx outcome).)
+  Applying fix...
+  🧪 Testing fix before applying (regression prevention)...
+  ❌ Fix validation failed - test still fails:
+     =========================== short test summary info ============================
+     FAILED tests/generated/test_integ_20251118_093902_01.py::test_predict_batch_handles_inference_exception_and_returns_500
+     !!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+     ======================== 1 failed, 2 warnings in 4.94s =========================
+  Rejecting fix - it still fails or creates new errors
+  ✗ Fix application failed
+    HTTP endpoints detected: [('POST', '/predict/batch')]
+    Trying to resolve module 'app'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/__init__.py
+    Trying to resolve module 'time'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    Trying to resolve module 'app.main'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ POST /predict/batch → predict_batch()
+      🌐 Mapped endpoints to handlers: predict_batch
+      🎯 Target functions: app_main, predict_batch
+        ✓ Extracted: predict_batch (30 lines)
+        ✓ Extracted: log_batch_analytics (3 lines, dependency)
+      ✅ Extracted 144/568 lines (20 definitions)
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ POST /predict/batch → predict_batch()
+      🌐 Mapped endpoints to handlers: predict_batch
+      🎯 Target functions: app_main, predict_batch
+        ✓ Extracted: predict_batch (30 lines)
+        ✓ Extracted: log_batch_analytics (3 lines, dependency)
+      ✅ Extracted 144/568 lines (20 definitions)
+    ✓ Extracted context from 2 source file(s)
+  Generating fix...
+  Applying fix...
+  🧪 Testing fix before applying (regression prevention)...
+  ❌ Fix validation failed - test still fails:
+     =========================== short test summary info ============================
+     ERROR tests/generated/test_integ_20251118_093902_01.py::test_predict_batch_handles_inference_exception_and_returns_500
+     !!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+     ========================= 2 warnings, 1 error in 5.76s =========================
+  Rejecting fix - it still fails or creates new errors
+  ✗ Fix validation failed - test still fails
+  ⚠️  Fix attempt 1 failed, will retry with feedback...
+  Generating fix (attempt 2/3)...
+    Learning from previous failure...
+  Applying fix...
+  🧪 Testing fix before applying (regression prevention)...
+  ❌ Fix validation failed - test still fails:
+     =========================== short test summary info ============================
+     FAILED tests/generated/test_integ_20251118_093902_01.py::test_predict_batch_handles_inference_exception_and_returns_500
+     !!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+     ======================== 1 failed, 2 warnings in 5.21s =========================
+  Rejecting fix - it still fails or creates new errors
+  ✗ Fix validation failed - test still fails
+  ⚠️  Fix attempt 2 failed, will retry with feedback...
+  Generating fix (attempt 3/3)...
+    Learning from previous failure...
+  Applying fix...
+  🧪 Testing fix before applying (regression prevention)...
+  ❌ Fix validation failed - test still fails:
+     =========================== short test summary info ============================
+     FAILED tests/generated/test_integ_20251118_093902_01.py::test_predict_batch_handles_inference_exception_and_returns_500
+     !!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+     ======================== 1 failed, 2 warnings in 5.76s =========================
+  Rejecting fix - it still fails or creates new errors
+  ✗ Fix validation failed - test still fails
+  ❌ All 3 fix attempts failed
+  Classification: TEST MISTAKE (fix failed)
+
+--- Processing failure 18/25 ---
+Test: test_system_metrics_reflects_model_loaded_flag_and_metrics_content in tests/generated/test_integ_20251118_093902_01.py
+  Rule classifier: unknown, using LLM...
+    HTTP endpoints detected: [('GET', '/system/metrics'), ('GET', '/system/metrics')]
+    Trying to resolve module 'app'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/__init__.py
+    Trying to resolve module 'time'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    Trying to resolve module 'app.main'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ GET /system/metrics → system_metrics()
+        ✓ GET /system/metrics → system_metrics()
+      🌐 Mapped endpoints to handlers: system_metrics
+      🎯 Target functions: app_main, system_metrics
+        ✓ Extracted: system_metrics (7 lines)
+      ✅ Extracted 141/568 lines (17 definitions)
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ GET /system/metrics → system_metrics()
+        ✓ GET /system/metrics → system_metrics()
+      🌐 Mapped endpoints to handlers: system_metrics
+      🎯 Target functions: app_main, system_metrics
+        ✓ Extracted: system_metrics (7 lines)
+      ✅ Extracted 141/568 lines (17 definitions)
+    ✓ Extracted context from 2 source file(s)
+  LLM classifier: code_bug (The test issues a simple GET to /system/metrics expecting a 200, but the app returned 400. This indicates the endpoint raised an HTTP error rather than returning metrics. The most likely cause is server-side behavior (for example the security dependency being applied unexpectedly because the conditional uses os.getenv('REQUIRE_API_KEY') truthiness, so environments that set REQUIRE_API_KEY to a non-empty falsey string still enable the dependency which in turn rejects the request). The test itself is correct in expecting a 200 with model=None (the route's implementation returns model_loaded=False), so the failure points to application logic/configuration rather than a mistake in the test code.)
+  Classification: CODE BUG (skipped)
+
+--- Processing failure 19/25 ---
+Test: test_root_status_changes_based_on_model_loaded_state in tests/generated/test_integ_20251118_093902_01.py
+  Rule classifier: unknown, using LLM...
+    HTTP endpoints detected: [('GET', '/'), ('GET', '/')]
+    Trying to resolve module 'app'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/__init__.py
+    Trying to resolve module 'app.main'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ GET / → root()
+        ✓ GET / → root()
+      🌐 Mapped endpoints to handlers: root
+      🎯 Target functions: app_main, root
+        ✓ Extracted: root (4 lines)
+      ✅ Extracted 139/568 lines (15 definitions)
+    ✓ Extracted context from 2 source file(s)
+  LLM classifier: code_bug (The test is asserting that GET / returns 200 and a status field; given the posted application code the root() path operation should always return a normal dict (200) and compute 'status' without raising. The fact that the test saw a 400 Bad Request indicates the application returned an HTTP error for a simple GET /, which points to a bug in the application (exception handler, middleware, startup/lifespan behavior or other request handling) rather than a mistake in the test. Because the root() function has no validation or dependencies that would normally produce a 400, the unexpected 400 is most likely caused by an implementation issue in the app.)
+  Classification: CODE BUG (skipped)
+
+--- Processing failure 20/25 ---
+Test: test_apply_hybrid_pipeline_accepts_various_model_outputs in tests/generated/test_integ_20251118_093902_01.py
+  Rule classifier: unknown, using LLM...
+    Trying to resolve module 'app'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/__init__.py
+    ✓ Extracted context from 1 source file(s)
+    ❌ Source extraction FAILED - only 3 lines extracted (minimum: 50)
+      This is likely due to parsing errors or incorrect file resolution
+  ❌ Source code extraction FAILED - cannot classify reliably
+     Skipping LLM classification (marking as code_bug to be safe)
+  Classification: CODE BUG (skipped)
+
+--- Processing failure 21/25 ---
+Test: test_verify_api_key_valid_and_invalid_tokens in tests/generated/test_integ_20251118_093902_01.py
+  Rule classifier: test_mistake
+    Trying to resolve module 'app'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/__init__.py
+    ✓ Extracted context from 1 source file(s)
+    ❌ Source extraction FAILED - only 3 lines extracted (minimum: 50)
+      This is likely due to parsing errors or incorrect file resolution
+  ❌ Source code extraction FAILED - cannot generate fix
+  Classification: TEST MISTAKE (fix failed)
+
+--- Processing failure 22/25 ---
+Test: test_clinical_model_predict_batch_error_path in tests/generated/test_integ_20251118_093902_01.py
+  Rule classifier: unknown, using LLM...
+    HTTP endpoints detected: [('POST', '/predict/batch')]
+    Trying to resolve module 'time'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    Trying to resolve module 'app.main'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    Trying to resolve module 'app'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/__init__.py
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ POST /predict/batch → predict_batch()
+      🌐 Mapped endpoints to handlers: predict_batch
+      🎯 Target functions: app_main, predict_batch
+        ✓ Extracted: predict_batch (30 lines)
+        ✓ Extracted: log_batch_analytics (3 lines, dependency)
+      ✅ Extracted 144/568 lines (20 definitions)
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ POST /predict/batch → predict_batch()
+      🌐 Mapped endpoints to handlers: predict_batch
+      🎯 Target functions: app_main, predict_batch
+        ✓ Extracted: predict_batch (30 lines)
+        ✓ Extracted: log_batch_analytics (3 lines, dependency)
+      ✅ Extracted 144/568 lines (20 definitions)
+    ✓ Extracted context from 2 source file(s)
+  LLM classifier: test_mistake (The request returned 400 (Bad Request) before entering the endpoint body, which indicates a dependency or request validation blocked the call. A common cause is the verify_api_key dependency being active (REQUIRE_API_KEY set) and the test not supplying/overriding it, causing a 400/authorization error rather than exercising the model error path. The source endpoint logic would return 500 only after successfully reaching the try/except; the test must bypass or satisfy the auth dependency so the request reaches model.predict_batch.)
+  Applying fix...
+Error: Patched code has syntax error at line 547: unterminated string literal (detected at line 547)
+  Problem line: '\n    Patch ClinicalAssertionModel.predict_batch to raise and ensure calling the app endpoint
+  Keeping original file unchanged
+  ✗ Fix application failed
+    HTTP endpoints detected: [('POST', '/predict/batch')]
+    Trying to resolve module 'time'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    Trying to resolve module 'app.main'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    Trying to resolve module 'app'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/__init__.py
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ POST /predict/batch → predict_batch()
+      🌐 Mapped endpoints to handlers: predict_batch
+      🎯 Target functions: app_main, predict_batch
+        ✓ Extracted: predict_batch (30 lines)
+        ✓ Extracted: log_batch_analytics (3 lines, dependency)
+      ✅ Extracted 144/568 lines (20 definitions)
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ POST /predict/batch → predict_batch()
+      🌐 Mapped endpoints to handlers: predict_batch
+      🎯 Target functions: app_main, predict_batch
+        ✓ Extracted: predict_batch (30 lines)
+        ✓ Extracted: log_batch_analytics (3 lines, dependency)
+      ✅ Extracted 144/568 lines (20 definitions)
+    ✓ Extracted context from 2 source file(s)
+  Generating fix...
+  Applying fix...
+  🧪 Testing fix before applying (regression prevention)...
+  ❌ Fix validation failed - test still fails:
+     =========================== short test summary info ============================
+     ERROR tests/generated/test_integ_20251118_093902_01.py::test_clinical_model_predict_batch_error_path
+     !!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+     ========================= 2 warnings, 1 error in 5.62s =========================
+  Rejecting fix - it still fails or creates new errors
+  ✗ Fix validation failed - test still fails
+  ⚠️  Fix attempt 1 failed, will retry with feedback...
+  Generating fix (attempt 2/3)...
+    Learning from previous failure...
+  Applying fix...
+  🧪 Testing fix before applying (regression prevention)...
+  ❌ Fix validation failed - test still fails:
+     =========================== short test summary info ============================
+     ERROR tests/generated/test_integ_20251118_093902_01.py::test_clinical_model_predict_batch_error_path
+     !!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+     ========================= 2 warnings, 1 error in 5.10s =========================
+  Rejecting fix - it still fails or creates new errors
+  ✗ Fix validation failed - test still fails
+  ⚠️  Fix attempt 2 failed, will retry with feedback...
+  Generating fix (attempt 3/3)...
+    Learning from previous failure...
+  Applying fix...
+  🧪 Testing fix before applying (regression prevention)...
+  ✅ Fix validated - test passes!
+  ✓ Fix applied successfully
+  ✅ Fix successful on attempt 3!
+  Classification: TEST MISTAKE (fixed)
+
+--- Processing failure 23/25 ---
+Test: test_any_route_triggers_middleware_dispatch_and_logging in tests/generated/test_integ_20251118_093902_01.py
+  Rule classifier: unknown, using LLM...
+    HTTP endpoints detected: [('GET', '/status')]
+    Trying to resolve module 'app'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/__init__.py
+    Trying to resolve module 'app.main'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ GET /status → service_status()
+      🌐 Mapped endpoints to handlers: service_status
+      🎯 Target functions: app_main, service_status
+        ✓ Extracted: service_status (6 lines)
+      ✅ Extracted 139/568 lines (15 definitions)
+    ✓ Extracted context from 2 source file(s)
+  LLM classifier: code_bug (A GET to /status (a simple health/status endpoint with no dependencies) should return 200 but the test received 400. The test is straightforward and correct — it only sets app_main.model = None and calls client.get('/status'). The unexpected 400 implies the application (most likely middleware.dispatch or related middleware/exception logic) is incorrectly rejecting the request (e.g. raising/returning a 400) instead of allowing the status route to proceed. Therefore the failure points to a bug in the application code rather than a test mistake.)
+  Classification: CODE BUG (skipped)
+
+--- Processing failure 24/25 ---
+Test: test_middleware_dispatch_success_and_error in tests/generated/test_unit_20251118_093902_01.py
+  Rule classifier: unknown, using LLM...
+    Detected safe_import('app.schemas') → importing 'app.schemas'
+    Detected safe_import('app.middleware') → importing 'app.middleware'
+    Detected safe_import('app.main') → importing 'app.main'
+    Detected safe_import('app.schemas') → importing 'app.schemas'
+    Detected safe_import('app.model') → importing 'app.model'
+    Trying to resolve module 'app.middleware'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/middleware.py
+    Trying to resolve module 'starlette.responses.Response'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    Trying to resolve module 'starlette.responses.JSONResponse'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    Trying to resolve module 'types.SimpleNamespace'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    🎯 Using targeted extraction for main.py (568 lines)...
+      Detected dynamic import: 'app.schemas'
+      Detected dynamic import: 'app.middleware'
+      Detected dynamic import: 'app.main'
+      Detected dynamic import: 'app.schemas'
+      Detected dynamic import: 'app.model'
+  📥 Parsed test imports:
+      app.schemas: <module> (dynamic import)
+      app.middleware: <module> (dynamic import)
+      app.main: <module> (dynamic import)
+      sys: sys
+      os: os
+      asyncio: asyncio
+      🎯 Target functions: * (will extract from error traceback)
+      ⚠️  No specific targets found
+      ❌ Cannot perform targeted extraction without targets
+    🎯 Using targeted extraction for main.py (568 lines)...
+      Detected dynamic import: 'app.schemas'
+      Detected dynamic import: 'app.middleware'
+      Detected dynamic import: 'app.main'
+      Detected dynamic import: 'app.schemas'
+      Detected dynamic import: 'app.model'
+  📥 Parsed test imports:
+      app.schemas: <module> (dynamic import)
+      app.middleware: <module> (dynamic import)
+      app.main: <module> (dynamic import)
+      sys: sys
+      os: os
+      asyncio: asyncio
+      🎯 Target functions: * (will extract from error traceback)
+      ⚠️  No specific targets found
+      ❌ Cannot perform targeted extraction without targets
+    🎯 Using targeted extraction for main.py (568 lines)...
+      Detected dynamic import: 'app.schemas'
+      Detected dynamic import: 'app.middleware'
+      Detected dynamic import: 'app.main'
+      Detected dynamic import: 'app.schemas'
+      Detected dynamic import: 'app.model'
+  📥 Parsed test imports:
+      app.schemas: <module> (dynamic import)
+      app.middleware: <module> (dynamic import)
+      app.main: <module> (dynamic import)
+      sys: sys
+      os: os
+      asyncio: asyncio
+      🎯 Target functions: * (will extract from error traceback)
+      ⚠️  No specific targets found
+      ❌ Cannot perform targeted extraction without targets
+    ✓ Extracted context from 1 source file(s)
+  LLM classifier: test_mistake (The test called dispatch() on an instance of starlette.middleware.base.BaseHTTPMiddleware (its base implementation raises NotImplementedError). The test did not account for the base-class dispatch being unimplemented. The correct approach is to skip the test when dispatch is not implemented (i.e. catches NotImplementedError) or detect the base implementation. This is an issue in the test, not the application middleware code.)
+  Applying fix...
+  🧪 Testing fix before applying (regression prevention)...
+  ✅ Fix validated - test passes!
+  ✓ Fix applied successfully
+  Classification: TEST MISTAKE (fixed)
+
+--- Processing failure 25/25 ---
+Test: test_model_predict_batch_input_validation in tests/generated/test_unit_20251118_093902_01.py
+  Rule classifier: test_mistake
+    Detected safe_import('app.schemas') → importing 'app.schemas'
+    Detected safe_import('app.middleware') → importing 'app.middleware'
+    Detected safe_import('app.main') → importing 'app.main'
+    Detected safe_import('app.schemas') → importing 'app.schemas'
+    Detected safe_import('app.model') → importing 'app.model'
+    Trying to resolve module 'types'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    Trying to resolve module 'app.model'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/model.py
+    Trying to resolve module 'types.SimpleNamespace'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    🎯 Using targeted extraction for main.py (568 lines)...
+      Detected dynamic import: 'app.schemas'
+      Detected dynamic import: 'app.middleware'
+      Detected dynamic import: 'app.main'
+      Detected dynamic import: 'app.schemas'
+      Detected dynamic import: 'app.model'
+  📥 Parsed test imports:
+      app.schemas: <module> (dynamic import)
+      app.middleware: <module> (dynamic import)
+      app.main: <module> (dynamic import)
+      sys: sys
+      os: os
+      asyncio: asyncio
+      🎯 Target functions: * (will extract from error traceback)
+      ⚠️  No specific targets found
+      ❌ Cannot perform targeted extraction without targets
+    🎯 Using targeted extraction for main.py (568 lines)...
+      Detected dynamic import: 'app.schemas'
+      Detected dynamic import: 'app.middleware'
+      Detected dynamic import: 'app.main'
+      Detected dynamic import: 'app.schemas'
+      Detected dynamic import: 'app.model'
+  📥 Parsed test imports:
+      app.schemas: <module> (dynamic import)
+      app.middleware: <module> (dynamic import)
+      app.main: <module> (dynamic import)
+      sys: sys
+      os: os
+      asyncio: asyncio
+      🎯 Target functions: * (will extract from error traceback)
+      ⚠️  No specific targets found
+      ❌ Cannot perform targeted extraction without targets
+    ✓ Extracted context from 1 source file(s)
+  Generating fix...
+  Applying fix...
+  🧪 Testing fix before applying (regression prevention)...
+  ✅ Fix validated - test passes!
+  ✓ Fix applied successfully
+  ✅ Fix successful on attempt 1!
+  Classification: TEST MISTAKE (fixed)
+
+================================================================================
+Iteration 1 Summary:
+  Test mistakes fixed: 8
+  Code bugs found: 14
+================================================================================
+
+      Detected dynamic import: 'app.utils'
+      Detected dynamic import: 'app.middleware'
+      Detected dynamic import: 'app.auth'
+  📥 Parsed test imports:
+      app.main: <module> (dynamic import)
+      app.schemas: <module> (dynamic import)
+      app.model: <module> (dynamic import)
+      sys: sys
+      os: os
+      asyncio: asyncio
+      🎯 Target functions: * (will extract from error traceback)
+      ⚠️  No specific targets found
+      ❌ Cannot perform targeted extraction without targets
+    ⚠️  No source code context found
+      Imports detected: ['sys', 'os', 'asyncio', 'uuid', 'time']
+      Used in test: ['starlette.requests.Request', 'asyncio', 'unittest.mock.patch', 'pytest', 'fastapi.BackgroundTasks']
+    ❌ Source extraction FAILED - no source files found
+  ❌ Source code extraction FAILED - cannot classify reliably
+     Skipping LLM classification (marking as code_bug to be safe)
+  Classification: CODE BUG (skipped)
+
+--- Processing failure 5/17 ---
+Test: test_service_status_returns_expected_keys in tests/generated/test_integ_20251118_093902_01.py
+  Rule classifier: unknown, using LLM...
+    HTTP endpoints detected: [('GET', '/status')]
+    Trying to resolve module 'time'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ GET /status → service_status()
+      🌐 Mapped endpoints to handlers: service_status
+      🎯 Target functions: app_main, service_status
+        ✓ Extracted: service_status (6 lines)
+      ✅ Extracted 139/568 lines (15 definitions)
+    ✓ Extracted context from 1 source file(s)
+  LLM classifier: code_bug (The test is a straightforward GET to /status and asserts a 200 with a few keys that match the endpoint's implementation. Receiving a 400 indicates the application raised an HTTPException (Bad Request) before returning the expected payload. There is no request validation or response model on /status that would make the test invalid; the test client call and assertions are correct. Therefore the problem is in the application code (middleware, dependency, or an exception raised during request handling) causing an unexpected 400 response.)
+  Classification: CODE BUG (skipped)
+
+--- Processing failure 6/17 ---
+Test: test_health_check_when_model_not_loaded_returns_503 in tests/generated/test_integ_20251118_093902_01.py
+  Rule classifier: unknown, using LLM...
+    HTTP endpoints detected: [('GET', '/health')]
+    Trying to resolve module 'app'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/__init__.py
+    Trying to resolve module 'app.main'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ GET /health → health_check()
+      🌐 Mapped endpoints to handlers: health_check
+      🎯 Target functions: app_main, health_check
+        ✓ Extracted: health_check (14 lines)
+        ✓ Extracted: system_metrics (7 lines, dependency)
+      ✅ Extracted 142/568 lines (18 definitions)
+    ✓ Extracted context from 2 source file(s)
+  LLM classifier: code_bug (The test correctly sets app_main.model = None and calls GET /health expecting a 503 when the model is not loaded. The application returned 400 Bad Request instead of the expected 503, which indicates the app did not behave as the test describes. The test assertion is consistent with the documented behavior in the source (raising HTTPException with 503 when model is None), so the mismatch points to a bug in the application (likely an unexpected request validation error, middleware/dependency interaction, or an exception handling issue) rather than an error in the test itself.)
+  Classification: CODE BUG (skipped)
+
+--- Processing failure 7/17 ---
+Test: test_health_check_when_model_loaded_returns_health_status in tests/generated/test_integ_20251118_093902_01.py
+  Rule classifier: unknown, using LLM...
+    HTTP endpoints detected: [('GET', '/health')]
+    Trying to resolve module 'app'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/__init__.py
+    Trying to resolve module 'app.main'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ GET /health → health_check()
+      🌐 Mapped endpoints to handlers: health_check
+      🎯 Target functions: app_main, health_check
+        ✓ Extracted: health_check (14 lines)
+        ✓ Extracted: system_metrics (7 lines, dependency)
+      ✅ Extracted 142/568 lines (18 definitions)
+    ✓ Extracted context from 2 source file(s)
+  LLM classifier: code_bug (The test correctly sets app_main.model and expects a 200 from /health, but the endpoint returned 400. A likely root cause is that an API-key dependency is being applied unexpectedly because the code uses a truthy check like if os.getenv('REQUIRE_API_KEY') to decide whether to attach Depends(verify_api_key). If the environment variable exists (for example set to the string 'false' or '0') the check is truthy and the dependency will be enforced, causing requests without the API key header to fail with 400. This is a bug in the application code's environment-var handling (treating any non-empty string as enabled) rather than an error in the test.)
+  Classification: CODE BUG (skipped)
+
+--- Processing failure 8/17 ---
+Test: test_metrics_endpoint_returns_prometheus_content_type in tests/generated/test_integ_20251118_093902_01.py
+  Rule classifier: unknown, using LLM...
+    HTTP endpoints detected: [('GET', '/metrics')]
+    Trying to resolve module 'app'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/__init__.py
+    Trying to resolve module 'app.main'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ GET /metrics → metrics()
+      🌐 Mapped endpoints to handlers: metrics
+      🎯 Target functions: app_main, metrics
+        ✓ Extracted: metrics (4 lines)
+      ✅ Extracted 138/568 lines (14 definitions)
+    ✓ Extracted context from 2 source file(s)
+  LLM classifier: code_bug (The test is exercising a simple GET /metrics endpoint and asserting a 200 response; getting a 400 indicates the application itself produced a Bad Request rather than the test being wrong. The test is correct in expecting a 200 and Prometheus content. Given the app code, the metrics handler should return generate_latest() with the proper media type; a 400 suggests the application raised an HTTPException or otherwise mishandled the request (likely in the metrics handler or app startup), so the fault is in the source code rather than the test.)
+  Classification: CODE BUG (skipped)
+
+--- Processing failure 9/17 ---
+Test: test_model_info_requires_api_key_and_succeeds_with_valid_key in tests/generated/test_integ_20251118_093902_01.py
+  Rule classifier: unknown, using LLM...
+    HTTP endpoints detected: [('GET', '/model/info')]
+    Trying to resolve module 'app'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/__init__.py
+    Trying to resolve module 'app.main'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ GET /model/info → model_info()
+      🌐 Mapped endpoints to handlers: model_info
+      🎯 Target functions: app_main, model_info
+        ✓ Extracted: model_info (6 lines)
+      ✅ Extracted 139/568 lines (15 definitions)
+    ✓ Extracted context from 2 source file(s)
+  LLM classifier: code_bug (The request returned 400 despite the test providing a valid Authorization header and setting API_KEY. That indicates the server-side authentication or header-parsing logic (verify_api_key or how the dependency is attached) is mishandling valid credentials or raising the wrong error. The test setup (setting REQUIRE_API_KEY and API_KEY, providing Bearer token, and injecting a loaded FakeModel) is correct; the unexpected 400 points to a bug in the application code (authentication dependency/validation or its conditional attachment) rather than a test mistake.)
+  Classification: CODE BUG (skipped)
+
+--- Processing failure 10/17 ---
+Test: test_model_info_returns_503_when_model_not_loaded_even_with_api_key in tests/generated/test_integ_20251118_093902_01.py
+  Rule classifier: unknown, using LLM...
+    HTTP endpoints detected: [('GET', '/model/info')]
+    Trying to resolve module 'app'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/__init__.py
+    Trying to resolve module 'app.main'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ GET /model/info → model_info()
+      🌐 Mapped endpoints to handlers: model_info
+      🎯 Target functions: app_main, model_info
+        ✓ Extracted: model_info (6 lines)
+      ✅ Extracted 139/568 lines (15 definitions)
+    ✓ Extracted context from 2 source file(s)
+  LLM classifier: code_bug (The request was rejected with 400 Bad Request before the route logic that would raise 503 could run. That indicates the authentication dependency ran and returned a 400 instead of allowing the request to reach the model check. The test sets REQUIRE_API_KEY and API_KEY and supplies an 'Authorization: Bearer test-secret' header, which is the expected form for API token auth. Getting a 400 here implies the authentication/dependency handling in the application is mis-parsing or mis-validating the header (or returning the wrong status code) rather than a mistake in the test itself. Therefore the failure points to a bug in the source code (authentication/dependency logic) rather than the test.)
+  Classification: CODE BUG (skipped)
+
+--- Processing failure 11/17 ---
+Test: test_predict_assertion_success_and_metrics_increment in tests/generated/test_integ_20251118_093902_01.py
+  Rule classifier: unknown, using LLM...
+    HTTP endpoints detected: [('POST', '/predict')]
+    Trying to resolve module 'app'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/__init__.py
+    Trying to resolve module 'app.main'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ POST /predict → predict_assertion()
+      🌐 Mapped endpoints to handlers: predict_assertion
+      🎯 Target functions: app_main, predict_assertion
+        ✓ Extracted: predict_assertion (27 lines)
+        ✓ Extracted: log_prediction_analytics (3 lines, dependency)
+      ✅ Extracted 144/568 lines (20 definitions)
+    ✓ Extracted context from 2 source file(s)
+  LLM classifier: code_bug (The test sends a valid JSON payload with 'sentence' and sets a fake loaded model, yet the endpoint returned HTTP 400 instead of 200. That indicates the application rejected the request before reaching the success path (validation or dependency failure) even though the test setup appears correct. Because the test input and setup are consistent with the endpoint implementation shown (it expects request.sentence and a loaded model), the failure is more likely due to a bug in the application (e.g. a request validation detail, API key dependency raising 400, or routing/validation mismatch) rather than an error in the test itself.)
+  Classification: CODE BUG (skipped)
+
+--- Processing failure 12/17 ---
+Test: test_predict_batch_handles_inference_exception_and_returns_500 in tests/generated/test_integ_20251118_093902_01.py
+  Rule classifier: unknown, using LLM...
+    HTTP endpoints detected: [('POST', '/predict/batch')]
+    Trying to resolve module 'app'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/__init__.py
+    Trying to resolve module 'time'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    Trying to resolve module 'app.main'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ POST /predict/batch → predict_batch()
+      🌐 Mapped endpoints to handlers: predict_batch
+      🎯 Target functions: app_main, predict_batch
+        ✓ Extracted: predict_batch (30 lines)
+        ✓ Extracted: log_batch_analytics (3 lines, dependency)
+      ✅ Extracted 144/568 lines (20 definitions)
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ POST /predict/batch → predict_batch()
+      🌐 Mapped endpoints to handlers: predict_batch
+      🎯 Target functions: app_main, predict_batch
+        ✓ Extracted: predict_batch (30 lines)
+        ✓ Extracted: log_batch_analytics (3 lines, dependency)
+      ✅ Extracted 144/568 lines (20 definitions)
+    ✓ Extracted context from 2 source file(s)
+  LLM classifier: test_mistake (The test sends a payload with two sentences. The application enforces a MAX_BATCH_SIZE (via env var) and will return HTTP 400 if the batch is too large — which is what happened in this run (likely MAX_BATCH_SIZE is set to 1 in the test environment). The 400 occurred before the model.predict_batch was invoked, so the test never exercised the inference exception path. The fix is to use a payload that won't trigger the batch-size check (e.g. a single sentence).)
+  Applying fix...
+  🧪 Testing fix before applying (regression prevention)...
+  ❌ Fix validation failed - test still fails:
+     =========================== short test summary info ============================
+     FAILED tests/generated/test_integ_20251118_093902_01.py::test_predict_batch_handles_inference_exception_and_returns_500
+     !!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+     ======================== 1 failed, 2 warnings in 5.42s =========================
+  Rejecting fix - it still fails or creates new errors
+  ✗ Fix application failed
+    HTTP endpoints detected: [('POST', '/predict/batch')]
+    Trying to resolve module 'app'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/__init__.py
+    Trying to resolve module 'time'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    Trying to resolve module 'app.main'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ POST /predict/batch → predict_batch()
+      🌐 Mapped endpoints to handlers: predict_batch
+      🎯 Target functions: app_main, predict_batch
+        ✓ Extracted: predict_batch (30 lines)
+        ✓ Extracted: log_batch_analytics (3 lines, dependency)
+      ✅ Extracted 144/568 lines (20 definitions)
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ POST /predict/batch → predict_batch()
+      🌐 Mapped endpoints to handlers: predict_batch
+      🎯 Target functions: app_main, predict_batch
+        ✓ Extracted: predict_batch (30 lines)
+        ✓ Extracted: log_batch_analytics (3 lines, dependency)
+      ✅ Extracted 144/568 lines (20 definitions)
+    ✓ Extracted context from 2 source file(s)
+  Generating fix...
+  Applying fix...
+  🧪 Testing fix before applying (regression prevention)...
+  ❌ Fix validation failed - test still fails:
+     =========================== short test summary info ============================
+     FAILED tests/generated/test_integ_20251118_093902_01.py::test_predict_batch_handles_inference_exception_and_returns_500
+     !!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+     ======================== 1 failed, 2 warnings in 4.98s =========================
+  Rejecting fix - it still fails or creates new errors
+  ✗ Fix validation failed - test still fails
+  ⚠️  Fix attempt 1 failed, will retry with feedback...
+  Generating fix (attempt 2/3)...
+    Learning from previous failure...
+  Applying fix...
+  🧪 Testing fix before applying (regression prevention)...
+  ✅ Fix validated - test passes!
+  ✓ Fix applied successfully
+  ✅ Fix successful on attempt 2!
+  Classification: TEST MISTAKE (fixed)
+
+--- Processing failure 13/17 ---
+Test: test_system_metrics_reflects_model_loaded_flag_and_metrics_content in tests/generated/test_integ_20251118_093902_01.py
+  Rule classifier: unknown, using LLM...
+    HTTP endpoints detected: [('GET', '/system/metrics'), ('GET', '/system/metrics')]
+    Trying to resolve module 'app'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/__init__.py
+    Trying to resolve module 'time'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    Trying to resolve module 'app.main'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ GET /system/metrics → system_metrics()
+        ✓ GET /system/metrics → system_metrics()
+      🌐 Mapped endpoints to handlers: system_metrics
+      🎯 Target functions: app_main, system_metrics
+        ✓ Extracted: system_metrics (7 lines)
+      ✅ Extracted 141/568 lines (17 definitions)
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ GET /system/metrics → system_metrics()
+        ✓ GET /system/metrics → system_metrics()
+      🌐 Mapped endpoints to handlers: system_metrics
+      🎯 Target functions: app_main, system_metrics
+        ✓ Extracted: system_metrics (7 lines)
+      ✅ Extracted 141/568 lines (17 definitions)
+    ✓ Extracted context from 2 source file(s)
+  LLM classifier: test_mistake (The endpoint has an optional dependency on an API key when the REQUIRE_API_KEY env var is set. In CI the dependency is active so the request without an API key returns 400. The test assumed no auth dependency and did not supply the required header. The application code is correct; the test must provide the API key when the app requires it (or adapt to either case).)
+  Applying fix...
+  🧪 Testing fix before applying (regression prevention)...
+  ❌ Fix validation failed - test still fails:
+     =========================== short test summary info ============================
+     FAILED tests/generated/test_integ_20251118_093902_01.py::test_system_metrics_reflects_model_loaded_flag_and_metrics_content
+     !!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+     ======================== 1 failed, 2 warnings in 4.68s =========================
+  Rejecting fix - it still fails or creates new errors
+  ✗ Fix application failed
+    HTTP endpoints detected: [('GET', '/system/metrics'), ('GET', '/system/metrics')]
+    Trying to resolve module 'app'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/__init__.py
+    Trying to resolve module 'time'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    Trying to resolve module 'app.main'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ GET /system/metrics → system_metrics()
+        ✓ GET /system/metrics → system_metrics()
+      🌐 Mapped endpoints to handlers: system_metrics
+      🎯 Target functions: app_main, system_metrics
+        ✓ Extracted: system_metrics (7 lines)
+      ✅ Extracted 141/568 lines (17 definitions)
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ GET /system/metrics → system_metrics()
+        ✓ GET /system/metrics → system_metrics()
+      🌐 Mapped endpoints to handlers: system_metrics
+      🎯 Target functions: app_main, system_metrics
+        ✓ Extracted: system_metrics (7 lines)
+      ✅ Extracted 141/568 lines (17 definitions)
+    ✓ Extracted context from 2 source file(s)
+  Generating fix...
+  Applying fix...
+  🧪 Testing fix before applying (regression prevention)...
+  ❌ Fix validation failed - test still fails:
+     =========================== short test summary info ============================
+     ERROR tests/generated/test_integ_20251118_093902_01.py::test_system_metrics_reflects_model_loaded_flag_and_metrics_content
+     !!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+     ========================= 2 warnings, 1 error in 4.69s =========================
+  Rejecting fix - it still fails or creates new errors
+  ✗ Fix validation failed - test still fails
+  ⚠️  Fix attempt 1 failed, will retry with feedback...
+  Generating fix (attempt 2/3)...
+    Learning from previous failure...
+  Applying fix...
+  🧪 Testing fix before applying (regression prevention)...
+  ❌ Fix validation failed - test still fails:
+     =========================== short test summary info ============================
+     FAILED tests/generated/test_integ_20251118_093902_01.py::test_system_metrics_reflects_model_loaded_flag_and_metrics_content
+     !!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+     ======================== 1 failed, 2 warnings in 5.22s =========================
+  Rejecting fix - it still fails or creates new errors
+  ✗ Fix validation failed - test still fails
+  ⚠️  Fix attempt 2 failed, will retry with feedback...
+  Generating fix (attempt 3/3)...
+    Learning from previous failure...
+  Applying fix...
+  🧪 Testing fix before applying (regression prevention)...
+  ❌ Fix validation failed - test still fails:
+     =========================== short test summary info ============================
+     FAILED tests/generated/test_integ_20251118_093902_01.py::test_system_metrics_reflects_model_loaded_flag_and_metrics_content
+     !!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+     ======================== 1 failed, 2 warnings in 5.01s =========================
+  Rejecting fix - it still fails or creates new errors
+  ✗ Fix validation failed - test still fails
+  ❌ All 3 fix attempts failed
+  Classification: TEST MISTAKE (fix failed)
+
+--- Processing failure 14/17 ---
+Test: test_root_status_changes_based_on_model_loaded_state in tests/generated/test_integ_20251118_093902_01.py
+  Rule classifier: unknown, using LLM...
+    HTTP endpoints detected: [('GET', '/'), ('GET', '/')]
+    Trying to resolve module 'app'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/__init__.py
+    Trying to resolve module 'app.main'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ GET / → root()
+        ✓ GET / → root()
+      🌐 Mapped endpoints to handlers: root
+      🎯 Target functions: app_main, root
+        ✓ Extracted: root (4 lines)
+      ✅ Extracted 139/568 lines (15 definitions)
+    ✓ Extracted context from 2 source file(s)
+  LLM classifier: code_bug (The test is calling GET / which, per the app code, should always return a 200 with a dict (status 'initializing' when model is None). Instead the test received a 400, which indicates the application raised an HTTP error while handling the request. The failing status is not caused by a wrong assertion in the test but by the app returning an unexpected 400. This points to a bug in the application (for example, an exception raised during request handling or in startup/lifespan logging that is being converted to an HTTPException with status 400), not a mistake in the test itself.)
+  Classification: CODE BUG (skipped)
+
+--- Processing failure 15/17 ---
+Test: test_apply_hybrid_pipeline_accepts_various_model_outputs in tests/generated/test_integ_20251118_093902_01.py
+  Rule classifier: unknown, using LLM...
+    Trying to resolve module 'app'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/__init__.py
+    ✓ Extracted context from 1 source file(s)
+    ❌ Source extraction FAILED - only 3 lines extracted (minimum: 50)
+      This is likely due to parsing errors or incorrect file resolution
+  ❌ Source code extraction FAILED - cannot classify reliably
+     Skipping LLM classification (marking as code_bug to be safe)
+  Classification: CODE BUG (skipped)
+
+--- Processing failure 16/17 ---
+Test: test_verify_api_key_valid_and_invalid_tokens in tests/generated/test_integ_20251118_093902_01.py
+  Rule classifier: test_mistake
+    Trying to resolve module 'app'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/__init__.py
+    ✓ Extracted context from 1 source file(s)
+    ❌ Source extraction FAILED - only 3 lines extracted (minimum: 50)
+      This is likely due to parsing errors or incorrect file resolution
+  ❌ Source code extraction FAILED - cannot generate fix
+  Classification: TEST MISTAKE (fix failed)
+
+--- Processing failure 17/17 ---
+Test: test_any_route_triggers_middleware_dispatch_and_logging in tests/generated/test_integ_20251118_093902_01.py
+  Rule classifier: unknown, using LLM...
+    HTTP endpoints detected: [('GET', '/status')]
+    Trying to resolve module 'app'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/__init__.py
+    Trying to resolve module 'app.main'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ GET /status → service_status()
+      🌐 Mapped endpoints to handlers: service_status
+      🎯 Target functions: app_main, service_status
+        ✓ Extracted: service_status (6 lines)
+      ✅ Extracted 139/568 lines (15 definitions)
+    ✓ Extracted context from 2 source file(s)
+  LLM classifier: code_bug (The test calls the /status endpoint (which in the source is a simple, model-independent GET) and expects 200, but the app returned 400. That indicates the application is rejecting the request before the status handler runs (most likely in a middleware or global dependency). The status route in the provided source has no input validation or dependencies that would yield a 400, so the unexpected 400 is caused by application logic (a middleware or global dependency) incorrectly raising an HTTP 400 for this simple health check. Because the failure stems from the app rejecting a request that should succeed, this is a bug in the application code, not an error in the test.)
+  Classification: CODE BUG (skipped)
+
+================================================================================
+Iteration 2 Summary:
+  Test mistakes fixed: 1
+  Code bugs found: 14
+================================================================================
+
+================================================================================
+ITERATION 3/3
+================================================================================
+
+Step 1: Running pytest and parsing failures...
+Found 16 failing test(s)
+
+--- Processing failure 1/16 ---
+Test: test_health_check_when_model_none_raises_503 in tests/generated/test_e2e_20251118_093902_01.py
+  Rule classifier: unknown, using LLM...
+    Detected safe_import('app.main') → importing 'app.main'
+    Detected safe_import('app.schemas') → importing 'app.schemas'
+    Detected safe_import('app.model') → importing 'app.model'
+    Detected safe_import('app.utils') → importing 'app.utils'
+    Detected safe_import('app.middleware') → importing 'app.middleware'
+    Detected safe_import('app.auth') → importing 'app.auth'
+    ⚠️  No source code context found
+      Imports detected: ['sys', 'os', 'asyncio', 'uuid', 'time']
+      Used in test: ['unittest.mock.patch', 'asyncio', 'pytest']
+    ❌ Source extraction FAILED - no source files found
+  ❌ Source code extraction FAILED - cannot classify reliably
+     Skipping LLM classification (marking as code_bug to be safe)
+  Classification: CODE BUG (skipped)
+
+--- Processing failure 2/16 ---
+Test: test_model_info_raises_and_succeeds_based_on_model in tests/generated/test_e2e_20251118_093902_01.py
+  Rule classifier: unknown, using LLM...
+    Detected safe_import('app.main') → importing 'app.main'
+    Detected safe_import('app.schemas') → importing 'app.schemas'
+    Detected safe_import('app.model') → importing 'app.model'
+    Detected safe_import('app.utils') → importing 'app.utils'
+    Detected safe_import('app.middleware') → importing 'app.middleware'
+    Detected safe_import('app.auth') → importing 'app.auth'
+    ⚠️  No source code context found
+      Imports detected: ['sys', 'os', 'asyncio', 'uuid', 'time']
+      Used in test: ['unittest.mock.patch', 'asyncio', 'pytest']
+    ❌ Source extraction FAILED - no source files found
+  ❌ Source code extraction FAILED - cannot classify reliably
+     Skipping LLM classification (marking as code_bug to be safe)
+  Classification: CODE BUG (skipped)
+
+--- Processing failure 3/16 ---
+Test: test_predict_assertion_success_and_failure in tests/generated/test_e2e_20251118_093902_01.py
+  Rule classifier: unknown, using LLM...
+    Detected safe_import('app.main') → importing 'app.main'
+    Detected safe_import('app.schemas') → importing 'app.schemas'
+    Detected safe_import('app.model') → importing 'app.model'
+    Detected safe_import('app.utils') → importing 'app.utils'
+    Detected safe_import('app.middleware') → importing 'app.middleware'
+    Detected safe_import('app.auth') → importing 'app.auth'
+    Trying to resolve module 'starlette.requests.Request'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    🎯 Using targeted extraction for main.py (568 lines)...
+      Detected dynamic import: 'app.main'
+      Detected dynamic import: 'app.schemas'
+      Detected dynamic import: 'app.model'
+      Detected dynamic import: 'app.utils'
+      Detected dynamic import: 'app.middleware'
+      Detected dynamic import: 'app.auth'
+  📥 Parsed test imports:
+      app.main: <module> (dynamic import)
+      app.schemas: <module> (dynamic import)
+      app.model: <module> (dynamic import)
+      sys: sys
+      os: os
+      asyncio: asyncio
+      🎯 Target functions: * (will extract from error traceback)
+      ⚠️  No specific targets found
+      ❌ Cannot perform targeted extraction without targets
+    ⚠️  No source code context found
+      Imports detected: ['sys', 'os', 'asyncio', 'uuid', 'time']
+      Used in test: ['starlette.requests.Request', 'asyncio', 'unittest.mock.patch', 'pytest', 'fastapi.BackgroundTasks']
+    ❌ Source extraction FAILED - no source files found
+  ❌ Source code extraction FAILED - cannot classify reliably
+     Skipping LLM classification (marking as code_bug to be safe)
+  Classification: CODE BUG (skipped)
+
+--- Processing failure 4/16 ---
+Test: test_predict_batch_success_and_batch_too_large in tests/generated/test_e2e_20251118_093902_01.py
+  Rule classifier: unknown, using LLM...
+    Detected safe_import('app.main') → importing 'app.main'
+    Detected safe_import('app.schemas') → importing 'app.schemas'
+    Detected safe_import('app.model') → importing 'app.model'
+    Detected safe_import('app.utils') → importing 'app.utils'
+    Detected safe_import('app.middleware') → importing 'app.middleware'
+    Detected safe_import('app.auth') → importing 'app.auth'
+    Trying to resolve module 'starlette.requests.Request'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    🎯 Using targeted extraction for main.py (568 lines)...
+      Detected dynamic import: 'app.main'
+      Detected dynamic import: 'app.schemas'
+      Detected dynamic import: 'app.model'
+      Detected dynamic import: 'app.utils'
+      Detected dynamic import: 'app.middleware'
+      Detected dynamic import: 'app.auth'
+  📥 Parsed test imports:
+      app.main: <module> (dynamic import)
+      app.schemas: <module> (dynamic import)
+      app.model: <module> (dynamic import)
+      sys: sys
+      os: os
+      asyncio: asyncio
+      🎯 Target functions: * (will extract from error traceback)
+      ⚠️  No specific targets found
+      ❌ Cannot perform targeted extraction without targets
+    ⚠️  No source code context found
+      Imports detected: ['sys', 'os', 'asyncio', 'uuid', 'time']
+      Used in test: ['starlette.requests.Request', 'asyncio', 'unittest.mock.patch', 'pytest', 'fastapi.BackgroundTasks']
+    ❌ Source extraction FAILED - no source files found
+  ❌ Source code extraction FAILED - cannot classify reliably
+     Skipping LLM classification (marking as code_bug to be safe)
+  Classification: CODE BUG (skipped)
+
+--- Processing failure 5/16 ---
+Test: test_service_status_returns_expected_keys in tests/generated/test_integ_20251118_093902_01.py
+  Rule classifier: unknown, using LLM...
+    HTTP endpoints detected: [('GET', '/status')]
+    Trying to resolve module 'time'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ GET /status → service_status()
+      🌐 Mapped endpoints to handlers: service_status
+      🎯 Target functions: app_main, service_status
+        ✓ Extracted: service_status (6 lines)
+      ✅ Extracted 139/568 lines (15 definitions)
+    ✓ Extracted context from 1 source file(s)
+  LLM classifier: code_bug (The test is a simple GET to /status and asserts a 200 and presence of keys that match the handler's returned dictionary. The handler implementation for /status returns a plain dict and should yield a 200; receiving a 400 means the application raised an HTTPException before the handler returned a normal response (or some middleware/global dependency rejected the request). There is nothing in the test that is obviously incorrect (it uses the test client correctly and checks the expected keys). The failure therefore indicates a problem in the application setup (startup/lifespan, global dependency or middleware) that is returning a 400 when calling /status rather than allowing the endpoint to respond with 200.)
+  Classification: CODE BUG (skipped)
+
+--- Processing failure 6/16 ---
+Test: test_health_check_when_model_not_loaded_returns_503 in tests/generated/test_integ_20251118_093902_01.py
+  Rule classifier: unknown, using LLM...
+    HTTP endpoints detected: [('GET', '/health')]
+    Trying to resolve module 'app'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/__init__.py
+    Trying to resolve module 'app.main'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ GET /health → health_check()
+      🌐 Mapped endpoints to handlers: health_check
+      🎯 Target functions: app_main, health_check
+        ✓ Extracted: health_check (14 lines)
+        ✓ Extracted: system_metrics (7 lines, dependency)
+      ✅ Extracted 142/568 lines (18 definitions)
+    ✓ Extracted context from 2 source file(s)
+  LLM classifier: code_bug (The test correctly simulates the model not being loaded (app_main.model = None) and expects a 503. The /health route is intended to raise an HTTPException with status 503 when model is None, but the test observed a 400 response — indicating the application did not behave as expected. This points to a problem in the application code path (exception handling or middleware) rather than an error in the test itself. In particular, the health_check function wraps all exceptions (including HTTPException) in a broad except and re-raises, and the app-level HTTP exception handler interacts with prometheus metric labels; this combination can alter the final response status (or trigger a validation error) instead of returning the intended 503. The test itself is valid.)
+  Classification: CODE BUG (skipped)
+
+--- Processing failure 7/16 ---
+Test: test_health_check_when_model_loaded_returns_health_status in tests/generated/test_integ_20251118_093902_01.py
+  Rule classifier: unknown, using LLM...
+    HTTP endpoints detected: [('GET', '/health')]
+    Trying to resolve module 'app'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/__init__.py
+    Trying to resolve module 'app.main'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ GET /health → health_check()
+      🌐 Mapped endpoints to handlers: health_check
+      🎯 Target functions: app_main, health_check
+        ✓ Extracted: health_check (14 lines)
+        ✓ Extracted: system_metrics (7 lines, dependency)
+      ✅ Extracted 142/568 lines (18 definitions)
+    ✓ Extracted context from 2 source file(s)
+  LLM classifier: code_bug (The test correctly sets app_main.model to a fake loaded model and calls GET /health expecting 200. The endpoint returned 400, which means the application raised an HTTP error before producing the expected HealthResponse. The test setup is appropriate (no missing headers or wrong call shape), so the failure points to the implementation: something in health_check (or the data it includes such as system_metrics or model.get_model_info()) is producing an error/invalid response that results in a 400 instead of the expected 200. Therefore this is a bug in the application code, not the test.)
+  Classification: CODE BUG (skipped)
+
+--- Processing failure 8/16 ---
+Test: test_metrics_endpoint_returns_prometheus_content_type in tests/generated/test_integ_20251118_093902_01.py
+  Rule classifier: unknown, using LLM...
+    HTTP endpoints detected: [('GET', '/metrics')]
+    Trying to resolve module 'app'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/__init__.py
+    Trying to resolve module 'app.main'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ GET /metrics → metrics()
+      🌐 Mapped endpoints to handlers: metrics
+      🎯 Target functions: app_main, metrics
+        ✓ Extracted: metrics (4 lines)
+      ✅ Extracted 138/568 lines (14 definitions)
+    ✓ Extracted context from 2 source file(s)
+  LLM classifier: code_bug (The test is a straightforward check: GET /metrics should return 200 and Prometheus content. The test exercised the app and got a 400 response, which indicates the application returned an incorrect status code or raised a bad-request HTTPException when serving /metrics. The test itself contains no obvious mistakes (correct path, sensible assertions). Therefore the failure is most likely due to a bug in the application code (the metrics endpoint or app middleware/initialization) rather than an error in the test.)
+  Classification: CODE BUG (skipped)
+
+--- Processing failure 9/16 ---
+Test: test_model_info_requires_api_key_and_succeeds_with_valid_key in tests/generated/test_integ_20251118_093902_01.py
+  Rule classifier: unknown, using LLM...
+    HTTP endpoints detected: [('GET', '/model/info')]
+    Trying to resolve module 'app'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/__init__.py
+    Trying to resolve module 'app.main'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ GET /model/info → model_info()
+      🌐 Mapped endpoints to handlers: model_info
+      🎯 Target functions: app_main, model_info
+        ✓ Extracted: model_info (6 lines)
+      ✅ Extracted 139/568 lines (15 definitions)
+    ✓ Extracted context from 2 source file(s)
+  LLM classifier: test_mistake (The test sets REQUIRE_API_KEY and API_KEY at runtime but does not reload or recreate the FastAPI app after changing environment variables. The route's dependencies (which are evaluated at import time) depend on the environment variable, so changing env vars after the app has been created will not update the route. The fix is to set the env vars and reload/import the app module and create a TestClient from the reloaded app so the dependency is applied correctly.)
+  Applying fix...
+  🧪 Testing fix before applying (regression prevention)...
+  ❌ Fix validation failed - test still fails:
+     =========================== short test summary info ============================
+     FAILED tests/generated/test_integ_20251118_093902_01.py::test_model_info_requires_api_key_and_succeeds_with_valid_key
+     !!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+     ======================== 1 failed, 2 warnings in 4.96s =========================
+  Rejecting fix - it still fails or creates new errors
+  ✗ Fix application failed
+    HTTP endpoints detected: [('GET', '/model/info')]
+    Trying to resolve module 'app'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/__init__.py
+    Trying to resolve module 'app.main'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ GET /model/info → model_info()
+      🌐 Mapped endpoints to handlers: model_info
+      🎯 Target functions: app_main, model_info
+        ✓ Extracted: model_info (6 lines)
+      ✅ Extracted 139/568 lines (15 definitions)
+    ✓ Extracted context from 2 source file(s)
+  Generating fix...
+  Applying fix...
+  🧪 Testing fix before applying (regression prevention)...
+  ❌ Fix validation failed - test still fails:
+     =========================== short test summary info ============================
+     FAILED tests/generated/test_integ_20251118_093902_01.py::test_model_info_requires_api_key_and_succeeds_with_valid_key
+     !!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+     ======================== 1 failed, 2 warnings in 5.34s =========================
+  Rejecting fix - it still fails or creates new errors
+  ✗ Fix validation failed - test still fails
+  ⚠️  Fix attempt 1 failed, will retry with feedback...
+  Generating fix (attempt 2/3)...
+    Learning from previous failure...
+  Generating fix (attempt 3/3)...
+    Learning from previous failure...
+  Applying fix...
+  🧪 Testing fix before applying (regression prevention)...
+  ❌ Fix validation failed - test still fails:
+     =========================== short test summary info ============================
+     FAILED tests/generated/test_integ_20251118_093902_01.py::test_model_info_requires_api_key_and_succeeds_with_valid_key
+     !!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+     ======================== 1 failed, 2 warnings in 5.11s =========================
+  Rejecting fix - it still fails or creates new errors
+  ✗ Fix validation failed - test still fails
+  ❌ All 3 fix attempts failed
+  Classification: TEST MISTAKE (fix failed)
+
+--- Processing failure 10/16 ---
+Test: test_model_info_returns_503_when_model_not_loaded_even_with_api_key in tests/generated/test_integ_20251118_093902_01.py
+  Rule classifier: unknown, using LLM...
+    HTTP endpoints detected: [('GET', '/model/info')]
+    Trying to resolve module 'app'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/__init__.py
+    Trying to resolve module 'app.main'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ GET /model/info → model_info()
+      🌐 Mapped endpoints to handlers: model_info
+      🎯 Target functions: app_main, model_info
+        ✓ Extracted: model_info (6 lines)
+      ✅ Extracted 139/568 lines (15 definitions)
+    ✓ Extracted context from 2 source file(s)
+  LLM classifier: code_bug (The test correctly sets REQUIRE_API_KEY and API_KEY and sends an Authorization: Bearer test-secret header, expecting the model_info route to run and return 503 when app_main.model is None. Instead the request fails with 400 (Bad Request), which indicates the API key verification dependency rejected the request before the route executed. That points to an issue in the authentication/dependency implementation (or how it's wired), not an error in the test itself.)
+  Classification: CODE BUG (skipped)
+
+--- Processing failure 11/16 ---
+Test: test_predict_assertion_success_and_metrics_increment in tests/generated/test_integ_20251118_093902_01.py
+  Rule classifier: unknown, using LLM...
+    HTTP endpoints detected: [('POST', '/predict')]
+    Trying to resolve module 'app'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/__init__.py
+    Trying to resolve module 'app.main'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ POST /predict → predict_assertion()
+      🌐 Mapped endpoints to handlers: predict_assertion
+      🎯 Target functions: app_main, predict_assertion
+        ✓ Extracted: predict_assertion (27 lines)
+        ✓ Extracted: log_prediction_analytics (3 lines, dependency)
+      ✅ Extracted 144/568 lines (20 definitions)
+    ✓ Extracted context from 2 source file(s)
+  LLM classifier: test_mistake (The endpoint returned 400 likely because an authentication dependency (verify_api_key) is active in the app but the test did not provide the required API key. The test should either supply the required header or bypass the dependency. It's safer in tests to override the dependency so the test focuses on prediction behavior. The source code's behavior (returning 400 when auth is missing) is consistent with an auth dependency raising HTTPException, so the failure is due to the test not accounting for the dependency.)
+  Applying fix...
+  🧪 Testing fix before applying (regression prevention)...
+  ❌ Fix validation failed - test still fails:
+     =========================== short test summary info ============================
+     FAILED tests/generated/test_integ_20251118_093902_01.py::test_predict_assertion_success_and_metrics_increment
+     !!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+     ======================== 1 failed, 2 warnings in 5.15s =========================
+  Rejecting fix - it still fails or creates new errors
+  ✗ Fix application failed
+    HTTP endpoints detected: [('POST', '/predict')]
+    Trying to resolve module 'app'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/__init__.py
+    Trying to resolve module 'app.main'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ POST /predict → predict_assertion()
+      🌐 Mapped endpoints to handlers: predict_assertion
+      🎯 Target functions: app_main, predict_assertion
+        ✓ Extracted: predict_assertion (27 lines)
+        ✓ Extracted: log_prediction_analytics (3 lines, dependency)
+      ✅ Extracted 144/568 lines (20 definitions)
+    ✓ Extracted context from 2 source file(s)
+  Generating fix...
+  Applying fix...
+  🧪 Testing fix before applying (regression prevention)...
+  ❌ Fix validation failed - test still fails:
+     =========================== short test summary info ============================
+     ERROR tests/generated/test_integ_20251118_093902_01.py::test_predict_assertion_success_and_metrics_increment
+     !!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+     ========================= 2 warnings, 1 error in 5.32s =========================
+  Rejecting fix - it still fails or creates new errors
+  ✗ Fix validation failed - test still fails
+  ⚠️  Fix attempt 1 failed, will retry with feedback...
+  Generating fix (attempt 2/3)...
+    Learning from previous failure...
+  Applying fix...
+  🧪 Testing fix before applying (regression prevention)...
+  ❌ Fix validation failed - test still fails:
+     =========================== short test summary info ============================
+     FAILED tests/generated/test_integ_20251118_093902_01.py::test_predict_assertion_success_and_metrics_increment
+     !!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+     ======================== 1 failed, 2 warnings in 5.63s =========================
+  Rejecting fix - it still fails or creates new errors
+  ✗ Fix validation failed - test still fails
+  ⚠️  Fix attempt 2 failed, will retry with feedback...
+  Generating fix (attempt 3/3)...
+    Learning from previous failure...
+  Applying fix...
+  🧪 Testing fix before applying (regression prevention)...
+  ❌ Fix validation failed - test still fails:
+     =========================== short test summary info ============================
+     FAILED tests/generated/test_integ_20251118_093902_01.py::test_predict_assertion_success_and_metrics_increment
+     !!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+     ======================== 1 failed, 2 warnings in 5.28s =========================
+  Rejecting fix - it still fails or creates new errors
+  ✗ Fix validation failed - test still fails
+  ❌ All 3 fix attempts failed
+  Classification: TEST MISTAKE (fix failed)
+
+--- Processing failure 12/16 ---
+Test: test_system_metrics_reflects_model_loaded_flag_and_metrics_content in tests/generated/test_integ_20251118_093902_01.py
+  Rule classifier: unknown, using LLM...
+    HTTP endpoints detected: [('GET', '/system/metrics'), ('GET', '/system/metrics')]
+    Trying to resolve module 'app'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/__init__.py
+    Trying to resolve module 'time'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    Trying to resolve module 'app.main'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ GET /system/metrics → system_metrics()
+        ✓ GET /system/metrics → system_metrics()
+      🌐 Mapped endpoints to handlers: system_metrics
+      🎯 Target functions: app_main, system_metrics
+        ✓ Extracted: system_metrics (7 lines)
+      ✅ Extracted 141/568 lines (17 definitions)
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ GET /system/metrics → system_metrics()
+        ✓ GET /system/metrics → system_metrics()
+      🌐 Mapped endpoints to handlers: system_metrics
+      🎯 Target functions: app_main, system_metrics
+        ✓ Extracted: system_metrics (7 lines)
+      ✅ Extracted 141/568 lines (17 definitions)
+    ✓ Extracted context from 2 source file(s)
+Error parsing LLM JSON response: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)
+Response preview: {
+  "classification": "test_mistake",
+  "reason": "The test assumes the /system/metrics endpoint will be accessible without any authentication dependency. In the application code the route conditional...
+  LLM classifier: code_bug (JSON parse error: Expecting property name enclosed in double quotes: line 1 column 2 (char 1))
+  Classification: CODE BUG (skipped)
+
+--- Processing failure 13/16 ---
+Test: test_root_status_changes_based_on_model_loaded_state in tests/generated/test_integ_20251118_093902_01.py
+  Rule classifier: unknown, using LLM...
+    HTTP endpoints detected: [('GET', '/'), ('GET', '/')]
+    Trying to resolve module 'app'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/__init__.py
+    Trying to resolve module 'app.main'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ GET / → root()
+        ✓ GET / → root()
+      🌐 Mapped endpoints to handlers: root
+      🎯 Target functions: app_main, root
+        ✓ Extracted: root (4 lines)
+      ✅ Extracted 139/568 lines (15 definitions)
+    ✓ Extracted context from 2 source file(s)
+  LLM classifier: code_bug (The test is calling GET / (a simple root endpoint with no dependencies) and expects 200, but the app returned 400. The root path implementation simply returns a dict and should always return 200 (with 'status' set based on model). There is nothing in the test that is obviously wrong (it simply sets app_main.model and queries '/'), so the unexpected 400 indicates the application is producing an HTTP error before or inside the root handler (likely due to a bug in the app — e.g. middleware, startup/lifespan behavior, or an exception being raised and translated to a 400). Because the failure originates from the service behavior rather than an invalid test assertion or fixture, this is a code bug.)
+  Classification: CODE BUG (skipped)
+
+--- Processing failure 14/16 ---
+Test: test_apply_hybrid_pipeline_accepts_various_model_outputs in tests/generated/test_integ_20251118_093902_01.py
+  Rule classifier: unknown, using LLM...
+    Trying to resolve module 'app'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/__init__.py
+    ✓ Extracted context from 1 source file(s)
+    ❌ Source extraction FAILED - only 3 lines extracted (minimum: 50)
+      This is likely due to parsing errors or incorrect file resolution
+  ❌ Source code extraction FAILED - cannot classify reliably
+     Skipping LLM classification (marking as code_bug to be safe)
+  Classification: CODE BUG (skipped)
+
+--- Processing failure 15/16 ---
+Test: test_verify_api_key_valid_and_invalid_tokens in tests/generated/test_integ_20251118_093902_01.py
+  Rule classifier: test_mistake
+    Trying to resolve module 'app'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/__init__.py
+    ✓ Extracted context from 1 source file(s)
+    ❌ Source extraction FAILED - only 3 lines extracted (minimum: 50)
+      This is likely due to parsing errors or incorrect file resolution
+  ❌ Source code extraction FAILED - cannot generate fix
+  Classification: TEST MISTAKE (fix failed)
+
+--- Processing failure 16/16 ---
+Test: test_any_route_triggers_middleware_dispatch_and_logging in tests/generated/test_integ_20251118_093902_01.py
+  Rule classifier: unknown, using LLM...
+    HTTP endpoints detected: [('GET', '/status')]
+    Trying to resolve module 'app'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/__init__.py
+    Trying to resolve module 'app.main'...
+      ✓ Found: /home/sigmoid/test-repos/clinic/app/main.py
+    🎯 Using targeted extraction for main.py (568 lines)...
+  📥 Parsed test imports:
+      sys: sys
+      os: os
+      time: time
+        ✓ GET /status → service_status()
+      🌐 Mapped endpoints to handlers: service_status
+      🎯 Target functions: app_main, service_status
+        ✓ Extracted: service_status (6 lines)
+      ✅ Extracted 139/568 lines (15 definitions)
+    ✓ Extracted context from 2 source file(s)
+  LLM classifier: code_bug (The /status endpoint is a simple GET that does not depend on the model and should return 200. The test sets app_main.model = None and calls '/status' but received a 400. That indicates the application (likely some middleware or request pre-processing) is incorrectly rejecting the request (Bad Request) instead of allowing the health/status endpoint to succeed. The test itself is correct — it exercises a no-model scenario and expects the status endpoint to remain available — so this is a bug in the application logic (middleware or request handling) that is returning 400 for a route that should succeed.)
+  Classification: CODE BUG (skipped)
+
+================================================================================
+Iteration 3 Summary:
+  Test mistakes fixed: 0
+  Code bugs found: 13
+================================================================================
+
+No test mistakes fixed in this iteration and we've tried multiple times. Stopping.
+
+================================================================================
+FINAL SUMMARY
+================================================================================
+Iterations: 3/3
+Total failures processed: 58
+Test mistakes: 17
+  - Fixed: 9
+  - Failed to fix: 8
+Code bugs (not fixed): 41
+================================================================================
+
+Detailed report saved to: auto_fixer_report.json
+
+⚠️  41 code bug(s) remain - these need manual fixes

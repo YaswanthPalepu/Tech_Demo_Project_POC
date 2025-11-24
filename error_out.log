@@ -1,0 +1,30 @@
+Initializing Auto Test Fixer...
+  Test directory: /home/sigmoid/my_name/new-tech-demo/tests/generated
+  Project root: /home/sigmoid/test-repos/food-menu
+  Max iterations: 3
+  Pytest args: ['*']
+================================================================================
+AUTO TEST FIXER - STARTING
+================================================================================
+
+================================================================================
+ITERATION 1/3
+================================================================================
+
+Step 1: Running pytest and parsing failures...
+✓ No test failures found!
+
+================================================================================
+FINAL SUMMARY
+================================================================================
+Iterations: 1/3
+Total failures processed: 0
+Test mistakes: 0
+  - Fixed: 0
+  - Failed to fix: 0
+Code bugs (not fixed): 0
+================================================================================
+
+Detailed report saved to: auto_fixer_report.json
+
+✓ All test mistakes have been fixed!
