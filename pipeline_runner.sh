@@ -167,7 +167,7 @@ PYCODE
     echo "📤 Uploading results to SonarQube..."
     sonar-scanner \
       -Dsonar.host.url="$SONAR_HOST_URL" \
-      -Dsonar.login="$SONAR_TOKEN" \
+      -Dsonar.token="$SONAR_TOKEN" \
       -Dproject.settings="$CURRENT_DIR/sonar-project.properties" \
       -Dsonar.projectBaseDir="$TARGET_DIR" \
       -Dsonar.sources="$TARGET_DIR" \
@@ -302,7 +302,7 @@ PYCODE
           if [ -n "${SONAR_HOST_URL:-}" ] && [ -n "${SONAR_TOKEN:-}" ]; then
             sonar-scanner \
               -Dsonar.host.url="$SONAR_HOST_URL" \
-              -Dsonar.login="$SONAR_TOKEN" \
+              -Dsonar.token="$SONAR_TOKEN" \
               -Dproject.settings="$CURRENT_DIR/sonar-project.properties" \
               -Dsonar.projectBaseDir="$TARGET_DIR" \
               -Dsonar.sources="$TARGET_DIR" \
@@ -411,7 +411,7 @@ if [ "$TEST_COUNT" -gt 0 ]; then
     if [ -n "${SONAR_HOST_URL:-}" ] && [ -n "${SONAR_TOKEN:-}" ]; then
       sonar-scanner \
         -Dsonar.host.url="$SONAR_HOST_URL" \
-        -Dsonar.login="$SONAR_TOKEN" \
+        -Dsonar.token="$SONAR_TOKEN" \
         -Dproject.settings="$CURRENT_DIR/sonar-project.properties" \
         -Dsonar.projectBaseDir="$TARGET_DIR" \
         -Dsonar.sources="$TARGET_DIR" \

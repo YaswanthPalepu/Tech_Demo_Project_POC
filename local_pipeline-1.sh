@@ -173,7 +173,7 @@ PYCODE
 
   sonar-scanner \
     -Dsonar.host.url="$SONAR_HOST_URL" \
-    -Dsonar.login="$SONAR_TOKEN" \
+    -Dsonar.token="$SONAR_TOKEN" \
     -Dproject.settings="$CURRENT_DIR/sonar-project.properties" \
     -Dsonar.projectBaseDir="$TARGET_DIR" \
     -Dsonar.sources="$TARGET_DIR" \
@@ -358,7 +358,7 @@ PYCODE
 
           sonar-scanner \
             -Dsonar.host.url="$SONAR_HOST_URL" \
-            -Dsonar.login="$SONAR_TOKEN" \
+            -Dsonar.token="$SONAR_TOKEN" \
             -Dproject.settings="$CURRENT_DIR/sonar-project.properties" \
             -Dsonar.projectBaseDir="$TARGET_DIR" \
             -Dsonar.sources="$TARGET_DIR" \
@@ -516,7 +516,7 @@ if [ "$TEST_COUNT" -gt 0 ]; then
 
     sonar-scanner \
       -Dsonar.host.url="$SONAR_HOST_URL" \
-      -Dsonar.login="$SONAR_TOKEN" \
+      -Dsonar.token="$SONAR_TOKEN" \
       -Dproject.settings="$CURRENT_DIR/sonar-project.properties" \
       -Dsonar.projectBaseDir="$TARGET_DIR" \
       -Dsonar.sources="$TARGET_DIR" \

@@ -27,8 +27,9 @@ jobs:
       - name: 🔧 Checkout Pipeline Code
         uses: actions/checkout@v4
         with:
-          path: pipeline
-      
+          path: pipeline\
+          fetch-depth: 0 
+
       - name: 🐍 Set up Python
         uses: actions/setup-python@v5
         with:
@@ -130,4 +131,3 @@ jobs:
           
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "✅ Pipeline completed!" >> $GITHUB_STEP_SUMMARY
-  
