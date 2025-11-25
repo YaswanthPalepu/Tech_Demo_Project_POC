@@ -387,7 +387,7 @@ Return ONLY the complete fixed test function code (include decorators, docstring
 
 ## Source Code
 ```python
-{source_code_display}
+{source_code}
 ```
 
 ## Task

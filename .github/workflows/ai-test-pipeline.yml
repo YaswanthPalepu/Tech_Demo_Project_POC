@@ -1,0 +1,133 @@
+name: AI Test Generation Pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      repo_url:
+        description: 'Git repository URL to test (e.g., https://github.com/user/repo.git)'
+        required: true
+        type: string
+      repo_branch:
+        description: 'Branch to checkout (default: main)'
+        required: false
+        default: 'main'
+        type: string
+      min_coverage:
+        description: 'Minimum coverage threshold (default: 90)'
+        required: false
+        default: '90'
+        type: string
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    
+    steps:
+      - name: 🔧 Checkout Pipeline Code
+        uses: actions/checkout@v4
+        with:
+          path: pipeline
+      
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      
+      - name: 📥 Clone Target Repository
+        run: |
+          echo "🔍 Cloning repository: ${{ inputs.repo_url }}"
+          git clone --depth 1 --branch ${{ inputs.repo_branch }} ${{ inputs.repo_url }} target_repo
+          echo "✅ Repository cloned successfully"
+          ls -la target_repo/
+      
+      - name: 📦 Create Virtual Environment
+        run: |
+          cd pipeline
+          python -m venv venv
+          source venv/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          echo "✅ Virtual environment created and dependencies installed"
+      
+      - name: 🔧 Install SonarQube Scanner
+        run: |
+          cd pipeline
+          mkdir -p venv/sonar-scanner
+          cd venv/sonar-scanner
+          
+          # Download and install sonar-scanner
+          wget -q https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
+          unzip -q sonar-scanner-cli-5.0.1.3006-linux.zip
+          mv sonar-scanner-5.0.1.3006-linux/* .
+          rm -rf sonar-scanner-cli-5.0.1.3006-linux.zip sonar-scanner-5.0.1.3006-linux
+          
+          chmod +x bin/sonar-scanner
+          echo "✅ SonarQube Scanner installed"
+          ./bin/sonar-scanner --version
+      
+      - name: 🧪 Run AI Test Generation Pipeline
+        env:
+          AZURE_OPENAI_KEY: ${{ secrets.AZURE_OPENAI_KEY }}
+          AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
+          AZURE_OPENAI_DEPLOYMENT: ${{ secrets.AZURE_OPENAI_DEPLOYMENT }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          MIN_COVERAGE_THRESHOLD: ${{ inputs.min_coverage }}
+        run: |
+          cd pipeline
+          source venv/bin/activate
+          
+          # Run the modified pipeline script
+          bash ./pipeline_runner.sh
+      
+      - name: 📊 Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: |
+            pipeline/coverage.xml
+            pipeline/test-results.xml
+            pipeline/htmlcov/
+            pipeline/.pytest_*.json
+            pipeline/auto_fixer_report.json
+            pipeline/manual_test_result.json
+            pipeline/coverage_gaps.json
+      
+      - name: 📈 Upload Coverage Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports
+          path: |
+            pipeline/coverage.xml
+            pipeline/htmlcov/
+      
+      - name: 📝 Generate Test Summary
+        if: always()
+        run: |
+          cd pipeline
+          
+          echo "## 📊 Pipeline Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ -f coverage.xml ]; then
+            COVERAGE=$(python3 -c "import xml.etree.ElementTree as ET; tree = ET.parse('coverage.xml'); root = tree.getroot(); print(f'{float(root.attrib.get(\"line-rate\", 0)) * 100:.2f}')")
+            echo "**Coverage:** ${COVERAGE}%" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [ -f manual_test_result.json ]; then
+            echo "### Manual Tests" >> $GITHUB_STEP_SUMMARY
+            python3 -c "import json; data=json.load(open('manual_test_result.json')); print(f'- **Found:** {data[\"manual_tests_found\"]}')" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [ -d tests/generated ]; then
+            TEST_COUNT=$(find tests/generated -name 'test_*.py' -type f | wc -l)
+            echo "### AI Generated Tests" >> $GITHUB_STEP_SUMMARY
+            echo "- **Generated Test Files:** ${TEST_COUNT}" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Pipeline completed!" >> $GITHUB_STEP_SUMMARY
+  

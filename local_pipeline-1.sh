@@ -8,7 +8,7 @@ echo ""
 
 # 1️⃣ Set target directory backend_code pytest_fun clinic flask-high-coverage-repo food-menu 
 export CURRENT_DIR="/home/sigmoid/my_name/new-tech-demo"
-export TARGET_DIR="/home/sigmoid/test-repos/clinic"
+export TARGET_DIR="/home/sigmoid/test-repos/flask-high-coverage-repo"
 export TARGET_ROOT="$TARGET_DIR"
 export PYTHONPATH="$TARGET_DIR"
 export PATH="$CURRENT_DIR/venv/sonar-scanner/bin:$PATH"
@@ -36,8 +36,6 @@ rm -rf "$CURRENT_DIR/.pytest_cache"
 # Remove pyc files
 find "$CURRENT_DIR" -name "*.pyc" -delete
 find "$CURRENT_DIR" -name "__pycache__" -type d -exec rm -rf {} +
-# find "$TARGET_DIR" -name "*.pyc" -delete
-# find "$TARGET_DIR" -name "__pycache__" -type d -exec rm -rf {} +
 
 # Remove coverage cache
 rm -f "$CURRENT_DIR/.coverage"
@@ -46,8 +44,18 @@ rm -f "$TARGET_DIR/.coverage"
 # Remove old sonar cache
 rm -rf "$CURRENT_DIR/.scannerwork"
 rm -rf "$TARGET_DIR/.scannerwork"
-rm -rf .codebase_index/
+rm -rf .codebase_index
+rm -f \
+  .pytest_combined.json \
+  .pytest_generated.json \
+  .pytest_manual.json \
+  auto_fixer_report.json \
+  coverage_gaps.json \
+  iteration_report.json \
+  manual_test_result.json \
+  pytest_report.json
 
+echo "Cleanup done."
 echo "✅ All stale caches removed"
 echo ""
 
@@ -169,8 +177,7 @@ PYCODE
     -Dproject.settings="$CURRENT_DIR/sonar-project.properties" \
     -Dsonar.projectBaseDir="$TARGET_DIR" \
     -Dsonar.sources="$TARGET_DIR" \
-    -Dsonar.python.coverage.reportPaths="$CURRENT_DIR/coverage.xml" \
-    -Dsonar.python.xunit.reportPath="$CURRENT_DIR/test-results.xml"
+    -Dsonar.python.coverage.reportPaths="$CURRENT_DIR/coverage.xml"
 
   echo "🎉 SonarQube upload complete!"
 
@@ -356,8 +363,7 @@ PYCODE
             -Dsonar.projectBaseDir="$TARGET_DIR" \
             -Dsonar.sources="$TARGET_DIR" \
             -Dsonar.tests="$CURRENT_DIR/tests/generated" \
-            -Dsonar.python.coverage.reportPaths="$CURRENT_DIR/coverage.xml" \
-            -Dsonar.python.xunit.reportPath="$CURRENT_DIR/test-results.xml"
+            -Dsonar.python.coverage.reportPaths="$CURRENT_DIR/coverage.xml"
 
           echo ""
         fi
@@ -514,8 +520,7 @@ if [ "$TEST_COUNT" -gt 0 ]; then
       -Dproject.settings="$CURRENT_DIR/sonar-project.properties" \
       -Dsonar.projectBaseDir="$TARGET_DIR" \
       -Dsonar.sources="$TARGET_DIR" \
-      -Dsonar.python.coverage.reportPaths="$CURRENT_DIR/coverage.xml" \
-      -Dsonar.python.xunit.reportPath="$CURRENT_DIR/test-results.xml"
+      -Dsonar.python.coverage.reportPaths="$CURRENT_DIR/coverage.xml"    
 
     echo ""
   fi
