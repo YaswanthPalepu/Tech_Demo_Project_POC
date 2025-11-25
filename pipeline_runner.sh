@@ -8,7 +8,7 @@ echo ""
 
 # Set directory paths
 export CURRENT_DIR="$(pwd)"
-export TARGET_DIR="$(pwd)/../target_repo"
+export TARGET_DIR="$(pwd)/target_repo"
 export TARGET_ROOT="$TARGET_DIR"
 export PYTHONPATH="$TARGET_DIR"
 export PATH="$CURRENT_DIR/venv/sonar-scanner/bin:$PATH"

@@ -26,10 +26,7 @@ jobs:
     steps:
       - name: 🔧 Checkout Pipeline Code
         uses: actions/checkout@v4
-        with:
-          path: pipeline\
-          fetch-depth: 0 
-
+      
       - name: 🐍 Set up Python
         uses: actions/setup-python@v5
         with:
@@ -38,22 +35,28 @@ jobs:
       - name: 📥 Clone Target Repository
         run: |
           echo "🔍 Cloning repository: ${{ inputs.repo_url }}"
-          git clone --depth 1 --branch ${{ inputs.repo_branch }} ${{ inputs.repo_url }} target_repo
+          cd ${{ github.workspace }}
+          git clone --branch ${{ inputs.repo_branch }} ${{ inputs.repo_url }} target_repo
           echo "✅ Repository cloned successfully"
-          ls -la target_repo/
+          echo ""
+          echo "📁 Workspace structure:"
+          ls -la ${{ github.workspace }}
+          echo ""
+          echo "📁 Target repo contents:"
+          ls -la ${{ github.workspace }}/target_repo
       
-      - name: 📦 Create Virtual Environment
+      - name: 📦 Install Dependencies
         run: |
-          cd pipeline
+          cd ${{ github.workspace }}
           python -m venv venv
           source venv/bin/activate
           pip install --upgrade pip
           pip install -r requirements.txt
-          echo "✅ Virtual environment created and dependencies installed"
+          echo "✅ Dependencies installed"
       
       - name: 🔧 Install SonarQube Scanner
         run: |
-          cd pipeline
+          cd ${{ github.workspace }}
           mkdir -p venv/sonar-scanner
           cd venv/sonar-scanner
           
@@ -76,10 +79,8 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           MIN_COVERAGE_THRESHOLD: ${{ inputs.min_coverage }}
         run: |
-          cd pipeline
+          cd ${{ github.workspace }}
           source venv/bin/activate
-          
-          # Run the modified pipeline script
           bash ./pipeline_runner.sh
       
       - name: 📊 Upload Test Results
@@ -88,13 +89,14 @@ jobs:
         with:
           name: test-results
           path: |
-            pipeline/coverage.xml
-            pipeline/test-results.xml
-            pipeline/htmlcov/
-            pipeline/.pytest_*.json
-            pipeline/auto_fixer_report.json
-            pipeline/manual_test_result.json
-            pipeline/coverage_gaps.json
+            ${{ github.workspace }}/coverage.xml
+            ${{ github.workspace }}/test-results.xml
+            ${{ github.workspace }}/htmlcov/
+            ${{ github.workspace }}/.pytest_*.json
+            ${{ github.workspace }}/auto_fixer_report.json
+            ${{ github.workspace }}/manual_test_result.json
+            ${{ github.workspace }}/coverage_gaps.json
+          if-no-files-found: warn
       
       - name: 📈 Upload Coverage Reports
         if: always()
@@ -102,29 +104,30 @@ jobs:
         with:
           name: coverage-reports
           path: |
-            pipeline/coverage.xml
-            pipeline/htmlcov/
+            ${{ github.workspace }}/coverage.xml
+            ${{ github.workspace }}/htmlcov/
+          if-no-files-found: warn
       
       - name: 📝 Generate Test Summary
         if: always()
         run: |
-          cd pipeline
+          cd ${{ github.workspace }}
           
           echo "## 📊 Pipeline Results" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           
           if [ -f coverage.xml ]; then
-            COVERAGE=$(python3 -c "import xml.etree.ElementTree as ET; tree = ET.parse('coverage.xml'); root = tree.getroot(); print(f'{float(root.attrib.get(\"line-rate\", 0)) * 100:.2f}')")
+            COVERAGE=$(python3 -c "import xml.etree.ElementTree as ET; tree = ET.parse('coverage.xml'); root = tree.getroot(); print(f'{float(root.attrib.get(\"line-rate\", 0)) * 100:.2f}')" 2>/dev/null || echo "0")
             echo "**Coverage:** ${COVERAGE}%" >> $GITHUB_STEP_SUMMARY
           fi
           
           if [ -f manual_test_result.json ]; then
             echo "### Manual Tests" >> $GITHUB_STEP_SUMMARY
-            python3 -c "import json; data=json.load(open('manual_test_result.json')); print(f'- **Found:** {data[\"manual_tests_found\"]}')" >> $GITHUB_STEP_SUMMARY
+            python3 -c "import json; data=json.load(open('manual_test_result.json')); print(f'- **Found:** {data[\"manual_tests_found\"]}')" >> $GITHUB_STEP_SUMMARY 2>/dev/null || true
           fi
           
           if [ -d tests/generated ]; then
-            TEST_COUNT=$(find tests/generated -name 'test_*.py' -type f | wc -l)
+            TEST_COUNT=$(find tests/generated -name 'test_*.py' -type f 2>/dev/null | wc -l)
             echo "### AI Generated Tests" >> $GITHUB_STEP_SUMMARY
             echo "- **Generated Test Files:** ${TEST_COUNT}" >> $GITHUB_STEP_SUMMARY
           fi
