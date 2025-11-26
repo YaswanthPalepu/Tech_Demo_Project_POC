@@ -72,11 +72,15 @@ jobs:
       
       - name: 🧪 Run AI Test Generation Pipeline
         env:
-          AZURE_OPENAI_KEY: ${{ secrets.AZURE_OPENAI_KEY }}
+          AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
           AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
           AZURE_OPENAI_DEPLOYMENT: ${{ secrets.AZURE_OPENAI_DEPLOYMENT }}
+          AZURE_OPENAI_API_VERSION: ${{ secrets.AZURE_OPENAI_API_VERSION }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          OLLAMA_HOST: ${{ secrets.OLLAMA_HOST }}
+          OLLAMA_EMBED_MODEL: ${{ secrets.OLLAMA_EMBED_MODEL }}
+          VECTOR_DIM: ${{ secrets.VECTOR_DIM }}
           MIN_COVERAGE_THRESHOLD: ${{ inputs.min_coverage }}
         run: |
           cd ${{ github.workspace }}
