@@ -51,7 +51,7 @@ rm -f \
 echo "✅ All stale caches removed"
 echo ""
 
-# 🔧 Ensure pytest-json-report is installed
+# Ensure pytest-json-report is installed
 echo "📦 Installing pytest-json-report for auto-fix feature..."
 pip install -q pytest-json-report || echo "⚠️ Failed to install pytest-json-report"
 echo ""
@@ -98,6 +98,7 @@ PYCODE
     pip install -q -r "$TARGET_DIR/requirements.txt" || echo "⚠️ Some dependencies failed to install"
   else
     echo "⚠️ No requirements.txt found in target repo"
+    exit 1
   fi
   echo ""
 
@@ -183,7 +184,7 @@ PYCODE
   # Auto-fix failing tests if any failures detected
   if [ $MANUAL_TEST_EXIT_CODE -ne 0 ]; then
     echo "⚠️ Some manual tests failed (exit code: $MANUAL_TEST_EXIT_CODE)"
-    echo "🔧 Auto-fix is available but skipped for manual tests"
+    echo "Auto-fix is available but skipped for manual tests"
     echo ""
   fi
 
@@ -290,7 +291,7 @@ PYCODE
 
         if [ $COMBINED_TEST_EXIT_CODE -ne 0 ]; then
           echo "⚠️ Some combined tests failed"
-          echo "🔧 Starting auto-fix for failing generated tests..."
+          echo "Starting auto-fix for failing generated tests..."
           echo ""
 
           python run_auto_fixer.py \
@@ -390,7 +391,7 @@ if [ "$TEST_COUNT" -gt 0 ]; then
 
   if [ $AI_TEST_EXIT_CODE -ne 0 ]; then
     echo "⚠️ Some AI-generated tests failed"
-    echo "🔧 Starting auto-fix..."
+    echo "Starting auto-fix..."
     
     python run_auto_fixer.py \
       --test-dir "$CURRENT_DIR/tests/generated" \
@@ -408,7 +409,7 @@ if [ "$TEST_COUNT" -gt 0 ]; then
       -v || true
 
     # Upload to SonarQube
-    if [ -n "${SONAR_HOST_URL:-}" ] && [ -n "${SONAR_TOKEN:-}" ]; then
+    if [ -n "${SONAR_HOST_URL:-}" ] && [ -n "${SONAR_TOKEN:-}" ];then
       sonar-scanner \
         -Dsonar.host.url="$SONAR_HOST_URL" \
         -Dsonar.token="$SONAR_TOKEN" \
