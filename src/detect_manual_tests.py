@@ -39,6 +39,8 @@ def find_common_test_root(test_dirs: List[str]) -> str:
         # Starts with 'test_' (e.g., 'test_integration')
         if dirname_lower.startswith('test_'):
             return True
+        if dirname_lower.endswith('_test'):
+            return True
         return False
 
     # Find common prefix of all paths
