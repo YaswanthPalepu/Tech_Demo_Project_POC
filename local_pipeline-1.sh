@@ -8,7 +8,7 @@ echo ""
 
 # 1️⃣ Set target directory backend_code pytest_fun clinic flask-high-coverage-repo food-menu 
 export CURRENT_DIR="/home/sigmoid/my_name/new-tech-demo"
-export TARGET_DIR="/home/sigmoid/test-repos/flask-high-coverage-repo"
+export TARGET_DIR="/home/sigmoid/test-repos/ecommerce"
 export TARGET_ROOT="$TARGET_DIR"
 export PYTHONPATH="$TARGET_DIR"
 export PATH="$CURRENT_DIR/venv/sonar-scanner/bin:$PATH"
@@ -98,6 +98,7 @@ PYCODE
     pip install -r "$TARGET_DIR/requirements.txt"
   else
     echo "⚠️ No requirements.txt found — skipping dependency installation"
+    exit 1
   fi
   echo ""
 
@@ -315,6 +316,7 @@ PYCODE
         pip install -q -r "$TARGET_DIR/requirements.txt"
       else
         echo "⚠️ No requirements.txt found — skipping dependency installation"
+        exit 1
       fi
 
       # 🧹 Clean cache for generated tests
@@ -468,6 +470,7 @@ if [ -f "$TARGET_DIR/requirements.txt" ]; then
   pip install -r "$TARGET_DIR/requirements.txt"
 else
   echo "⚠️ No requirements.txt found — skipping dependency installation"
+  exit 1
 fi
 
 # 🧹 Clean cache for generated tests

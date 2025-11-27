@@ -392,18 +392,6 @@ Be conservative: if you're unsure, classify as "code_bug" to avoid incorrectly m
         # Modern LLMs (deepseek-r1: 64k, gpt-4o-mini: 128k) can handle large contexts
         # The AST/embedding extractors already limit to relevant functions only
         source_code_display = source_code
-        print("debugging all values:    ")
-        print(source_code_display)
-        print("end of source code display")
-        print("debugging test code:    ")
-        print(test_code)
-        print("end of test code")
-        print("debugging failure:    ")
-        print(failure)
-        print("end of failure")
-        print("debugging prompt:    ")
-        print("prompt built successfully")
-        print("end of prompt debugging")
         prompt = f"""# Test Failure Analysis
 
 ## Failing Test

@@ -307,7 +307,6 @@ PYCODE
               -Dproject.settings="$CURRENT_DIR/sonar-project.properties" \
               -Dsonar.projectBaseDir="$TARGET_DIR" \
               -Dsonar.sources="$TARGET_DIR" \
-              -Dsonar.tests="$CURRENT_DIR/tests/generated" \
               -Dsonar.python.coverage.reportPaths="$CURRENT_DIR/coverage.xml" || echo "⚠️ SonarQube upload failed"
           fi
         fi
@@ -356,10 +355,13 @@ echo ""
 export TESTGEN_FORCE=true
 rm -rf "./tests/generated"
 
-# Install target dependencies
+# 📦 Install project dependencies if requirements.txt exists
 if [ -f "$TARGET_DIR/requirements.txt" ]; then
-  echo "📦 Installing project dependencies..."
-  pip install -q -r "$TARGET_DIR/requirements.txt" || echo "⚠️ Some dependencies failed"
+  echo "📦 Installing project dependencies from target repo..."
+  pip install -q -r "$TARGET_DIR/requirements.txt" || echo "⚠️ Some dependencies failed to install"
+else
+  echo "⚠️ No requirements.txt found in target repo"
+  exit 1
 fi
 
 python -m src.gen --target "$TARGET_DIR" --outdir "$CURRENT_DIR/tests/generated" --force || true
