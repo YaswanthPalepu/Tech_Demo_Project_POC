@@ -238,7 +238,7 @@ Note: This test suite is designed to achieve >95% coverage with real code execut
                              force_regeneration: bool = False) -> Dict[str, Any]:
         """Orchestrate the complete test generation process."""
         
-        print("🚀 Starting universal test generation orchestration...")
+        print("Starting universal test generation orchestration...")
         
         try:
             # Setup environment
@@ -260,8 +260,8 @@ Note: This test suite is designed to achieve >95% coverage with real code execut
             report_path = self.output_dir / "generation_report.txt"
             report_path.write_text(final_report, encoding="utf-8")
             
-            print("🎉 Test generation orchestration completed successfully!")
-            print(f"📊 Final Report: {report_path}")
+            print("Test generation orchestration completed successfully!")
+            print(f"Final Report: {report_path}")
             
             return {
                 "success": True,
@@ -278,5 +278,5 @@ Note: This test suite is designed to achieve >95% coverage with real code execut
                 "error": str(e),
                 "traceback": traceback.format_exc()
             }
-            print(f"❌ Test generation orchestration failed: {e}")
+            print(f"Test generation orchestration failed: {e}")
             return error_result

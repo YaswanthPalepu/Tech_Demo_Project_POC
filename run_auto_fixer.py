@@ -89,20 +89,20 @@ def main():
 
         # Exit with appropriate code
         if summary['code_bugs'] > 0:
-            print(f"\n⚠️  {summary['code_bugs']} code bug(s) remain - these need manual fixes")
+            print(f"\n {summary['code_bugs']} code bug(s) remain - these need manual fixes")
             sys.exit(1)
         elif summary['failed_fixes'] > 0:
-            print(f"\n⚠️  {summary['failed_fixes']} test mistake(s) could not be fixed")
+            print(f"\n {summary['failed_fixes']} test mistake(s) could not be fixed")
             sys.exit(1)
         else:
-            print(f"\n✓ All test mistakes have been fixed!")
+            print(f"\n All test mistakes have been fixed!")
             sys.exit(0)
 
     except KeyboardInterrupt:
         print("\n\nInterrupted by user")
         sys.exit(130)
     except Exception as e:
-        print(f"\n❌ Error: {e}")
+        print(f"\n Error: {e}")
         import traceback
         traceback.print_exc()
         sys.exit(1)

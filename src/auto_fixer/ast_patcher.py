@@ -96,7 +96,7 @@ class ASTPatcher:
                 try:
                     cleaned_tree = ast.parse(cleaned_content)
                     if self._validate_pytest_decorators(cleaned_tree):
-                        print(f"  ✓ Auto-cleanup successful - using cleaned version")
+                        print(f"  Auto-cleanup successful - using cleaned version")
                         patched_content = cleaned_content
                     else:
                         print(f"Error: Patched code still has duplicate @pytest.mark.parametrize decorators after cleanup")
@@ -196,7 +196,7 @@ class ASTPatcher:
                 try:
                     cleaned_tree = ast.parse(cleaned_content)
                     if self._validate_pytest_decorators(cleaned_tree):
-                        print(f"  ✓ Auto-cleanup successful - using cleaned version")
+                        print(f"Auto-cleanup successful - using cleaned version")
                         patched_content = cleaned_content
                     else:
                         print(f"Error: Patched code still has duplicate @pytest.mark.parametrize decorators after cleanup")
@@ -509,7 +509,7 @@ class ASTPatcher:
             - success: True if the test passes with the fix
             - failure_output: Pytest output if test failed, empty string if passed
         """
-        print(f"  🧪 Testing fix before applying (regression prevention)...")
+        print(f"Testing fix before applying (regression prevention)...")
 
         # Strip parameter suffix for parameterized tests
         base_test_name = test_function_name.split('[')[0] if '[' in test_function_name else test_function_name
@@ -534,16 +534,16 @@ class ASTPatcher:
 
             # Check if test passed
             if result.returncode == 0:
-                print(f"  ✅ Fix validated - test passes!")
+                print(f"Fix validated - test passes!")
                 return True, ""
             else:
                 # Test failed - capture full output for learning
-                print(f"  ❌ Fix validation failed - test still fails:")
+                print(f"Fix validation failed - test still fails:")
                 # Show last few lines to user
                 output_lines = result.stdout.split('\n')
                 for line in output_lines[-5:]:
                     if line.strip():
-                        print(f"     {line}")
+                        print(f"{line}")
 
                 # Return full output for LLM learning
                 full_output = result.stdout + "\n" + result.stderr
@@ -551,7 +551,7 @@ class ASTPatcher:
 
         except subprocess.TimeoutExpired:
             # Test hung - definitely reject this fix
-            print(f"  ⏱️  Fix validation timed out - test hung")
+            print(f"Fix validation timed out - test hung")
             # Restore original
             try:
                 with open(test_file_path, 'w') as f:
@@ -562,7 +562,7 @@ class ASTPatcher:
 
         except Exception as e:
             # Any error during testing - restore original and reject
-            print(f"  ⚠️  Error during fix validation: {e}")
+            print(f"Error during fix validation: {e}")
             try:
                 with open(test_file_path, 'w') as f:
                     f.write(original_content)
@@ -654,7 +654,7 @@ class ASTPatcher:
         # Convert back to code
         try:
             cleaned_code = ast.unparse(tree)
-            print(f"  ✓ Automatically cleaned duplicate decorators from LLM-generated fix")
+            print(f"Automatically cleaned duplicate decorators from LLM-generated fix")
             return cleaned_code
         except Exception:
             # If unparsing fails, return original

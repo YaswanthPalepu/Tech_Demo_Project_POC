@@ -274,8 +274,8 @@ def build_prompt(kind: str, compact_json: str, focus_label: str, shard: int, tot
     if is_gap_focused_mode():
         gap_context = get_coverage_context_for_prompts()
         if gap_context:
-            print(f"   📊 Added {len(gap_context)} chars of gap-focused context to prompt")
-            print(f"   📊 Targeting uncovered code lines")
+            print(f"   Added {len(gap_context)} chars of gap-focused context to prompt")
+            print(f"   Targeting uncovered code lines")
             # Show first 500 chars for verification
             print(f"   Preview: {gap_context[:500]}...")
     user_content = f"""
@@ -376,7 +376,7 @@ def _merge_universal_text():
 #     gap_context = ""
 #     if is_gap_focused_mode():
 #         gap_context = get_coverage_context_for_prompts()
-#         print(f"   📊 Added {len(gap_context)} chars of gap-focused context to prompt")
+#         print(f"   Added {len(gap_context)} chars of gap-focused context to prompt")
 
 #     user_content = f"""
 # UNIVERSAL {kind.upper()} TEST GENERATION - FILE {shard + 1}/{total}

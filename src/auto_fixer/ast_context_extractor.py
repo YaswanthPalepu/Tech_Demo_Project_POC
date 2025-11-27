@@ -80,7 +80,7 @@ class ASTContextExtractor:
         # NEW: Extract HTTP endpoints from test code (for e2e/integration tests)
         http_endpoints = self._extract_http_endpoints(test_func_code)
         if http_endpoints and self.verbose:
-            print(f"    HTTP endpoints detected: {http_endpoints[:3]}")
+            print(f"HTTP endpoints detected: {http_endpoints[:3]}")
 
         # Resolve import paths to actual files
         source_files = self._resolve_imports_to_files(test_imports)
@@ -89,10 +89,10 @@ class ASTContextExtractor:
         # search common locations for files that might contain the endpoints
         if http_endpoints and not source_files:
             if self.verbose:
-                print(f"    ⚠️  No source files from imports, searching for HTTP endpoint handlers...")
+                print(f"No source files from imports, searching for HTTP endpoint handlers...")
             source_files = self._find_files_with_http_endpoints(http_endpoints)
             if source_files and self.verbose:
-                print(f"    ✓ Found {len(source_files)} file(s) with matching endpoints")
+                print(f"Found {len(source_files)} file(s) with matching endpoints")
 
         # Extract relevant code from each source file
         context = {}
@@ -114,11 +114,11 @@ class ASTContextExtractor:
 
         if self.verbose:
             if context:
-                print(f"  ✓ Extracted context from {len(context)} source file(s)")
+                print(f"Extracted context from {len(context)} source file(s)")
             else:
-                print(f"  ⚠ No source code context found")
-                print(f"    Imports detected: {list(imports.keys())[:5]}")
-                print(f"    Used in test: {list(test_imports)[:5]}")
+                print(f"No source code context found")
+                print(f"Imports detected: {list(imports.keys())[:5]}")
+                print(f"Used in test: {list(test_imports)[:5]}")
 
         return context
 
@@ -176,7 +176,7 @@ class ASTContextExtractor:
                                 module = '.'.join(parts[:-1])
                                 imports[module] = module
                                 if self.verbose:
-                                    print(f"    Detected patch target: '{patch_target}' → importing '{module}'")
+                                    print(f"Detected patch target: '{patch_target}' - importing '{module}'")
 
                 # Check for monkeypatch.setattr('app.main.model', ...)
                 elif isinstance(node.func, ast.Attribute) and node.func.attr == 'setattr':
@@ -190,7 +190,7 @@ class ASTContextExtractor:
                                 module = '.'.join(parts[:-1])
                                 imports[module] = module
                                 if self.verbose:
-                                    print(f"    Detected monkeypatch target: '{setattr_target}' → importing '{module}'")
+                                    print(f"Detected monkeypatch target: '{setattr_target}' - importing '{module}'")
 
                 # Check for dynamic import helpers: pytest.importorskip("app.main"), safe_import("app.main"), try_import("app.main")
                 elif isinstance(node.func, ast.Attribute):
@@ -201,7 +201,7 @@ class ASTContextExtractor:
                             if isinstance(module_path, str):
                                 imports[module_path] = module_path
                                 if self.verbose:
-                                    print(f"    Detected pytest.importorskip('{module_path}') → importing '{module_path}'")
+                                    print(f"Detected pytest.importorskip('{module_path}') - importing '{module_path}'")
 
                 # Check for function-based dynamic imports: safe_import("app.main"), try_import("app.main")
                 elif isinstance(node.func, ast.Name):
@@ -211,7 +211,7 @@ class ASTContextExtractor:
                             if isinstance(module_path, str):
                                 imports[module_path] = module_path
                                 if self.verbose:
-                                    print(f"    Detected {node.func.id}('{module_path}') → importing '{module_path}'")
+                                    print(f"Detected {node.func.id}('{module_path}') - importing '{module_path}'")
 
             # Also check for patch() used as decorator
             elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
@@ -227,7 +227,7 @@ class ASTContextExtractor:
                                         module = '.'.join(parts[:-1])
                                         imports[module] = module
                                         if self.verbose:
-                                            print(f"    Detected patch decorator: '@patch({patch_target})' → importing '{module}'")
+                                            print(f"Detected patch decorator: '@patch({patch_target})' - importing '{module}'")
 
         return imports
 
@@ -356,7 +356,7 @@ class ASTContextExtractor:
                     if method == test_method and endpoint == test_endpoint:
                         handlers.add(node.name)
                         if self.verbose:
-                            print(f"        ✓ {method} {endpoint} → {node.name}()")
+                            print(f"{method} {endpoint} - {node.name}()")
 
         return handlers
 
@@ -693,18 +693,18 @@ class ASTContextExtractor:
         variations.extend([f"src/{f}" for f in common_files])
 
         if self.verbose:
-            print(f"    Trying to resolve module '{module_path}'...")
+            print(f"Trying to resolve module '{module_path}'...")
 
         # Try each variation
         for var in variations:
             full_path = self.project_root / var
             if full_path.exists():
                 if self.verbose:
-                    print(f"      ✓ Found: {full_path}")
+                    print(f"Found: {full_path}")
                 return str(full_path)
 
         if self.verbose:
-            print(f"      ✗ Not found (tried {len(variations)} variations)")
+            print(f"Not found (tried {len(variations)} variations)")
 
         return None
 
@@ -739,7 +739,7 @@ class ASTContextExtractor:
 
         # File too large - extract intelligently
         if self.verbose:
-            print(f"    ⚠ File too large ({len(lines)} lines), extracting relevant parts only...")
+            print(f"File too large ({len(lines)} lines), extracting relevant parts only...")
 
         try:
             tree = ast.parse(content)
@@ -781,7 +781,7 @@ class ASTContextExtractor:
             result += f"\n\n# ... (extracted {current_lines}/{len(lines)} lines to fit token limit)"
 
             if self.verbose:
-                print(f"      → Extracted {current_lines}/{len(lines)} lines")
+                print(f"Extracted {current_lines}/{len(lines)} lines")
 
         return result if result else content[:self.max_source_lines * 80]  # Fallback
 
@@ -855,24 +855,24 @@ class ASTContextExtractor:
                     # For dynamic imports, we import the whole module
                     imports[module_path].add('*')
                     if self.verbose:
-                        print(f"      Detected dynamic import: '{module_path}'")
+                        print(f"Detected dynamic import: '{module_path}'")
 
         if self.verbose and imports:
-            print(f"  📥 Parsed test imports:")
+            print(f"Parsed test imports:")
             # Separate dynamic imports (with '*') from regular imports
             dynamic_imports = {k: v for k, v in imports.items() if '*' in v}
             regular_imports = {k: v for k, v in imports.items() if '*' not in v}
 
             # Show dynamic imports first
             for module, names in list(dynamic_imports.items())[:3]:
-                print(f"      {module}: <module> (dynamic import)")
+                print(f"{module}: <module> (dynamic import)")
 
             # Then show regular imports
             for module, names in list(regular_imports.items())[:3]:
                 names_str = ', '.join(list(names)[:5])
                 if len(names) > 5:
                     names_str += f', ... ({len(names)} total)'
-                print(f"      {module}: {names_str}")
+                print(f"{module}: {names_str}")
 
         return imports
 
@@ -949,7 +949,7 @@ class ASTContextExtractor:
         self._source_map_cache[source_file] = source_map
 
         if self.verbose and source_map:
-            print(f"  🗺️  Built source map: {len(source_map)} definitions found")
+            print(f"Built source map: {len(source_map)} definitions found")
 
         return source_map
 
@@ -1002,7 +1002,7 @@ class ASTContextExtractor:
                     functions.add(function_name)
 
                     if self.verbose:
-                        print(f"      📍 Found in traceback: {function_name} (line {line_number})")
+                        print(f"Found in traceback: {function_name} (line {line_number})")
             except:
                 # If path normalization fails, try basic string matching
                 if source_file_name in file_path:
@@ -1138,7 +1138,7 @@ class ASTContextExtractor:
 
         # Always use targeted extraction (only extract functions/classes found, not entire file)
         if self.verbose:
-            print(f"    🎯 Using targeted extraction for {os.path.basename(source_file)} ({total_lines} lines)...")
+            print(f"Using targeted extraction for {os.path.basename(source_file)} ({total_lines} lines)...")
 
         # Step 1: Parse test imports
         test_imports = self._parse_test_imports_detailed(test_file)
@@ -1159,7 +1159,7 @@ class ASTContextExtractor:
         if not source_map:
             # Could not parse source file, skip AST (embeddings will handle it)
             if self.verbose:
-                print(f"      ⚠️  Could not parse source file, skipping AST (will use embeddings only)")
+                print(f"Could not parse source file, skipping AST (will use embeddings only)")
             return ""  # Empty = skip this file, embeddings will handle it
 
         # Step 3: Parse error traceback
@@ -1171,7 +1171,7 @@ class ASTContextExtractor:
         if http_endpoints:
             endpoint_handlers = self._map_endpoints_to_handlers(http_endpoints, source_file, source_map)
             if endpoint_handlers and self.verbose:
-                print(f"      🌐 Mapped endpoints to handlers: {', '.join(list(endpoint_handlers)[:3])}")
+                print(f"Mapped endpoints to handlers: {', '.join(list(endpoint_handlers)[:3])}")
 
             # Extract dependencies from decorators (NEW: for API keys, auth, etc.)
             for handler_name in endpoint_handlers:
@@ -1180,7 +1180,7 @@ class ASTContextExtractor:
                     decorator_dependencies.update(deps)
 
             if decorator_dependencies and self.verbose:
-                print(f"      🔐 Found decorator dependencies: {', '.join(list(decorator_dependencies)[:3])}")
+                print(f"Found decorator dependencies: {', '.join(list(decorator_dependencies)[:3])}")
 
         # Step 4: Combine all target names
         target_names = imported_names | error_functions | endpoint_handlers | decorator_dependencies
@@ -1194,14 +1194,14 @@ class ASTContextExtractor:
             targets_str = ', '.join(list(target_names)[:5])
             if len(target_names) > 5:
                 targets_str += f', ... ({len(target_names)} total)'
-            print(f"      🎯 Target functions: {targets_str}")
+            print(f"Target functions: {targets_str}")
         elif self.verbose and has_wildcard:
-            print(f"      🎯 Target functions: * (will extract from error traceback)")
+            print(f"Target functions: * (will extract from error traceback)")
 
         if not target_names:
             # No specific targets found, skip AST and rely on embeddings
             if self.verbose:
-                print(f"      ⚠️  No specific targets found, skipping AST (will use embeddings only)")
+                print(f"No specific targets found, skipping AST (will use embeddings only)")
             return ""  # Empty = skip this file, embeddings will handle it
 
         # Step 5: Extract with priority ordering
@@ -1258,7 +1258,7 @@ class ASTContextExtractor:
                     current_lines += lines
 
                     if self.verbose:
-                        print(f"        ✓ Extracted: {target} ({lines} lines)")
+                        print(f"Extracted: {target} ({lines} lines)")
 
         # Priority 4: Dependencies of target functions
         for dep in all_dependencies:
@@ -1272,7 +1272,7 @@ class ASTContextExtractor:
                     current_lines += lines
 
                     if self.verbose:
-                        print(f"        ✓ Extracted: {dep} ({lines} lines, dependency)")
+                        print(f"Extracted: {dep} ({lines} lines, dependency)")
 
         # Priority 5: Fill remaining space with other definitions
         if current_lines < max_lines:
@@ -1321,7 +1321,7 @@ class ASTContextExtractor:
         result += f"\n# Targeted extraction: {len(extracted_names)} definitions"
 
         if self.verbose:
-            print(f"      ✅ Extracted {current_lines}/{total_lines} lines ({len(extracted_names)} definitions)")
+            print(f"Extracted {current_lines}/{total_lines} lines ({len(extracted_names)} definitions)")
 
         return result
 

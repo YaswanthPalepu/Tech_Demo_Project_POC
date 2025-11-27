@@ -28,14 +28,14 @@ print("\nThis demonstrates how the auto-fixer processes failing tests")
 # =============================================================================
 print_step(1, "Show test file with intentional mistakes")
 
-print("\n📄 tests/test_user_example.py:")
+print("\n tests/test_user_example.py:")
 print("-" * 80)
 with open("tests/test_user_example.py", "r") as f:
     content = f.read()
     print(content)
 print("-" * 80)
 
-print("\n🔍 Mistakes in this file:")
+print("\n Mistakes in this file:")
 print("   1. Line 11: User class not imported")
 print("   2. Line 19: User class not imported")
 print("   3. Line 28: create_user function not imported")
@@ -45,7 +45,7 @@ print("   3. Line 28: create_user function not imported")
 # =============================================================================
 print_step(2, "Show source code being tested")
 
-print("\n📄 src/user_module.py:")
+print("\n src/user_module.py:")
 print("-" * 80)
 with open("src/user_module.py", "r") as f:
     content = f.read()
@@ -57,14 +57,14 @@ print("-" * 80)
 # =============================================================================
 print_step(3, "Run pytest to capture failures")
 
-print("\n📝 Running: pytest tests/test_user_example.py -v --tb=short")
+print("\n Running: pytest tests/test_user_example.py -v --tb=short")
 result = subprocess.run(
     ["pytest", "tests/test_user_example.py", "-v", "--tb=short"],
     capture_output=True,
     text=True
 )
 
-print("\n📊 Pytest output:")
+print("\n Pytest output:")
 print("-" * 80)
 print(result.stdout)
 print("-" * 80)
@@ -74,7 +74,7 @@ print("-" * 80)
 # =============================================================================
 print_step(4, "Parse failures into structured objects")
 
-print("\n📝 The FailureParser extracts:")
+print("\n The FailureParser extracts:")
 print("""
 For each FAILED line like:
   FAILED tests/test_user_example.py::test_user_creation - NameError: name 'User' is not defined
@@ -101,7 +101,7 @@ for i, failure in enumerate(failures, 1):
 # =============================================================================
 print_step(5, "Classify failures (test_mistake vs code_bug)")
 
-print("\n📝 Rule-based classification:")
+print("\n Rule-based classification:")
 print("""
 The RuleBasedClassifier checks patterns:
 
@@ -112,7 +112,7 @@ Result:  → test_mistake
 Why? Because NameError in a test usually means missing import or typo.
 """)
 
-print("\n📝 If rule classifier returns 'unknown', use LLM classifier:")
+print("\n If rule classifier returns 'unknown', use LLM classifier:")
 print("""
 LLM receives:
   - Test code: def test_user_creation(): ...
@@ -133,7 +133,7 @@ LLM analyzes and returns:
 # =============================================================================
 print_step(6, "Extract source code context using AST")
 
-print("\n📝 How AST extraction works:")
+print("\n How AST extraction works:")
 print("""
 1. Parse test file AST:
    import ast
@@ -166,7 +166,7 @@ print("""
 
 import ast
 
-print("\n📝 Example: Extracting test function AST")
+print("\n Example: Extracting test function AST")
 with open("tests/test_user_example.py", "r") as f:
     test_content = f.read()
 
@@ -178,7 +178,7 @@ for node in ast.walk(tree):
         print("-" * 80)
         break
 
-print("\n📝 Example: Extracting source class AST")
+print("\n Example: Extracting source class AST")
 with open("src/user_module.py", "r") as f:
     source_content = f.read()
 
@@ -196,7 +196,7 @@ for node in tree.body:
 # =============================================================================
 print_step(7, "Generate fix using LLM")
 
-print("\n📝 LLM receives a prompt like:")
+print("\n LLM receives a prompt like:")
 print("-" * 80)
 print("""# Fix This Failing Test
 
@@ -234,7 +234,7 @@ Return ONLY the fixed code.
 """)
 print("-" * 80)
 
-print("\n📝 LLM returns:")
+print("\n LLM returns:")
 print("-" * 80)
 print("""def test_user_creation():
     \"\"\"Test user creation - FIXED: Added import.\"\"\"
@@ -250,7 +250,7 @@ print("-" * 80)
 # =============================================================================
 print_step(8, "Apply fix using AST patcher")
 
-print("\n📝 AST patcher process:")
+print("\n AST patcher process:")
 print("""
 1. Read original test file
 2. Parse into AST to find the function:
@@ -285,7 +285,7 @@ print("""
 # =============================================================================
 print_step(9, "Re-run pytest to verify fix")
 
-print("\n📝 After patching, run pytest again:")
+print("\n After patching, run pytest again:")
 print("""
 pytest tests/test_user_example.py -v
 

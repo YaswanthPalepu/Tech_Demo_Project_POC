@@ -157,7 +157,7 @@ class CodebaseIndexer:
                         print("  Using Ollama for embeddings")
                 except Exception as e:
                     if self.verbose:
-                        print(f"  ⚠️  Failed to load Ollama client: {e}")
+                        print(f"Failed to load Ollama client: {e}")
                     # Fall back to OpenAI
                     try:
                         spec = importlib.util.spec_from_file_location(
@@ -173,7 +173,7 @@ class CodebaseIndexer:
                             print("  Using OpenAI for embeddings (fallback)")
                     except Exception as e2:
                         if self.verbose:
-                            print(f"  ⚠️  Both Ollama and OpenAI failed: {e2}")
+                            print(f"Both Ollama and OpenAI failed: {e2}")
                         self._embedding_client = None
             else:
                 # Use OpenAI
@@ -191,7 +191,7 @@ class CodebaseIndexer:
                         print("  Using OpenAI for embeddings")
                 except Exception as e:
                     if self.verbose:
-                        print(f"  ⚠️  Failed to load OpenAI client: {e}")
+                        print(f"Failed to load OpenAI client: {e}")
                     self._embedding_client = None
         return self._embedding_client
 
@@ -243,14 +243,14 @@ class CodebaseIndexer:
                 content = f.read()
         except (IOError, UnicodeDecodeError) as e:
             if self.verbose:
-                print(f"  ⚠️  Could not read {file_path}: {e}")
+                print(f"Could not read {file_path}: {e}")
             return []
 
         try:
             tree = ast.parse(content)
         except SyntaxError as e:
             if self.verbose:
-                print(f"  ⚠️  Syntax error in {file_path}: {e}")
+                print(f"Syntax error in {file_path}: {e}")
             return []
 
         elements = []
@@ -332,7 +332,7 @@ class CodebaseIndexer:
             )
         except Exception as e:
             if self.verbose:
-                print(f"    ⚠️  Error extracting function {node.name}: {e}")
+                print(f"Error extracting function {node.name}: {e}")
             return None
 
     def _extract_class(
@@ -368,7 +368,7 @@ class CodebaseIndexer:
             )
         except Exception as e:
             if self.verbose:
-                print(f"    ⚠️  Error extracting class {node.name}: {e}")
+                print(f"Error extracting class {node.name}: {e}")
             return None
 
     def _extract_variable(
@@ -394,7 +394,7 @@ class CodebaseIndexer:
             )
         except Exception as e:
             if self.verbose:
-                print(f"    ⚠️  Error extracting variable {var_name}: {e}")
+                print(f"Error extracting variable {var_name}: {e}")
             return None
 
     def _extract_http_endpoint(
@@ -434,7 +434,7 @@ class CodebaseIndexer:
                 )
             except Exception as e:
                 if self.verbose:
-                    print(f"    ⚠️  Error extracting HTTP endpoint {node.name}: {e}")
+                    print(f"Error extracting HTTP endpoint {node.name}: {e}")
                 return None
 
         return None
@@ -485,12 +485,12 @@ class CodebaseIndexer:
         # Check cache
         if not force_rebuild and cache_file.exists():
             if self.verbose:
-                print("📦 Loading index from cache...")
+                print("Loading index from cache...")
             self.load_index()
             return
 
         if self.verbose:
-            print("🔨 Building codebase index...")
+            print("Building codebase index...")
 
         # Find all Python files
         python_files = []
@@ -505,34 +505,34 @@ class CodebaseIndexer:
         self.code_elements = []
         for file_path in python_files:
             if self.verbose:
-                print(f"  📄 Indexing {file_path.relative_to(self.project_root)}...")
+                print(f"Indexing {file_path.relative_to(self.project_root)}...")
 
             elements = self.extract_code_elements(file_path)
             self.code_elements.extend(elements)
 
             if self.verbose and elements:
-                print(f"    → Extracted {len(elements)} elements")
+                print(f"Extracted {len(elements)} elements")
 
         if self.verbose:
-            print(f"\n✅ Extracted {len(self.code_elements)} total code elements")
-            print(f"  • Functions: {sum(1 for e in self.code_elements if e.element_type == 'function')}")
-            print(f"  • Classes: {sum(1 for e in self.code_elements if e.element_type == 'class')}")
-            print(f"  • Variables: {sum(1 for e in self.code_elements if e.element_type == 'variable')}")
-            print(f"  • HTTP Endpoints: {sum(1 for e in self.code_elements if e.element_type == 'http_endpoint')}")
+            print(f"\n Extracted {len(self.code_elements)} total code elements")
+            print(f"Functions: {sum(1 for e in self.code_elements if e.element_type == 'function')}")
+            print(f"Classes: {sum(1 for e in self.code_elements if e.element_type == 'class')}")
+            print(f"Variables: {sum(1 for e in self.code_elements if e.element_type == 'variable')}")
+            print(f"HTTP Endpoints: {sum(1 for e in self.code_elements if e.element_type == 'http_endpoint')}")
 
         # Generate embeddings
         if self.verbose:
-            print("\n🧠 Generating embeddings...")
+            print("\n Generating embeddings...")
 
         self.embeddings = self._generate_embeddings_batch(self.code_elements)
 
         # Save cache
         if self.verbose:
-            print("\n💾 Saving index to cache...")
+            print("\n Saving index to cache...")
         self.save_index()
 
         if self.verbose:
-            print("✅ Index built successfully!")
+            print(" Index built successfully!")
 
     def _generate_embeddings_batch(
         self,
@@ -575,7 +575,7 @@ class CodebaseIndexer:
 
             except Exception as e:
                 if self.verbose:
-                    print(f"    ⚠️  Error generating embeddings: {e}")
+                    print(f"Error generating embeddings: {e}")
                 # Fallback: add zero vectors
                 # Determine embedding dimension from environment (VECTOR_DIM)
                 # or infer from model name for OpenAI models
@@ -623,5 +623,5 @@ class CodebaseIndexer:
 
         if self.verbose:
             metadata = data.get('metadata', {})
-            print(f"  ✓ Loaded {metadata.get('num_elements', 0)} elements")
-            print(f"  ✓ Model: {metadata.get('embedding_model', 'unknown')}")
+            print(f"Loaded {metadata.get('num_elements', 0)} elements")
+            print(f"Model: {metadata.get('embedding_model', 'unknown')}")

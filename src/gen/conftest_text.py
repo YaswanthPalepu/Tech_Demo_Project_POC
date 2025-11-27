@@ -113,7 +113,7 @@ try:
     ASYNC_SUPPORT = True
 except ImportError:
     ASYNC_SUPPORT = False
-    print("⚠️ pytest-asyncio not installed - async tests may be skipped")
+    print("pytest-asyncio not installed - async tests may be skipped")
 
 @pytest.fixture
 def event_loop():

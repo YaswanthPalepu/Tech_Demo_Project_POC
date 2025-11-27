@@ -110,7 +110,7 @@ class OllamaEmbeddingClient:
                     retry_count += 1
                     if retry_count >= max_retries:
                         # Fallback: return zero vector
-                        print(f"  ⚠️  Failed to embed text {i+1}/{len(input_texts)} after {max_retries} retries: {e}")
+                        print(f"Failed to embed text {i+1}/{len(input_texts)} after {max_retries} retries: {e}")
                         embeddings.append([0.0] * self.vector_dim)
                         break
                     else:
@@ -391,15 +391,15 @@ def test_ollama_connection() -> bool:
         )
 
         if response.data and len(response.data) > 0:
-            print(f"✓ Ollama connection successful!")
-            print(f"  Embedding dimension: {len(response.data[0].embedding)}")
+            print(f"Ollama connection successful!")
+            print(f"Embedding dimension: {len(response.data[0].embedding)}")
             return True
         else:
-            print("✗ Ollama returned empty response")
+            print("Ollama returned empty response")
             return False
 
     except Exception as e:
-        print(f"✗ Ollama connection failed: {e}")
+        print(f"Ollama connection failed: {e}")
         return False
 
 
@@ -408,11 +408,10 @@ if __name__ == "__main__":
     print("Testing Ollama embedding client...")
     print(f"Host: {os.getenv('OLLAMA_HOST', 'http://localhost:11434')}")
     print(f"Model: {os.getenv('OLLAMA_EMBED_MODEL', 'deepseek-r1:latest')}")
-    print()
 
     success = test_ollama_connection()
 
     if success:
-        print("\n✅ Client is ready to use!")
+        print("\n Client is ready to use!")
     else:
-        print("\n❌ Client setup failed. Check your Ollama configuration.")
+        print("\n Client setup failed. Check your Ollama configuration.")

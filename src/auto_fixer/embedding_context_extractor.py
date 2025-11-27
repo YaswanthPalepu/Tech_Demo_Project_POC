@@ -66,7 +66,7 @@ class EmbeddingContextExtractor:
         if os.getenv("DISABLE_EMBEDDINGS", "").lower() in ("true", "1", "yes"):
             self.use_embeddings = False
             if self.verbose:
-                print("  ℹ️  Embeddings disabled via DISABLE_EMBEDDINGS env var")
+                print("Embeddings disabled via DISABLE_EMBEDDINGS env var")
 
     @property
     def indexer(self) -> Optional[CodebaseIndexer]:
@@ -84,7 +84,7 @@ class EmbeddingContextExtractor:
                 self._indexer.build_index()
             except Exception as e:
                 if self.verbose:
-                    print(f"  ⚠️  Could not initialize indexer: {e}")
+                    print(f"Could not initialize indexer: {e}")
                 self._indexer = None
 
         return self._indexer
@@ -126,7 +126,7 @@ class EmbeddingContextExtractor:
             Dict mapping file paths to code context
         """
         if self.verbose:
-            print(f"\n  🔍 Extracting context for {test_function_name}")
+            print(f"\n Extracting context for {test_function_name}")
 
         # Step 1: Try AST extraction
         ast_context = self.ast_extractor.extract_context(
@@ -169,10 +169,10 @@ class EmbeddingContextExtractor:
                 combined_files = len(combined_context)
                 combined_elements = count_elements(combined_context)
 
-                print(f"  📊 Context extraction results:")
-                print(f"     AST: {ast_elements} elements in {ast_files} files")
-                print(f"     Embeddings: {embed_elements} elements in {embed_files} files")
-                print(f"     Combined: {combined_elements} elements in {combined_files} files (deduplicated)")
+                print(f"Context extraction results:")
+                print(f"AST: {ast_elements} elements in {ast_files} files")
+                print(f"Embeddings: {embed_elements} elements in {embed_files} files")
+                print(f"Combined: {combined_elements} elements in {combined_files} files (deduplicated)")
 
             return combined_context
 
@@ -221,7 +221,7 @@ class EmbeddingContextExtractor:
 
         except Exception as e:
             if self.verbose:
-                print(f"    ⚠️  Could not read test file: {e}")
+                print(f"Could not read test file: {e}")
             test_code = ""
 
         # Perform semantic search
@@ -233,9 +233,9 @@ class EmbeddingContextExtractor:
         )
 
         if self.verbose and results:
-            print(f"    🔍 Embedding search found {len(results)} matches:")
+            print(f"Embedding search found {len(results)} matches:")
             for result in results[:3]:
-                print(f"       {result.rank}. {result.code_element.name} ({result.code_element.element_type}) - score: {result.similarity_score:.3f}")
+                print(f"  {result.rank}. {result.code_element.name} ({result.code_element.element_type}) - score: {result.similarity_score:.3f}")
 
         # Build context from results
         context = {}

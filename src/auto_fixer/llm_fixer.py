@@ -70,11 +70,11 @@ Return the complete fixed test function code."""
                 self.client = ollama_module.get_ollama_llm_client()
                 self.using_ollama = True
                 if verbose:
-                    print(f"  ✓ Using Ollama LLM for fixing: {os.getenv('OLLAMA_MODEL', 'deepseek-r1:latest')}")
+                    print(f"Using Ollama LLM for fixing: {os.getenv('OLLAMA_MODEL', 'deepseek-r1:latest')}")
             except Exception as e:
                 if verbose:
-                    print(f"  ⚠️  Could not initialize Ollama LLM client: {e}")
-                    print(f"  → Falling back to Azure OpenAI")
+                    print(f"Could not initialize Ollama LLM client: {e}")
+                    print(f"Falling back to Azure OpenAI")
 
         # Fall back to Azure OpenAI if Ollama not configured or failed
         if self.client is None:
@@ -96,7 +96,7 @@ Return the complete fixed test function code."""
 
                 self.client = openai_module.get_openai_client()
                 if verbose:
-                    print(f"  ✓ Using Azure OpenAI for fixing")
+                    print(f"Using Azure OpenAI for fixing")
             except Exception as e:
                 print(f"Warning: Could not initialize OpenAI client: {e}")
                 self.client = None
@@ -139,7 +139,7 @@ Return the complete fixed test function code."""
         prompt_lines = user_prompt.count('\n')
         prompt_chars = len(user_prompt)
         estimated_tokens = prompt_chars // 4  # Rough estimate: 4 chars per token
-        print(f"      📏 Prompt size: {prompt_lines} lines, {prompt_chars} chars (~{estimated_tokens} tokens)")
+        print(f"Prompt size: {prompt_lines} lines, {prompt_chars} chars (~{estimated_tokens} tokens)")
 
         try:
             # Call LLM
@@ -235,7 +235,7 @@ Return the complete fixed test function code."""
             f.write(f"Test code:      {len(test_code):,} chars, {test_code.count(chr(10))} lines\n")
             f.write(f"Source code:    {len(source_code_display):,} chars, {source_code_display.count(chr(10))} lines\n")
             f.write(f"Traceback:      {len(failure.traceback):,} chars, {failure.traceback.count(chr(10))} lines\n")
-        print(f"      💾 Debug saved: {debug_dir}/{timestamp}_*.txt")
+        print(f"Debug saved: {debug_dir}/{timestamp}_*.txt")
         # ============================================================
         prompt = f"""# Fix This Failing Test
 

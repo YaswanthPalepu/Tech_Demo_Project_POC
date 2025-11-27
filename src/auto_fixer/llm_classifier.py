@@ -87,11 +87,11 @@ Be conservative: if you're unsure, classify as "code_bug" to avoid incorrectly m
                 self.client = ollama_module.get_ollama_llm_client()
                 self.using_ollama = True
                 if verbose:
-                    print(f"  ✓ Using Ollama LLM: {os.getenv('OLLAMA_MODEL', 'deepseek-r1:latest')}")
+                    print(f"Using Ollama LLM: {os.getenv('OLLAMA_MODEL', 'deepseek-r1:latest')}")
             except Exception as e:
                 if verbose:
-                    print(f"  ⚠️  Could not initialize Ollama LLM client: {e}")
-                    print(f"  → Falling back to Azure OpenAI")
+                    print(f"Could not initialize Ollama LLM client: {e}")
+                    print(f"Falling back to Azure OpenAI")
 
         # Fall back to Azure OpenAI if Ollama not configured or failed
         if self.client is None:
@@ -113,7 +113,7 @@ Be conservative: if you're unsure, classify as "code_bug" to avoid incorrectly m
 
                 self.client = openai_module.get_openai_client()
                 if verbose:
-                    print(f"  ✓ Using Azure OpenAI")
+                    print(f"Using Azure OpenAI")
             except Exception as e:
                 print(f"Warning: Could not initialize OpenAI client: {e}")
                 self.client = None
@@ -155,10 +155,10 @@ Be conservative: if you're unsure, classify as "code_bug" to avoid incorrectly m
         element_count = source_code.count('# function:') + source_code.count('# class:') + source_code.count('# http_endpoint:')
 
         if self.verbose:
-            print(f"      📏 Input size:")
-            print(f"         • Prompt: {prompt_lines} lines, {prompt_chars} chars (~{estimated_tokens} tokens)")
-            print(f"         • Elements sent to LLM: {element_count}")
-            print(f"         • Source code: {len(source_code)} chars (~{len(source_code)//4} tokens)")
+            print(f"Input size:")
+            print(f"Prompt: {prompt_lines} lines, {prompt_chars} chars (~{estimated_tokens} tokens)")
+            print(f"Elements sent to LLM: {element_count}")
+            print(f"Source code: {len(source_code)} chars (~{len(source_code)//4} tokens)")
 
         try:
             # Call LLM with retry logic
@@ -192,7 +192,7 @@ Be conservative: if you're unsure, classify as "code_bug" to avoid incorrectly m
             import time
             start_time = time.time()
             if self.verbose and self.using_ollama:
-                print(f"      ⏳ Calling {model_name}... (this may take 30s-15min for reasoning models)")
+                print(f"Calling {model_name}... (this may take 30s-15min for reasoning models)")
 
             # Retry logic with exponential backoff
             response = self._call_llm_with_retry(request_params, max_retries=3)
@@ -202,7 +202,7 @@ Be conservative: if you're unsure, classify as "code_bug" to avoid incorrectly m
                 mins = int(elapsed_time // 60)
                 secs = int(elapsed_time % 60)
                 if mins > 0:
-                    print(f"      ⏱️  Completed in {mins}m {secs}s")
+                    print(f"Completed in {mins}m {secs}s")
 
             # Parse response
             content = response.choices[0].message.content.strip()
@@ -210,22 +210,22 @@ Be conservative: if you're unsure, classify as "code_bug" to avoid incorrectly m
             # DEBUG: Show raw LLM response for Ollama models (to debug reasoning models)
             if self.verbose and self.using_ollama:
                 output_tokens = len(content) // 4  # Estimate
-                print(f"      📤 Output size:")
-                print(f"         • Response: {len(content)} chars (~{output_tokens} tokens)")
-                print(f"      🤖 Raw LLM response preview (first 300 chars):")
+                print(f"Output size:")
+                print(f"Response: {len(content)} chars (~{output_tokens} tokens)")
+                print(f"Raw LLM response preview (first 300 chars):")
                 # Show first 300 chars to see if it's JSON or reasoning text
                 preview = content[:300] if len(content) > 300 else content
-                print(f"         {preview}")
+                print(f"{preview}")
                 if len(content) > 300:
-                    print(f"         ... ({len(content) - 300} more chars)")
+                    print(f" ... ({len(content) - 300} more chars)")
 
             # Extract JSON from response (handle various formats)
             json_str = self._extract_json(content)
 
             # DEBUG: Show extracted JSON
             if self.verbose and self.using_ollama and json_str != content:
-                print(f"      📝 Extracted JSON ({len(json_str)} chars):")
-                print(f"         {json_str[:200]}")
+                print(f"Extracted JSON ({len(json_str)} chars):")
+                print(f"{json_str[:200]}")
 
             result = json.loads(json_str)
 
@@ -237,13 +237,13 @@ Be conservative: if you're unsure, classify as "code_bug" to avoid incorrectly m
             )
 
         except json.JSONDecodeError as e:
-            print(f"❌ Error parsing LLM JSON response: {e}")
+            print(f"Error parsing LLM JSON response: {e}")
             if 'content' in locals():
-                print(f"   Raw response preview (first 400 chars):")
-                print(f"   {content[:400]}")
+                print(f"Raw response preview (first 400 chars):")
+                print(f"{content[:400]}")
                 if 'json_str' in locals() and json_str != content:
-                    print(f"   Extracted JSON attempt:")
-                    print(f"   {json_str[:400]}")
+                    print(f"Extracted JSON attempt:")
+                    print(f"{json_str[:400]}")
             # Conservative fallback
             return LLMClassification(
                 classification="code_bug",
@@ -293,12 +293,12 @@ Be conservative: if you're unsure, classify as "code_bug" to avoid incorrectly m
                 if attempt < max_retries - 1:
                     # Calculate backoff time: 2^attempt seconds (2s, 4s, 8s)
                     backoff_time = 2 ** attempt
-                    print(f"  ⚠️  LLM API error (attempt {attempt + 1}/{max_retries}): {e}")
-                    print(f"      Retrying in {backoff_time}s...")
+                    print(f"LLM API error (attempt {attempt + 1}/{max_retries}): {e}")
+                    print(f"Retrying in {backoff_time}s...")
                     time.sleep(backoff_time)
                 else:
                     # Final attempt failed
-                    print(f"  ❌ LLM API failed after {max_retries} attempts: {e}")
+                    print(f"LLM API failed after {max_retries} attempts: {e}")
                     raise
 
     def _extract_json(self, content: str) -> str:

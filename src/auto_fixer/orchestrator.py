@@ -74,12 +74,12 @@ class AutoTestFixerOrchestrator:
                 verbose=verbose
             )
             if verbose:
-                print("🧠 Using embedding-enhanced context extraction")
+                print("Using embedding-enhanced context extraction")
         else:
             # Fallback to pure AST extraction
             self.context_extractor = ASTContextExtractor(project_root, verbose=verbose)
             if verbose:
-                print("🌲 Using AST-only context extraction")
+                print("Using AST-only context extraction")
 
         self.llm_fixer = LLMFixer()
         self.ast_patcher = ASTPatcher()
@@ -116,7 +116,7 @@ class AutoTestFixerOrchestrator:
             failures = self.failure_parser.run_and_parse(extra_pytest_args)
 
             if not failures:
-                print("✓ No test failures found!")
+                print("No test failures found!")
                 all_tests_fixed = True
                 break
 
@@ -127,7 +127,7 @@ class AutoTestFixerOrchestrator:
             code_bugs_found = []
 
             for idx, failure in enumerate(failures, 1):
-                print(f"\n--- Processing failure {idx}/{len(failures)} ---")
+                print(f"\n Processing failure {idx}/{len(failures)}")
                 print(f"Test: {failure.test_name} in {failure.test_file}")
 
                 result = self._process_failure(failure)
@@ -135,17 +135,17 @@ class AutoTestFixerOrchestrator:
 
                 if result.classification == "code_bug":
                     code_bugs_found.append(failure)
-                    print(f"  Classification: CODE BUG (skipped)")
+                    print(f"Classification: CODE BUG (skipped)")
                 elif result.fix_successful:
                     test_mistakes_fixed.append(failure)
-                    print(f"  Classification: TEST MISTAKE (fixed)")
+                    print(f"Classification: TEST MISTAKE (fixed)")
                 else:
-                    print(f"  Classification: TEST MISTAKE (fix failed)")
+                    print(f"Classification: TEST MISTAKE (fix failed)")
 
             print(f"\n{'=' * 80}")
             print(f"Iteration {iteration} Summary:")
-            print(f"  Test mistakes fixed: {len(test_mistakes_fixed)}")
-            print(f"  Code bugs found: {len(code_bugs_found)}")
+            print(f"Test mistakes fixed: {len(test_mistakes_fixed)}")
+            print(f"Code bugs found: {len(code_bugs_found)}")
             print(f"{'=' * 80}")
 
             # Update code bugs list
@@ -185,15 +185,15 @@ class AutoTestFixerOrchestrator:
         )
 
         if rule_classification == "test_mistake":
-            print(f"  Rule classifier: test_mistake")
+            print(f"Rule classifier: test_mistake")
             return self._fix_test_mistake(failure, "rule-based classification", test_code, source_code)
 
         # Step 3: LLM classification
-        print(f"  Rule classifier: unknown, using LLM...")
+        print(f"Rule classifier: unknown, using LLM...")
 
         # LLM classification (reuse extracted context)
         llm_result = self.llm_classifier.classify(failure, test_code, source_code)
-        print(f"  LLM classifier: {llm_result.classification} ({llm_result.reason})")
+        print(f"LLM classifier: {llm_result.classification} ({llm_result.reason})")
 
         if llm_result.classification == "test_mistake":
             # Try to use LLM's suggested fix first
@@ -254,10 +254,10 @@ class AutoTestFixerOrchestrator:
         for attempt in range(1, max_attempts + 1):
             # Step 5: Generate fix
             if attempt == 1:
-                print(f"  Generating fix...")
+                print(f"Generating fix...")
             else:
-                print(f"  Generating fix (attempt {attempt}/{max_attempts})...")
-                print(f"    Learning from previous failure...")
+                print(f"Generating fix (attempt {attempt}/{max_attempts})...")
+                print(f"Learning from previous failure...")
 
             fixed_code = self.llm_fixer.fix_test(
                 failure,
@@ -283,7 +283,7 @@ class AutoTestFixerOrchestrator:
             success, failure_output = self._apply_fix_with_feedback(failure, fixed_code)
 
             if success:
-                print(f"  ✅ Fix successful on attempt {attempt}!")
+                print(f"Fix successful on attempt {attempt}!")
                 return FixResult(
                     test_file=failure.test_file,
                     test_name=failure.test_name,
@@ -298,9 +298,9 @@ class AutoTestFixerOrchestrator:
             previous_failure_output = failure_output
 
             if attempt < max_attempts:
-                print(f"  ⚠️  Fix attempt {attempt} failed, will retry with feedback...")
+                print(f"Fix attempt {attempt} failed, will retry with feedback...")
             else:
-                print(f"  ❌ All {max_attempts} fix attempts failed")
+                print(f"All {max_attempts} fix attempts failed")
 
         return FixResult(
             test_file=failure.test_file,
@@ -322,7 +322,7 @@ class AutoTestFixerOrchestrator:
         Returns:
             True if patch successful
         """
-        print(f"  Applying fix...")
+        print(f"Applying fix...")
 
         # Strip parameter suffix for parameterized tests
         # e.g., "test_foo[param]" → "test_foo"
@@ -337,13 +337,13 @@ class AutoTestFixerOrchestrator:
         if success:
             # Validate the patch
             if self.ast_patcher.validate_patch(failure.test_file):
-                print(f"  ✓ Fix applied successfully")
+                print(f"Fix applied successfully")
                 return True
             else:
-                print(f"  ✗ Fix validation failed")
+                print(f"Fix validation failed")
                 return False
         else:
-            print(f"  ✗ Fix application failed")
+            print(f"Fix application failed")
             return False
 
     def _apply_fix_with_feedback(self, failure: TestFailure, fixed_code: str) -> tuple[bool, str]:
@@ -359,7 +359,7 @@ class AutoTestFixerOrchestrator:
             - success: True if patch successful
             - failure_output: Pytest output if failed, empty string if succeeded
         """
-        print(f"  Applying fix...")
+        print(f"Applying fix...")
 
         # Strip parameter suffix for parameterized tests
         base_test_name = self._strip_test_parameters(failure.test_name)
@@ -373,16 +373,16 @@ class AutoTestFixerOrchestrator:
         if success:
             # Validate the patch
             if self.ast_patcher.validate_patch(failure.test_file):
-                print(f"  ✓ Fix applied successfully")
+                print(f"Fix applied successfully")
                 return True, ""
             else:
-                print(f"  ✗ Fix validation failed")
+                print(f"Fix validation failed")
                 return False, "Syntax validation failed after applying fix"
         else:
             if failure_output:
-                print(f"  ✗ Fix validation failed - test still fails")
+                print(f"Fix validation failed - test still fails")
             else:
-                print(f"  ✗ Fix application failed")
+                print(f"Fix application failed")
             return False, failure_output
 
     def _strip_test_parameters(self, test_name: str) -> str:

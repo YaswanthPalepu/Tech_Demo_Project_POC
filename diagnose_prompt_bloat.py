@@ -19,8 +19,8 @@ def simulate_prompt_breakdown():
     Simulate the prompt construction to see where bloat comes from.
 
     Based on the user's log showing:
-    - 📏 Prompt size: 3103 lines, 129037 chars (~32259 tokens)
-    - 📊 Combined: 14 elements in 5 files
+    - Prompt size: 3103 lines, 129037 chars (~32259 tokens)
+    - Combined: 14 elements in 5 files
     - Backend codebase: 230 lines total
     - Test files: Generated, could be 500-800 lines each
     """
@@ -39,8 +39,8 @@ def simulate_prompt_breakdown():
     print()
     print("   For GENERATED test files:")
     test_file_lines = 800  # User's generated test files
-    print(f"   ❌ BLOAT: Full test file = ~{test_file_lines} lines")
-    print(f"   ✅ FIXED: Just the function = ~25 lines (97% reduction)")
+    print(f"BLOAT: Full test file = ~{test_file_lines} lines")
+    print(f"FIXED: Just the function = ~25 lines (97% reduction)")
 
     print("\n2. SOURCE CODE (source_code)")
     print("   Where it comes from: embedding_context_extractor")
@@ -51,12 +51,12 @@ def simulate_prompt_breakdown():
     elements = 14
     avg_lines_per_function_full = 128  # From previous analysis
     source_total_before = elements * avg_lines_per_function_full
-    print(f"   ❌ BLOAT: 14 × {avg_lines_per_function_full} avg lines = ~{source_total_before} lines")
+    print(f"   BLOAT: 14 {avg_lines_per_function_full} avg lines = ~{source_total_before} lines")
     print()
     print("   After fix (smart summaries, 15-line max):")
     avg_lines_per_function_summary = 17  # signature + 15 lines + truncation
     source_total_after = elements * avg_lines_per_function_summary
-    print(f"   ✅ FIXED: 14 × {avg_lines_per_function_summary} avg lines = ~{source_total_after} lines (87% reduction)")
+    print(f"   FIXED: 14 {avg_lines_per_function_summary} avg lines = ~{source_total_after} lines (87% reduction)")
 
     print("\n3. ERROR INFORMATION")
     error_lines = 50  # Traceback, exception, message
@@ -90,8 +90,8 @@ def simulate_prompt_breakdown():
 
     test_function_only = 25  # Just the failing test function
     total_after = test_function_only + source_total_after + error_lines + prev_attempt_lines + static_lines
-    print(f"\nTest code:              {test_function_only:4} lines  (✅ just the function)")
-    print(f"Source code:            {source_total_after:4} lines  (✅ smart summaries)")
+    print(f"\nTest code:              {test_function_only:4} lines  (just the function)")
+    print(f"Source code:            {source_total_after:4} lines  (smart summaries)")
     print(f"Error info:             {error_lines:4} lines")
     print(f"Previous attempt:       {prev_attempt_lines:4} lines")
     print(f"Static instructions:    {static_lines:4} lines")
@@ -116,14 +116,14 @@ def simulate_prompt_breakdown():
 Your backend source code is only 230 lines, so individual functions are 10-20
 lines each. The REAL bloat was coming from:
 
-1. ❌ TEST FILES (800 lines) - Your GENERATED test files are large!
-   ✅ Fixed by regex fallback in orchestrator.py
+1. TEST FILES (800 lines) - Your GENERATED test files are large!
+   Fixed by regex fallback in orchestrator.py
 
-2. ❌ DUPLICATE context extraction (running 3-4 times per fix)
-   ✅ Already fixed in your codebase (context caching)
+2. DUPLICATE context extraction (running 3-4 times per fix)
+   Already fixed in your codebase (context caching)
 
-3. ❌ Full function bodies stored in embeddings (even though small)
-   ✅ Fixed by smart summaries in codebase_indexer.py
+3. Full function bodies stored in embeddings (even though small)
+   Fixed by smart summaries in codebase_indexer.py
 
 The embeddings WERE working correctly - they only indexed your 230-line backend.
 But they stored the FULL function bodies (even if only 10-20 lines each).

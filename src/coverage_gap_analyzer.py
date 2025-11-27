@@ -378,7 +378,7 @@ class CoverageGapAnalyzer:
         with open(output_path, 'w') as f:
             json.dump(serializable_data, f, indent=2)
         
-        print(f"✅ Coverage gap analysis saved to: {output_path}")
+        print(f"Coverage gap analysis saved to: {output_path}")
         return str(output_path)
     
     def _make_serializable(self, obj):
@@ -420,7 +420,7 @@ def main():
     
     analyzer = CoverageGapAnalyzer(args.target, args.current_dir)
     
-    print("🔍 Analyzing coverage gaps...")
+    print("Analyzing coverage gaps...")
     coverage_data = analyzer.analyze_coverage()
     
     # Generate and print report
@@ -432,11 +432,11 @@ def main():
     
     # Return exit code based on coverage
     if coverage_data["needs_ai_generation"]:
-        print(f"\n⚠️  Coverage is below 90% ({coverage_data['overall_coverage']:.2f}%)")
-        print("🤖 AI test generation recommended for uncovered code")
+        print(f"\n  Coverage is below 90% ({coverage_data['overall_coverage']:.2f}%)")
+        print("AI test generation recommended for uncovered code")
         return 1
     else:
-        print(f"\n✅ Coverage is above 90% ({coverage_data['overall_coverage']:.2f}%)")
+        print(f"\n Coverage is above 90% ({coverage_data['overall_coverage']:.2f}%)")
         print("No AI test generation needed")
         return 0
 

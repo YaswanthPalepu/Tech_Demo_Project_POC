@@ -85,7 +85,7 @@ class MultiIterationOrchestrator:
     def print_header(self):
         """Print orchestrator header"""
         print("\n" + "="*80)
-        print("🔄 MULTI-ITERATION TEST GENERATION ORCHESTRATOR")
+        print("MULTI-ITERATION TEST GENERATION ORCHESTRATOR")
         print("="*80)
         print(f"Target Directory: {self.target_dir}")
         print(f"Max Iterations: {self.max_iterations}")
@@ -121,14 +121,14 @@ class MultiIterationOrchestrator:
             output = result.stdout + result.stderr
 
             if success:
-                print(f"    ✅ Success")
+                print(f"Success")
             else:
-                print(f"    ⚠️  Warning: Command returned code {result.returncode}")
+                print(f"Warning: Command returned code {result.returncode}")
 
             return success, output
 
         except Exception as e:
-            print(f"    ❌ Error: {str(e)}")
+            print(f"Error: {str(e)}")
             return False, str(e)
 
     def get_current_coverage(self) -> Optional[float]:
@@ -145,10 +145,10 @@ class MultiIterationOrchestrator:
                     coverage = gaps_data.get('overall_coverage', 0.0)
                     return float(coverage)
             else:
-                print(f"    ⚠️  Coverage gaps file not found: {self.coverage_gaps_file}")
+                print(f" Coverage gaps file not found: {self.coverage_gaps_file}")
                 return None
         except Exception as e:
-            print(f"    ❌ Error reading coverage: {str(e)}")
+            print(f"Error reading coverage: {str(e)}")
             return None
 
     def analyze_coverage_gaps(self, iteration: int, is_final: bool = False) -> bool:
@@ -163,7 +163,7 @@ class MultiIterationOrchestrator:
             True if successful, False otherwise
         """
         phase = "Post-Test Analysis" if is_final else "Pre-Test Analysis"
-        print(f"\n📊 ITERATION {iteration}: {phase}")
+        print(f"\n ITERATION {iteration}: {phase}")
         print("-" * 80)
 
         cmd = [
@@ -186,7 +186,7 @@ class MultiIterationOrchestrator:
                 total = gaps.get('total_statements', 0)
                 files_with_gaps = len(gaps.get('files_with_gaps', {}))
 
-                print(f"\n  📈 Coverage Analysis:")
+                print(f"\n  Coverage Analysis:")
                 print(f"     Current Coverage: {coverage}%")
                 print(f"     Missing Statements: {missing}/{total}")
                 print(f"     Files with Gaps: {files_with_gaps}")
@@ -194,10 +194,10 @@ class MultiIterationOrchestrator:
                 return True
 
             except Exception as e:
-                print(f"  ❌ Error parsing coverage gaps: {str(e)}")
+                print(f"Error parsing coverage gaps: {str(e)}")
                 return False
         else:
-            print(f"  ❌ Coverage gap analysis failed")
+            print(f"Coverage gap analysis failed")
             return False
 
     def generate_ai_tests(self, iteration: int) -> bool:
@@ -210,7 +210,7 @@ class MultiIterationOrchestrator:
         Returns:
             True if successful, False otherwise
         """
-        print(f"\n🤖 ITERATION {iteration}: Generating AI Tests (Gap-Focused)")
+        print(f"\n ITERATION {iteration}: Generating AI Tests (Gap-Focused)")
         print("-" * 80)
 
         # Set environment variable for gap-focused mode
@@ -244,14 +244,14 @@ class MultiIterationOrchestrator:
             # Check if tests were generated
             if self.output_dir.exists():
                 test_files = list(self.output_dir.glob("test_*.py"))
-                print(f"    ✅ Generated {len(test_files)} test files")
+                print(f"Generated {len(test_files)} test files")
                 return True
             else:
-                print(f"    ⚠️  Output directory not found: {self.output_dir}")
+                print(f"Output directory not found: {self.output_dir}")
                 return False
 
         except Exception as e:
-            print(f"    ❌ Error generating tests: {str(e)}")
+            print(f"Error generating tests: {str(e)}")
             return False
 
     def run_all_tests(self, iteration: int) -> bool:
@@ -264,7 +264,7 @@ class MultiIterationOrchestrator:
         Returns:
             True if successful, False otherwise
         """
-        print(f"\n🧪 ITERATION {iteration}: Running All Tests with Coverage")
+        print(f"\n ITERATION {iteration}: Running All Tests with Coverage")
         print("-" * 80)
 
         # Build pytest command
@@ -274,15 +274,15 @@ class MultiIterationOrchestrator:
         manual_tests_dir = self.current_dir / "tests" / "manual"
         if manual_tests_dir.exists():
             test_paths.append(str(manual_tests_dir))
-            print(f"  📁 Including manual tests: {manual_tests_dir}")
+            print(f"Including manual tests: {manual_tests_dir}")
 
         # Include generated tests
         if self.output_dir.exists():
             test_paths.append(str(self.output_dir))
-            print(f"  📁 Including generated tests: {self.output_dir}")
+            print(f"Including generated tests: {self.output_dir}")
 
         if not test_paths:
-            print(f"  ⚠️  No test directories found")
+            print(f"No test directories found")
             return False
 
         cmd = [
@@ -301,10 +301,10 @@ class MultiIterationOrchestrator:
         # Coverage report is generated even if some tests fail
         # So we check if coverage.xml exists
         if self.coverage_xml_file.exists():
-            print(f"    ✅ Coverage report generated")
+            print(f"Coverage report generated")
             return True
         else:
-            print(f"    ⚠️  Coverage report not found")
+            print(f"Coverage report not found")
             return success
 
     def run_iteration(self, iteration: int) -> IterationMetrics:
@@ -320,7 +320,7 @@ class MultiIterationOrchestrator:
         metrics = IterationMetrics(iteration)
 
         print("\n" + "="*80)
-        print(f"🔄 STARTING ITERATION {iteration}/{self.max_iterations}")
+        print(f"STARTING ITERATION {iteration}/{self.max_iterations}")
         print("="*80)
 
         try:
@@ -328,7 +328,7 @@ class MultiIterationOrchestrator:
             initial_cov = self.get_current_coverage()
             if initial_cov is not None:
                 metrics.initial_coverage = initial_cov
-                print(f"\n📊 Initial Coverage: {initial_cov}%")
+                print(f"\n Initial Coverage: {initial_cov}%")
 
             # Step 1: Analyze coverage gaps
             if not self.analyze_coverage_gaps(iteration):
@@ -356,7 +356,7 @@ class MultiIterationOrchestrator:
 
             # Step 3: Run all tests with coverage
             if not self.run_all_tests(iteration):
-                print(f"  ⚠️  Some tests may have failed, but continuing with coverage analysis")
+                print(f"Some tests may have failed, but continuing with coverage analysis")
 
             # Step 4: CRITICAL - Re-analyze coverage gaps to get updated coverage
             # This reads the NEW coverage.xml created by running tests above
@@ -364,15 +364,15 @@ class MultiIterationOrchestrator:
             # 1. Final coverage for THIS iteration is correct
             # 2. Initial coverage for NEXT iteration is correct
             if not self.analyze_coverage_gaps(iteration, is_final=True):
-                print(f"  ⚠️  Could not re-analyze coverage, using previous data")
+                print(f"Could not re-analyze coverage, using previous data")
 
             # Get final coverage for this iteration (now reads freshly updated coverage_gaps.json)
             final_cov = self.get_current_coverage()
             if final_cov is not None:
                 metrics.final_coverage = final_cov
                 metrics.coverage_gain = final_cov - metrics.initial_coverage
-                print(f"\n📊 Final Coverage: {final_cov}%")
-                print(f"📈 Coverage Gain: +{metrics.coverage_gain:.2f}%")
+                print(f"\n Final Coverage: {final_cov}%")
+                print(f" Coverage Gain: +{metrics.coverage_gain:.2f}%")
             else:
                 metrics.error = "Could not determine final coverage"
 
@@ -382,7 +382,7 @@ class MultiIterationOrchestrator:
         except Exception as e:
             metrics.error = str(e)
             metrics.end_time = time.time()
-            print(f"\n❌ Iteration {iteration} failed: {str(e)}")
+            print(f"\n Iteration {iteration} failed: {str(e)}")
 
         return metrics
 
@@ -393,7 +393,7 @@ class MultiIterationOrchestrator:
     def print_iteration_summary(self, metrics: IterationMetrics):
         """Print summary for a single iteration"""
         print("\n" + "="*80)
-        print(f"📋 ITERATION {metrics.iteration} SUMMARY")
+        print(f" ITERATION {metrics.iteration} SUMMARY")
         print("="*80)
         print(f"Duration: {metrics.end_time - metrics.start_time:.2f}s")
         print(f"Initial Coverage: {metrics.initial_coverage:.2f}%")
@@ -401,7 +401,7 @@ class MultiIterationOrchestrator:
         print(f"Coverage Gain: +{metrics.coverage_gain:.2f}%")
         print(f"Tests Generated: {metrics.tests_generated}")
         print(f"Gaps Analyzed: {metrics.gaps_analyzed}")
-        print(f"Success: {'✅' if metrics.success else '❌'}")
+        print(f"Success: {'successful' if metrics.success else 'not successful'}")
         if metrics.error:
             print(f"Error: {metrics.error}")
         print("="*80 + "\n")
@@ -409,7 +409,7 @@ class MultiIterationOrchestrator:
     def print_final_report(self):
         """Print final report for all iterations"""
         print("\n" + "="*80)
-        print("📊 FINAL MULTI-ITERATION REPORT")
+        print(" FINAL MULTI-ITERATION REPORT")
         print("="*80)
 
         print(f"\nTotal Iterations Run: {len(self.iterations)}")
@@ -417,12 +417,12 @@ class MultiIterationOrchestrator:
         print(f"Final Coverage: {self.final_coverage:.2f}%")
         print(f"Total Coverage Gain: +{self.final_coverage - self.initial_coverage:.2f}%")
         print(f"Target Coverage: {self.target_coverage}%")
-        print(f"Target Achieved: {'✅ YES' if self.target_achieved else '❌ NO'}")
+        print(f"Target Achieved: {'YES' if self.target_achieved else 'NO'}")
 
-        print("\n📈 Iteration Breakdown:")
+        print("\n Iteration Breakdown:")
         print("-" * 80)
         for metrics in self.iterations:
-            status = "✅" if metrics.success else "❌"
+            status = "yes" if metrics.success else "No"
             print(f"  Iteration {metrics.iteration}: {status} "
                   f"{metrics.initial_coverage:.2f}% → {metrics.final_coverage:.2f}% "
                   f"(+{metrics.coverage_gain:.2f}%) | "
@@ -432,11 +432,11 @@ class MultiIterationOrchestrator:
         print("\n" + "="*80)
 
         if self.target_achieved:
-            print("🎉 SUCCESS! Target coverage achieved!")
+            print(" SUCCESS! Target coverage achieved!")
         else:
             remaining = self.target_coverage - self.final_coverage
-            print(f"⚠️  Target not achieved. Remaining gap: {remaining:.2f}%")
-            print(f"💡 Consider running additional iterations or manual test improvements")
+            print(f"Target not achieved. Remaining gap: {remaining:.2f}%")
+            print(f"Consider running additional iterations or manual test improvements")
 
         print("="*80 + "\n")
 
@@ -463,9 +463,9 @@ class MultiIterationOrchestrator:
         try:
             with open(self.iteration_report_file, 'w') as f:
                 json.dump(report, f, indent=2)
-            print(f"📄 Report saved to: {self.iteration_report_file}")
+            print(f"Report saved to: {self.iteration_report_file}")
         except Exception as e:
-            print(f"⚠️  Could not save report: {str(e)}")
+            print(f"Could not save report: {str(e)}")
 
     def run(self) -> bool:
         """
@@ -480,13 +480,13 @@ class MultiIterationOrchestrator:
 
         # Get initial coverage
         self.initial_coverage = self.get_current_coverage() or 0.0
-        print(f"🎯 Starting Coverage: {self.initial_coverage:.2f}%")
-        print(f"🎯 Target Coverage: {self.target_coverage:.2f}%")
-        print(f"📊 Gap to Target: {self.target_coverage - self.initial_coverage:.2f}%\n")
+        print(f"Starting Coverage: {self.initial_coverage:.2f}%")
+        print(f"Target Coverage: {self.target_coverage:.2f}%")
+        print(f"Gap to Target: {self.target_coverage - self.initial_coverage:.2f}%\n")
 
         # Check if already at target
         if self.check_target_achieved(self.initial_coverage):
-            print("✅ Target coverage already achieved!")
+            print("Target coverage already achieved!")
             self.final_coverage = self.initial_coverage
             self.target_achieved = True
             return True
@@ -503,21 +503,21 @@ class MultiIterationOrchestrator:
 
             # Check if target achieved
             if self.check_target_achieved(self.final_coverage):
-                print(f"🎉 Target coverage {self.target_coverage}% achieved!")
+                print(f"Target coverage {self.target_coverage}% achieved!")
                 self.target_achieved = True
                 break
 
             # Check if no improvement
             if metrics.coverage_gain <= 0 and i < self.max_iterations:
-                print(f"⚠️  No coverage improvement in iteration {i}")
-                print(f"💡 Continuing to next iteration...")
+                print(f"No coverage improvement in iteration {i}")
+                print(f"Continuing to next iteration...")
 
         # Print final report
         end_time = time.time()
         total_time = end_time - start_time
 
         self.print_final_report()
-        print(f"⏱️  Total Time: {total_time:.2f}s\n")
+        print(f"Total Time: {total_time:.2f}s\n")
 
         # Save report
         self.save_report()

@@ -24,37 +24,37 @@ jobs:
     timeout-minutes: 90
     
     steps:
-      - name: 🔧 Checkout Pipeline Code
+      - name: Checkout Pipeline Code
         uses: actions/checkout@v4
       
-      - name: 🐍 Set up Python
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
       
-      - name: 📥 Clone Target Repository
+      - name: Clone Target Repository
         run: |
-          echo "🔍 Cloning repository: ${{ inputs.repo_url }}"
+          echo "Cloning repository: ${{ inputs.repo_url }}"
           cd ${{ github.workspace }}
           git clone --branch ${{ inputs.repo_branch }} ${{ inputs.repo_url }} target_repo
-          echo "✅ Repository cloned successfully"
+          echo "Repository cloned successfully"
           echo ""
-          echo "📁 Workspace structure:"
+          echo "Workspace structure:"
           ls -la ${{ github.workspace }}
           echo ""
-          echo "📁 Target repo contents:"
+          echo "Target repo contents:"
           ls -la ${{ github.workspace }}/target_repo
       
-      - name: 📦 Install Dependencies
+      - name: Install Dependencies
         run: |
           cd ${{ github.workspace }}
           python -m venv venv
           source venv/bin/activate
           pip install --upgrade pip
           pip install -r requirements.txt
-          echo "✅ Dependencies installed"
+          echo "Dependencies installed"
       
-      - name: 🔧 Install SonarQube Scanner
+      - name: Install SonarQube Scanner
         run: |
           cd ${{ github.workspace }}
           mkdir -p venv/sonar-scanner
@@ -67,10 +67,10 @@ jobs:
           rm -rf sonar-scanner-cli-5.0.1.3006-linux.zip sonar-scanner-5.0.1.3006-linux
           
           chmod +x bin/sonar-scanner
-          echo "✅ SonarQube Scanner installed"
+          echo "SonarQube Scanner installed"
           ./bin/sonar-scanner --version
       
-      - name: 🧪 Run AI Test Generation Pipeline
+      - name: Run AI Test Generation Pipeline
         env:
           AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
           AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
@@ -87,7 +87,7 @@ jobs:
           source venv/bin/activate
           bash ./pipeline_runner.sh
       
-      - name: 📊 Upload Test Results
+      - name: Upload Test Results
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -102,7 +102,7 @@ jobs:
             ${{ github.workspace }}/coverage_gaps.json
           if-no-files-found: warn
       
-      - name: 📈 Upload Coverage Reports
+      - name: Upload Coverage Reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -112,12 +112,12 @@ jobs:
             ${{ github.workspace }}/htmlcov/
           if-no-files-found: warn
       
-      - name: 📝 Generate Test Summary
+      - name: Generate Test Summary
         if: always()
         run: |
           cd ${{ github.workspace }}
           
-          echo "## 📊 Pipeline Results" >> $GITHUB_STEP_SUMMARY
+          echo "## Pipeline Results" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           
           if [ -f coverage.xml ]; then
@@ -137,4 +137,4 @@ jobs:
           fi
           
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "✅ Pipeline completed!" >> $GITHUB_STEP_SUMMARY
+          echo "Pipeline completed!" >> $GITHUB_STEP_SUMMARY

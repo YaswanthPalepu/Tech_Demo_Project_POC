@@ -152,12 +152,12 @@ def main():
     """Main entry point for detecting all manual test directories."""
     repo_root = sys.argv[1] if len(sys.argv) > 1 else "."
 
-    print(f"🔍 Scanning repository for manual test directories in: {os.path.abspath(repo_root)}")
+    print(f"Scanning repository for manual test directories in: {os.path.abspath(repo_root)}")
 
     detection_result = find_all_manual_test_dirs(repo_root)
 
     if not detection_result["files_by_relative_path"]:
-        print("⚠️ No manual test files found.")
+        print("No manual test files found.")
         result = {
             "manual_tests_found": False,
             "test_root": "",
@@ -174,14 +174,14 @@ def main():
             "files_by_relative_path": detection_result["files_by_relative_path"]
         }
 
-        print(f"\n✅ Found {result['test_files_count']} manual test files")
-        print(f"📁 Test root: {result['test_root']}")
-        print(f"📂 Test directories: {len(result['manual_test_paths'])}")
-        print("\n📋 Files with preserved structure:")
+        print(f"\n Found {result['test_files_count']} manual test files")
+        print(f"Test root: {result['test_root']}")
+        print(f"Test directories: {len(result['manual_test_paths'])}")
+        print("\n Files with preserved structure:")
         for rel_path in sorted(result["files_by_relative_path"].keys()):
             print(f"   {rel_path}")
 
-    print("\n📊 Detection Result:")
+    print("\n Detection Result:")
     print(json.dumps(result, indent=2))
 
     # Write outputs for GitHub Actions

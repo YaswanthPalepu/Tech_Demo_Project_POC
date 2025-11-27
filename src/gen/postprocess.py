@@ -102,7 +102,7 @@ def _validate_and_fix_syntax(code: str, file_path: pathlib.Path) -> str:
         ast.parse(code)
         return code
     except SyntaxError as e:
-        print(f"⚠️ Syntax error in generated code for {file_path}: {e}")
+        print(f"Syntax error in generated code for {file_path}: {e}")
         
     # Try fixing indentation errors
     try:
@@ -112,24 +112,24 @@ def _validate_and_fix_syntax(code: str, file_path: pathlib.Path) -> str:
         # Validate the fixed content
         try:
             ast.parse(fixed_code)
-            print(f"✅ Fixed syntax errors in {file_path}")
+            print(f"Fixed syntax errors in {file_path}")
             return fixed_code
         except SyntaxError as e2:
-            print(f"❌ Could not fix syntax errors in {file_path}: {e2}")
+            print(f"Could not fix syntax errors in {file_path}: {e2}")
     except Exception as fix_error:
-        print(f"❌ Error during syntax fixing for {file_path}: {fix_error}")
+        print(f"Error during syntax fixing for {file_path}: {fix_error}")
     
     # Try dedenting as last resort
     try:
         dedented = textwrap.dedent(code)
         ast.parse(dedented)
-        print(f"✅ Fixed syntax errors with dedent in {file_path}")
+        print(f"Fixed syntax errors with dedent in {file_path}")
         return dedented
     except SyntaxError:
         pass
     
     # Final fallback: add warning comment but keep original
-    print(f"❌ All syntax fixes failed for {file_path}, using original with warning")
+    print(f"All syntax fixes failed for {file_path}, using original with warning")
     return f"# WARNING: This file may contain syntax errors\n# Generation system could not fix all issues\n\n{code}"
 
 def write_text(file_path: pathlib.Path, content: str):
@@ -159,7 +159,7 @@ def write_text(file_path: pathlib.Path, content: str):
         try:
             ast.parse(final_content)
             file_path.write_text(final_content, encoding="utf-8", newline="\n")
-            print(f"✅ Successfully wrote: {file_path}")
+            print(f"Successfully wrote: {file_path}")
             return
         except SyntaxError as final_error:
             # Last resort: try formatted cleaning
@@ -167,17 +167,17 @@ def write_text(file_path: pathlib.Path, content: str):
             try:
                 ast.parse(formatted_content)
                 file_path.write_text(formatted_content, encoding="utf-8", newline="\n")
-                print(f"✅ Successfully wrote (formatted): {file_path}")
+                print(f"Successfully wrote (formatted): {file_path}")
                 return
             except SyntaxError:
                 # Write with warning
                 warning_content = f"# WARNING: Syntax errors present\n# Final error: {final_error}\n\n{final_content}"
                 file_path.write_text(warning_content, encoding="utf-8", newline="\n")
-                print(f"⚠️ Wrote with syntax warnings: {file_path}")
+                print(f"Wrote with syntax warnings: {file_path}")
                 return
                 
     except Exception as e:
-        print(f"❌ Failed to write {file_path}: {e}")
+        print(f"Failed to write {file_path}: {e}")
         traceback.print_exc()
         
         # Absolute last resort: write raw content
@@ -187,9 +187,9 @@ def write_text(file_path: pathlib.Path, content: str):
             else:
                 raw_content = content
             file_path.write_text(raw_content, encoding="utf-8", newline="\n")
-            print(f"✅ Wrote raw content to {file_path} (may have syntax errors)")
+            print(f"Wrote raw content to {file_path} (may have syntax errors)")
         except Exception as e2:
-            print(f"❌ Complete failure writing {file_path}: {e2}")
+            print(f"Complete failure writing {file_path}: {e2}")
 
 def clean_and_format_content(content: str) -> str:
     """Clean and format test content for professional appearance."""
@@ -313,7 +313,7 @@ def cleanup_deleted_and_modified(output_dir: pathlib.Path, deleted_files: Set[st
             except Exception as e:
                 print(f" Could not remove {test_file}: {e}")
     cleanup_empty_directories(output_dir)
-    print(f"Cleaned up {cleanup_count} obsolete test files" if cleanup_count else "ℹ️ No obsolete test files to clean up")
+    print(f"Cleaned up {cleanup_count} obsolete test files" if cleanup_count else "No obsolete test files to clean up")
 
 def cleanup_empty_directories(output_dir: pathlib.Path):
     """Remove empty directories from test output."""

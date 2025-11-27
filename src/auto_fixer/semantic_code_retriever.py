@@ -91,10 +91,10 @@ class SemanticCodeRetriever:
 
                     self._embedding_client = ollama_module.get_ollama_client()
                     if self.verbose:
-                        print("  Using Ollama for embeddings")
+                        print("Using Ollama for embeddings")
                 except Exception as e:
                     if self.verbose:
-                        print(f"  ⚠️  Failed to load Ollama client: {e}")
+                        print(f"Failed to load Ollama client: {e}")
                     # Fall back to OpenAI
                     try:
                         spec = importlib.util.spec_from_file_location(
@@ -107,10 +107,10 @@ class SemanticCodeRetriever:
 
                         self._embedding_client = openai_module.create_client()
                         if self.verbose:
-                            print("  Using OpenAI for embeddings (fallback)")
+                            print("Using OpenAI for embeddings (fallback)")
                     except Exception as e2:
                         if self.verbose:
-                            print(f"  ⚠️  Both Ollama and OpenAI failed: {e2}")
+                            print(f"Both Ollama and OpenAI failed: {e2}")
                         self._embedding_client = None
             else:
                 # Use OpenAI
@@ -125,10 +125,10 @@ class SemanticCodeRetriever:
 
                     self._embedding_client = openai_module.create_client()
                     if self.verbose:
-                        print("  Using OpenAI for embeddings")
+                        print("Using OpenAI for embeddings")
                 except Exception as e:
                     if self.verbose:
-                        print(f"  ⚠️  Failed to load OpenAI client: {e}")
+                        print(f"Failed to load OpenAI client: {e}")
                     self._embedding_client = None
         return self._embedding_client
 
@@ -153,13 +153,13 @@ class SemanticCodeRetriever:
         """
         if not self.indexer.code_elements:
             if self.verbose:
-                print("  ⚠️  Index is empty. Run indexer.build_index() first.")
+                print("Index is empty. Run indexer.build_index() first.")
             return []
 
         # Check if embedding client is available
         if self.embedding_client is None:
             if self.verbose:
-                print("  ⚠️  No embedding client available")
+                print("No embedding client available")
             return []
 
         # Generate query embedding
@@ -171,7 +171,7 @@ class SemanticCodeRetriever:
             query_embedding = response.data[0].embedding
         except Exception as e:
             if self.verbose:
-                print(f"  ⚠️  Error generating query embedding: {e}")
+                print(f"Error generating query embedding: {e}")
             return []
 
         # Calculate similarities
@@ -251,8 +251,8 @@ class SemanticCodeRetriever:
         query = '\n'.join(query_parts)
 
         if self.verbose:
-            print(f"  🔍 Searching for code matching test failure...")
-            print(f"     Query length: {len(query)} chars")
+            print(f"Searching for code matching test failure...")
+            print(f"Query length: {len(query)} chars")
 
         return self.search_by_query(query, top_k=top_k)
 
@@ -276,7 +276,7 @@ class SemanticCodeRetriever:
         query = f"HTTP {method.upper()} {path} endpoint handler function"
 
         if self.verbose:
-            print(f"  🌐 Searching for {method} {path} endpoint...")
+            print(f"Searching for {method} {path} endpoint...")
 
         # First try: filter to http_endpoint type
         results = self.search_by_query(
@@ -288,7 +288,7 @@ class SemanticCodeRetriever:
         # If no HTTP endpoint elements found, search all functions
         if not results:
             if self.verbose:
-                print(f"     No HTTP endpoints found, searching all functions...")
+                print(f"No HTTP endpoints found, searching all functions...")
             results = self.search_by_query(
                 query,
                 top_k=top_k,
@@ -358,7 +358,7 @@ class SemanticCodeRetriever:
         query = f"code imported as: {import_statement}"
 
         if self.verbose:
-            print(f"  📦 Searching for import: {import_statement}")
+            print(f"Searching for import: {import_statement}")
 
         return self.search_by_query(query, top_k=top_k)
 
@@ -390,18 +390,18 @@ class SemanticCodeRetriever:
 
         if not results:
             if self.verbose:
-                print(f"  ❌ Target '{target_name}' not found in codebase")
+                print(f"Target '{target_name}' not found in codebase")
             return None
 
         best_match = results[0]
 
         if best_match.similarity_score < threshold:
             if self.verbose:
-                print(f"  ❌ Target '{target_name}' not found (best match: {best_match.code_element.name}, score: {best_match.similarity_score:.3f})")
+                print(f"Target '{target_name}' not found (best match: {best_match.code_element.name}, score: {best_match.similarity_score:.3f})")
             return None
 
         if self.verbose:
-            print(f"  ✓ Found '{target_name}' → {best_match.code_element.name} (score: {best_match.similarity_score:.3f})")
+            print(f"Found '{target_name}' → {best_match.code_element.name} (score: {best_match.similarity_score:.3f})")
 
         return best_match
 
@@ -434,7 +434,7 @@ class SemanticCodeRetriever:
         if self.verbose:
             correct = sum(1 for v in verification.values() if v)
             total = len(verification)
-            print(f"  ✓ AST extraction verification: {correct}/{total} correct")
+            print(f"AST extraction verification: {correct}/{total} correct")
 
         return verification
 

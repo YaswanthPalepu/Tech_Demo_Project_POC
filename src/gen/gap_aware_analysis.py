@@ -30,24 +30,24 @@ def load_coverage_gaps() -> Dict[str, Any]:
     gaps_file = get_coverage_gaps_file()
     
     if not gaps_file.exists():
-        print("⚠️  Gap-focused mode enabled but no coverage gaps file found")
-        print(f"   Looking for: {gaps_file}")
+        print("Gap-focused mode enabled but no coverage gaps file found")
+        print(f"Looking for: {gaps_file}")
         return {}
     
     try:
         with open(gaps_file, 'r') as f:
             gaps_data = json.load(f)
         
-        print(f"✅ Loaded coverage gaps analysis from: {gaps_file}")
-        print(f"   Current Coverage: {gaps_data.get('overall_coverage', 0):.2f}%")
-        print(f"   Uncovered Functions: {len(gaps_data.get('uncovered_functions', []))}")
-        print(f"   Uncovered Classes: {len(gaps_data.get('uncovered_classes', []))}")
-        print(f"   Files with Gaps: {len(gaps_data.get('files_with_gaps', {}))}")
+        print(f" Loaded coverage gaps analysis from: {gaps_file}")
+        print(f"Current Coverage: {gaps_data.get('overall_coverage', 0):.2f}%")
+        print(f"Uncovered Functions: {len(gaps_data.get('uncovered_functions', []))}")
+        print(f"Uncovered Classes: {len(gaps_data.get('uncovered_classes', []))}")
+        print(f"Files with Gaps: {len(gaps_data.get('files_with_gaps', {}))}")
         
         return gaps_data
         
     except Exception as e:
-        print(f"❌ Error loading coverage gaps: {e}")
+        print(f"Error loading coverage gaps: {e}")
         return {}
 
 
@@ -66,7 +66,7 @@ def filter_analysis_by_coverage_gaps(full_analysis: Dict[str, Any],
     Returns:
         Filtered analysis containing only uncovered elements
     """
-    print("\n🎯 Filtering analysis to focus on coverage gaps...")
+    print("\n Filtering analysis to focus on coverage gaps...")
     
     # Start with full analysis structure
     gap_focused_analysis = {
@@ -210,11 +210,11 @@ def filter_analysis_by_coverage_gaps(full_analysis: Dict[str, Any],
                     gap_focused_analysis["nested_functions"].append(func)
     
     # Print filtering results
-    print(f"\n📊 Gap-Focused Analysis Results:")
-    print(f"   Original Functions: {len(full_analysis.get('functions', []))} → Uncovered: {len(gap_focused_analysis['functions'])}")
-    print(f"   Original Classes: {len(full_analysis.get('classes', []))} → Uncovered: {len(gap_focused_analysis['classes'])}")
-    print(f"   Original Methods: {len(full_analysis.get('methods', []))} → Uncovered: {len(gap_focused_analysis['methods'])}")
-    print(f"   Original Routes: {len(full_analysis.get('routes', []))} → Uncovered: {len(gap_focused_analysis['routes'])}")
+    print(f"\n Gap-Focused Analysis Results:")
+    print(f"Original Functions: {len(full_analysis.get('functions', []))} → Uncovered: {len(gap_focused_analysis['functions'])}")
+    print(f"Original Classes: {len(full_analysis.get('classes', []))} → Uncovered: {len(gap_focused_analysis['classes'])}")
+    print(f"Original Methods: {len(full_analysis.get('methods', []))} → Uncovered: {len(gap_focused_analysis['methods'])}")
+    print(f"Original Routes: {len(full_analysis.get('routes', []))} → Uncovered: {len(gap_focused_analysis['routes'])}")
     
     total_original = (
         len(full_analysis.get('functions', [])) + 
@@ -228,7 +228,7 @@ def filter_analysis_by_coverage_gaps(full_analysis: Dict[str, Any],
     )
     
     reduction_pct = ((total_original - total_filtered) / max(total_original, 1)) * 100
-    print(f"   Total Reduction: {reduction_pct:.1f}% (focusing only on gaps)")
+    print(f"Total Reduction: {reduction_pct:.1f}% (focusing only on gaps)")
     
     return gap_focused_analysis
 
@@ -268,7 +268,7 @@ def enhance_prompt_with_coverage_context(coverage_gaps: Dict[str, Any]) -> str:
         context_lines.append("FILES WITH COVERAGE GAPS:")
         context_lines.append("-" * 80)
         for filename, file_data in list(files_with_gaps.items())[:10]:  # Limit to avoid token overflow
-            context_lines.append(f"\n📁 {filename}")
+            context_lines.append(f"\n {filename}")
             context_lines.append(f"   Current Coverage: {file_data.get('coverage_percentage', 0):.2f}%")
             missing_lines = file_data.get("missing_lines", [])
             if missing_lines:
@@ -328,13 +328,13 @@ def apply_gap_aware_filtering(analysis: Dict[str, Any]) -> Dict[str, Any]:
     coverage_gaps = load_coverage_gaps()
     
     if not coverage_gaps:
-        print("⚠️  No coverage gaps data available, falling back to full analysis")
+        print("No coverage gaps data available, falling back to full analysis")
         return analysis
     
     # Check if we actually need gap-focused generation
     current_coverage = coverage_gaps.get("overall_coverage", 100)
     if current_coverage >= 90:
-        print(f"✅ Coverage is already {current_coverage:.2f}% (≥90%)")
+        print(f"Coverage is already {current_coverage:.2f}% (≥90%)")
         print("No gap-focused generation needed- coverage goal achieved!")
         return {"skip_generation": True, "reason": "coverage_adequate"}
     
@@ -344,7 +344,7 @@ def apply_gap_aware_filtering(analysis: Dict[str, Any]) -> Dict[str, Any]:
     # Add coverage context for prompts
     gap_focused_analysis["coverage_prompt_context"] = enhance_prompt_with_coverage_context(coverage_gaps)
     
-    print("\n✅ Gap-focused analysis prepared")
+    print("\n Gap-focused analysis prepared")
     print(f"   Targeting {gap_focused_analysis.get('coverage_context', {}).get('missing_statements', 0)} uncovered statements")
     print("=" * 80 + "\n")
     

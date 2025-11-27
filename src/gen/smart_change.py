@@ -197,7 +197,7 @@ def should_generate_tests(target_root: str) -> Tuple[bool, Set[str], Set[str]]:
     print(f"TESTGEN_FORCE environment variable: '{force_flag}'")
     
     if force_flag in ['true', '1', 'yes']:
-        print("🚀 Force generation enabled - will regenerate all tests")
+        print("Force generation enabled - will regenerate all tests")
         # When forcing, we want to generate tests for ALL source files
         all_source_files = _get_source_files(target_path)
         all_files_set = set(all_source_files.keys())
@@ -227,7 +227,7 @@ def prepare_for_generation(target_root: str, changed_files: Set[str], deleted_fi
         target_path = Path(target_root)
         test_dir = target_path / 'tests' / 'generated'
         if test_dir.exists():
-            print("🧹 Force mode: Cleaning up all existing generated tests")
+            print("Force mode: Cleaning up all existing generated tests")
             cleaned_count = 0
             for test_file in test_dir.glob('test_*.py'):
                 try:

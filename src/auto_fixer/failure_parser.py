@@ -61,18 +61,18 @@ class FailureParser:
         if os.path.exists(report_file):
             try:
                 os.remove(report_file)
-                print(f"  🗑️  Removed old {report_file}")
+                print(f" Removed old {report_file}")
             except OSError as e:
-                print(f"  ⚠️  Warning: Could not remove old {report_file}: {e}")
+                print(f"Warning: Could not remove old {report_file}: {e}")
 
         # Remove pytest cache to prevent stale results
         cache_dir = ".pytest_cache"
         if os.path.exists(cache_dir):
             try:
                 shutil.rmtree(cache_dir)
-                print(f"  🗑️  Cleared pytest cache")
+                print(f"Cleared pytest cache")
             except OSError as e:
-                print(f"  ⚠️  Warning: Could not clear pytest cache: {e}")
+                print(f"Warning: Could not clear pytest cache: {e}")
                 
         # Try with JSON report first
         cmd = [
@@ -93,8 +93,8 @@ class FailureParser:
                 text=True
             )
         except subprocess.TimeoutExpired:
-            print("⚠️  Pytest timed out after 120 seconds - tests may be hanging")
-            print("   Try running pytest manually to debug: pytest", self.test_directory, "-v")
+            print("Pytest timed out after 120 seconds - tests may be hanging")
+            print("Try running pytest manually to debug: pytest", self.test_directory, "-v")
             return {"tests": [], "summary": {"total": 0, "passed": 0, "failed": 0}}
 
         # Read the JSON report
@@ -121,8 +121,8 @@ class FailureParser:
                 timeout=120  # 2 minute overall timeout
             )
         except subprocess.TimeoutExpired:
-            print("⚠️  Pytest timed out after 120 seconds - tests may be hanging")
-            print("   Try running pytest manually to debug: pytest", self.test_directory, "-v")
+            print(" Pytest timed out after 120 seconds - tests may be hanging")
+            print("Try running pytest manually to debug: pytest", self.test_directory, "-v")
             return {"tests": [], "summary": {"total": 0, "passed": 0, "failed": 0}}
 
         return self._parse_text_output(result.stdout)

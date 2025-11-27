@@ -579,15 +579,15 @@ def generate_all(analysis: Dict[str, Any], outdir: str = "tests/generated",
     
     # Apply gap-aware filtering if in gap-focused mode
     if is_gap_focused_mode():
-        print("\n🎯 GAP-FOCUSED MODE: Analyzing coverage gaps...")
+        print("\n GAP-FOCUSED MODE: Analyzing coverage gaps...")
         analysis = apply_gap_aware_filtering(analysis)
         
         # Check if generation should be skipped
         if analysis.get("skip_generation"):
-            print("✅ Coverage is adequate, skipping generation")
+            print(" Coverage is adequate, skipping generation")
             return []
         
-        print(f"✅ Gap analysis complete: Targeting {len(analysis.get('functions', []))} uncovered functions, "
+        print(f"Gap analysis complete: Targeting {len(analysis.get('functions', []))} uncovered functions, "
               f"{len(analysis.get('classes', []))} uncovered classes, "
               f"{len(analysis.get('methods', []))} uncovered methods")
 
@@ -641,20 +641,20 @@ def generate_all(analysis: Dict[str, Any], outdir: str = "tests/generated",
     
     if total_targets == 0:
         if is_gap_focused_mode():
-            print("✅ Gap-focused analysis found no significant gaps to target")
-            print("   Your manual tests already provide good coverage!")
+            print("Gap-focused analysis found no significant gaps to target")
+            print("Your manual tests already provide good coverage!")
             return []  # Return empty list, but this is SUCCESS
         else:
             raise RuntimeError("No testable targets found")
     
     print(f"UNIVERSAL COVERAGE TARGETS:")
-    print(f"   Functions: {len(compact.get('functions', []))}")
-    print(f"   Classes: {len(compact.get('classes', []))}")
-    print(f"   Methods: {len(compact.get('methods', []))}")
-    print(f"   Routes: {len(compact.get('routes', []))}")
-    print(f"   Total Targets: {total_targets}")
-    print(f"   Expected Coverage: Maximum")
-    print(f"   Project Structure: Universal compatibility")
+    print(f"Functions: {len(compact.get('functions', []))}")
+    print(f"Classes: {len(compact.get('classes', []))}")
+    print(f"Methods: {len(compact.get('methods', []))}")
+    print(f"Routes: {len(compact.get('routes', []))}")
+    print(f"Total Targets: {total_targets}")
+    print(f"Expected Coverage: Maximum")
+    print(f"Project Structure: Universal compatibility")
     
     has_routes = bool(compact.get("routes"))
     test_kinds = ["unit", "integ"]
@@ -701,7 +701,7 @@ def generate_all(analysis: Dict[str, Any], outdir: str = "tests/generated",
                 print(f"  {filename} - {len(focus_names)} targets")
                 
             except Exception as e:
-                print(f"  Error generating {test_kind} test {file_index + 1}: {e}")
+                print(f"Error generating {test_kind} test {file_index + 1}: {e}")
                 traceback.print_exc()
     
     if generated_files and changed_files:
@@ -853,14 +853,14 @@ FEATURES:
     # === ADD THIS: Enable gap-focused mode if requested ===
     if args.coverage_mode == "gap-focused":
         os.environ["GAP_FOCUSED_MODE"] = "true"
-        print("🎯 Gap-focused mode enabled via --coverage-mode argument")
+        print("Gap-focused mode enabled via --coverage-mode argument")
         
         # Check if coverage gaps file exists
         gaps_file = os.environ.get("COVERAGE_GAPS_FILE", "coverage_gaps.json")
         if not pathlib.Path(gaps_file).exists():
-            print(f"⚠️  Warning: Gap-focused mode requires {gaps_file}")
-            print("   Run coverage_gap_analyzer.py first to generate this file")
-            print("   Falling back to normal mode")
+            print(f"Warning: Gap-focused mode requires {gaps_file}")
+            print("Run coverage_gap_analyzer.py first to generate this file")
+            print("Falling back to normal mode")
             os.environ["GAP_FOCUSED_MODE"] = "false"
 
     # Validate target
@@ -944,11 +944,11 @@ FEATURES:
         else:
             # In gap-focused mode, no targets means coverage is good - this is success!
             if args.coverage_mode == "gap-focused":
-                print("✅ No additional tests needed - coverage gaps are minimal")
+                print("No additional tests needed - coverage gaps are minimal")
                 print("   This is expected when most code is already covered by manual tests")
-                return 0  # ✅ Success
+                return 0  # Success
             else:
-                print("⚠️  No tests generated - this may indicate an issue with the source code")
+                print("No tests generated - this may indicate an issue with the source code")
                 return 1
             
     except Exception as e:

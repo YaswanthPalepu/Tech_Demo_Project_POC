@@ -38,7 +38,7 @@ def run_pytest(test_file: str) -> tuple[str, list]:
     print("=" * 80)
     print("STEP 1: Running pytest to capture REAL failure")
     print("=" * 80)
-    print(f"\n🧪 Running: pytest {test_file} -v --tb=long\n")
+    print(f"\n Running: pytest {test_file} -v --tb=long\n")
 
     result = subprocess.run(
         ["pytest", test_file, "-v", "--tb=short"],
@@ -53,13 +53,13 @@ def run_pytest(test_file: str) -> tuple[str, list]:
     json_data = parser._parse_text_output(output)
     failures = parser.parse_failures(json_data)
 
-    print(f"✅ Pytest completed")
+    print(f"Pytest completed")
     print(f"   Exit code: {result.returncode}")
     print(f"   Output length: {len(output)} chars, {output.count(chr(10))} lines")
     print(f"   Failures found: {len(failures)}")
 
     if failures:
-        print(f"\n📋 First failure details:")
+        print(f"\n First failure details:")
         failure = failures[0]
         print(f"   Test file: {failure.test_file}")
         print(f"   Test name: {failure.test_name}")
@@ -86,14 +86,14 @@ def extract_test_code(failure, test_file_path: str) -> str:
     total_lines = content.count('\n') + 1
     total_chars = len(content)
 
-    print(f"\n📄 Test file stats:")
+    print(f"\n Test file stats:")
     print(f"   Path: {test_file_path}")
     print(f"   Total lines: {total_lines}")
     print(f"   Total chars: {total_chars:,}")
     print(f"   Est. tokens: ~{total_chars // 4:,}")
 
     # Try AST extraction
-    print(f"\n🔍 Attempting extraction methods...")
+    print(f"\n Attempting extraction methods...")
 
     import ast
     import re
@@ -112,7 +112,7 @@ def extract_test_code(failure, test_file_path: str) -> str:
                     lines = test_code.count('\n') + 1
                     chars = len(test_code)
 
-                    print(f"\n   ✅ AST extraction SUCCESS!")
+                    print(f"\n AST extraction SUCCESS!")
                     print(f"      Extracted lines: {lines}")
                     print(f"      Extracted chars: {chars:,}")
                     print(f"      Est. tokens: ~{chars // 4:,}")
@@ -121,7 +121,7 @@ def extract_test_code(failure, test_file_path: str) -> str:
                     return test_code
 
         # AST failed - try regex
-        print(f"   ⚠️  AST extraction FAILED - trying regex...")
+        print(f"AST extraction FAILED - trying regex...")
 
         pattern = rf'^(@.*\n)*(?:async\s+)?def\s+{re.escape(base_test_name)}\s*\([^)]*\):.*?(?=\n(?:def\s+|class\s+|@|$))'
         match = re.search(pattern, content, re.MULTILINE | re.DOTALL)
@@ -131,7 +131,7 @@ def extract_test_code(failure, test_file_path: str) -> str:
             lines = test_code.count('\n') + 1
             chars = len(test_code)
 
-            print(f"\n   ✅ Regex extraction SUCCESS!")
+            print(f"\n Regex extraction SUCCESS!")
             print(f"      Extracted lines: {lines}")
             print(f"      Extracted chars: {chars:,}")
             print(f"      Est. tokens: ~{chars // 4:,}")
@@ -140,7 +140,7 @@ def extract_test_code(failure, test_file_path: str) -> str:
             return test_code
 
         # Both failed - use full file
-        print(f"\n   ❌ BOTH extractions FAILED!")
+        print(f"\n BOTH extractions FAILED!")
         print(f"      Using FULL FILE - THIS IS THE BLOAT!")
         print(f"      Full file lines: {total_lines}")
         print(f"      Full file chars: {total_chars:,}")
@@ -149,7 +149,7 @@ def extract_test_code(failure, test_file_path: str) -> str:
         return content
 
     except Exception as e:
-        print(f"\n   ❌ Exception during extraction: {e}")
+        print(f"\n Exception during extraction: {e}")
         print(f"      Using FULL FILE as fallback")
         return content
 
@@ -164,7 +164,7 @@ def extract_source_code(failure, project_root: str) -> str:
     print("STEP 3: Extracting SOURCE CODE from embeddings (source_code variable)")
     print("=" * 80)
 
-    print(f"\n📦 Initializing embedding context extractor...")
+    print(f"\n Initializing embedding context extractor...")
     print(f"   Project root: {project_root}")
 
     extractor = EmbeddingContextExtractor(
@@ -174,7 +174,7 @@ def extract_source_code(failure, project_root: str) -> str:
         verbose=True
     )
 
-    print(f"\n🔍 Extracting context for failure...")
+    print(f"\n Extracting context for failure...")
     print(f"   Test file: {failure.test_file}")
     print(f"   Test name: {failure.test_name}")
     print(f"   Error: {failure.error_message[:100]}...")
@@ -188,7 +188,7 @@ def extract_source_code(failure, project_root: str) -> str:
     lines = source_code.count('\n') + 1
     chars = len(source_code)
 
-    print(f"\n✅ Source code extracted")
+    print(f"\n Source code extracted")
     print(f"   Total lines: {lines}")
     print(f"   Total chars: {chars:,}")
     print(f"   Est. tokens: ~{chars // 4:,}")
@@ -350,7 +350,7 @@ def analyze_prompt_components(prompt: str, test_code: str, source_code: str,
     total_prompt_chars = len(prompt)
     total_prompt_tokens = total_prompt_chars // 4
 
-    print("\n📊 COMPONENT BREAKDOWN:\n")
+    print("\n COMPONENT BREAKDOWN:\n")
 
     print(f"{'Component':<30} {'Lines':>8} {'Chars':>12} {'Tokens':>10} {'%':>6}")
     print("-" * 80)
@@ -372,29 +372,29 @@ def analyze_prompt_components(prompt: str, test_code: str, source_code: str,
     print(f"{'TOTAL PROMPT':<30} {total_prompt_lines:8,} {total_prompt_chars:12,} {total_prompt_tokens:10,} {'100.0%':>6}")
 
     print("\n" + "=" * 80)
-    print("🎯 BLOAT ANALYSIS")
+    print("BLOAT ANALYSIS")
     print("=" * 80)
 
     # Identify bloat sources
     if test_code_lines > 100:
-        print(f"\n❌ TEST CODE BLOAT DETECTED!")
+        print(f"\n TEST CODE BLOAT DETECTED!")
         print(f"   Test code is {test_code_lines} lines")
         print(f"   This suggests full test file is being sent, not just the function")
         print(f"   Expected: ~15-30 lines for a single test function")
         print(f"   Actual: {test_code_lines} lines")
         print(f"   Bloat: {test_code_lines - 30} extra lines (~{(test_code_lines - 30) * 4:,} tokens)")
     else:
-        print(f"\n✅ Test code size looks good: {test_code_lines} lines")
+        print(f"\n Test code size looks good: {test_code_lines} lines")
 
     if source_code_lines > 500:
-        print(f"\n❌ SOURCE CODE BLOAT DETECTED!")
+        print(f"\n SOURCE CODE BLOAT DETECTED!")
         print(f"   Source code is {source_code_lines} lines")
         print(f"   For a 230-line backend, this suggests full functions are stored")
         print(f"   Expected: ~100-200 lines (smart summaries)")
         print(f"   Actual: {source_code_lines} lines")
         print(f"   Bloat: {source_code_lines - 200} extra lines (~{(source_code_lines - 200) * 4:,} tokens)")
     else:
-        print(f"\n✅ Source code size looks good: {source_code_lines} lines")
+        print(f"\n Source code size looks good: {source_code_lines} lines")
 
     # Show biggest contributor
     components = [
@@ -409,7 +409,7 @@ def analyze_prompt_components(prompt: str, test_code: str, source_code: str,
 
     biggest = max(components, key=lambda x: x[1])
 
-    print(f"\n📈 BIGGEST CONTRIBUTOR: {biggest[0]}")
+    print(f"\n BIGGEST CONTRIBUTOR: {biggest[0]}")
     print(f"   Lines: {biggest[1]:,} ({biggest[1]/total_prompt_lines*100:.1f}% of total)")
     print(f"   Tokens: ~{biggest[2]:,}")
 
@@ -456,7 +456,7 @@ def main():
     pytest_output, failures = run_pytest(args.test_file)
 
     if not failures:
-        print("\n❌ No failures found! The tests might all be passing.")
+        print("\n No failures found! The tests might all be passing.")
         print("   Try a test file that has failing tests.")
         return
 
@@ -486,7 +486,7 @@ def main():
     if args.save_prompt:
         with open(args.save_prompt, 'w') as f:
             f.write(prompt)
-        print(f"\n💾 Full prompt saved to: {args.save_prompt}")
+        print(f"\n Full prompt saved to: {args.save_prompt}")
         print(f"   You can inspect it to see EXACTLY what gets sent to the LLM")
 
     print("\n" + "=" * 80)
