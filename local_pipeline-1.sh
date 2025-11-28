@@ -172,7 +172,7 @@ PYCODE
     --json-report-file="$CURRENT_DIR/.pytest_manual.json" \
     -v || MANUAL_TEST_EXIT_CODE=$?
 
-  cp -r "$CURRENT_DIR/tests/manual" "$TARGET_DIR/tests/manual"
+  rsync -av "$CURRENT_DIR/tests/manual" "$TARGET_DIR/tests/manual"
   sonar-scanner \
     -Dsonar.projectKey=testflask \
     -Dsonar.projectName=testflask \
