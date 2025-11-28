@@ -8,7 +8,7 @@ echo ""
 
 # Set target directory backend_code pytest_fun clinic flask-high-coverage-repo food-menu 
 export CURRENT_DIR="/home/sigmoid/my_name/new-tech-demo"
-export TARGET_DIR="/home/sigmoid/test-repos/ecommerce"
+export TARGET_DIR="/home/sigmoid/test-repos/flask-high-coverage-repo"
 export TARGET_ROOT="$TARGET_DIR"
 export PYTHONPATH="$TARGET_DIR"
 export PATH="$CURRENT_DIR/venv/sonar-scanner/bin:$PATH"
@@ -172,13 +172,19 @@ PYCODE
     --json-report-file="$CURRENT_DIR/.pytest_manual.json" \
     -v || MANUAL_TEST_EXIT_CODE=$?
 
+  cp -r "$CURRENT_DIR/tests/manual" "$TARGET_DIR/tests/manual"
   sonar-scanner \
+    -Dsonar.projectKey=testflask \
+    -Dsonar.projectName=testflask \
     -Dsonar.host.url="$SONAR_HOST_URL" \
     -Dsonar.token="$SONAR_TOKEN" \
     -Dproject.settings="$CURRENT_DIR/sonar-project.properties" \
     -Dsonar.projectBaseDir="$TARGET_DIR" \
     -Dsonar.sources="$TARGET_DIR" \
-    -Dsonar.python.coverage.reportPaths="$CURRENT_DIR/coverage.xml"
+    -Dsonar.tests="$TARGET_DIR/tests" \
+    -Dsonar.python.coverage.reportPaths="$CURRENT_DIR/coverage.xml" \
+    -Dsonar.python.xunit.reportPath="$CURRENT_DIR/test-results.xml"
+
 
   echo "SonarQube upload complete!"
 
