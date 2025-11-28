@@ -244,7 +244,7 @@ PYCODE
     # Upload to SonarQube
     if [ -n "${SONAR_HOST_URL:-}" ] && [ -n "${SONAR_TOKEN:-}" ]; then
       echo "Uploading results to SonarQube..."
-      rsync -av "$CURRENT_DIR/tests/manual" "$TARGET_DIR/tests/manual"
+      rsync -av "$CURRENT_DIR/tests/manual/" "$TARGET_DIR/tests/manual/"
       if ! sonar-scanner \
         -Dsonar.projectKey="${SONAR_PROJECT_KEY}" \
         -Dsonar.projectName="${SONAR_PROJECT_NAME}" \
@@ -402,8 +402,8 @@ PYCODE
     # Upload to SonarQube
     if [ -n "${SONAR_HOST_URL:-}" ] && [ -n "${SONAR_TOKEN:-}" ]; then
       echo "Uploading results to SonarQube..."
-      rsync -av "$CURRENT_DIR/tests/manual" "$TARGET_DIR/tests/manual"
-      rsync -av "$CURRENT_DIR/tests/generated" "$TARGET_DIR/tests/generated"
+      rsync -av "$CURRENT_DIR/tests/manual/" "$TARGET_DIR/tests/manual/"
+      rsync -av "$CURRENT_DIR/tests/generated/" "$TARGET_DIR/tests/generated/"
       if ! sonar-scanner \
         -Dsonar.projectKey="${SONAR_PROJECT_KEY}" \
         -Dsonar.projectName="${SONAR_PROJECT_NAME}" \
@@ -544,7 +544,8 @@ if [ "$TEST_COUNT" -gt 0 ]; then
   # Upload to SonarQube
   if [ -n "${SONAR_HOST_URL:-}" ] && [ -n "${SONAR_TOKEN:-}" ]; then
     echo ""
-    rsync -av "$CURRENT_DIR/tests/generated" "$TARGET_DIR/tests/generated"
+    mkdir -p "$TARGET_DIR/tests/"
+    rsync -av "$CURRENT_DIR/tests/generated/" "$TARGET_DIR/tests/generated/"
     echo "Uploading results to SonarQube..."
     if ! sonar-scanner \
       -Dsonar.projectKey="${SONAR_PROJECT_KEY}" \
