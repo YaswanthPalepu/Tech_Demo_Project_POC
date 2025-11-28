@@ -245,8 +245,8 @@ PYCODE
     if [ -n "${SONAR_HOST_URL:-}" ] && [ -n "${SONAR_TOKEN:-}" ]; then
       echo "Uploading results to SonarQube..."
       if ! sonar-scanner \
-        -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
-        -Dsonar.projectName=${SONAR_PROJECT_NAME} \
+        -Dsonar.projectKey="${SONAR_PROJECT_KEY}" \
+        -Dsonar.projectName="${SONAR_PROJECT_NAME}" \
         -Dsonar.host.url="$SONAR_HOST_URL" \
         -Dsonar.token="$SONAR_TOKEN" \
         -Dproject.settings="$CURRENT_DIR/sonar-project.properties" \
@@ -397,8 +397,8 @@ PYCODE
     if [ -n "${SONAR_HOST_URL:-}" ] && [ -n "${SONAR_TOKEN:-}" ]; then
       echo "Uploading results to SonarQube..."
       if ! sonar-scanner \
-        -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
-        -Dsonar.projectName=${SONAR_PROJECT_NAME} \
+        -Dsonar.projectKey="${SONAR_PROJECT_KEY}" \
+        -Dsonar.projectName="${SONAR_PROJECT_NAME}" \
         -Dsonar.host.url="$SONAR_HOST_URL" \
         -Dsonar.token="$SONAR_TOKEN" \
         -Dproject.settings="$CURRENT_DIR/sonar-project.properties" \
@@ -533,8 +533,8 @@ if [ "$TEST_COUNT" -gt 0 ]; then
     echo ""
     echo "Uploading results to SonarQube..."
     if ! sonar-scanner \
-      -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
-      -Dsonar.projectName=${SONAR_PROJECT_NAME} \
+      -Dsonar.projectKey="${SONAR_PROJECT_KEY}" \
+      -Dsonar.projectName="${SONAR_PROJECT_NAME}" \
       -Dsonar.host.url="$SONAR_HOST_URL" \
       -Dsonar.token="$SONAR_TOKEN" \
       -Dproject.settings="$CURRENT_DIR/sonar-project.properties" \
