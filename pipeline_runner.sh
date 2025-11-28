@@ -177,7 +177,7 @@ PYCODE
   echo ""
 
   MANUAL_TEST_EXIT_CODE=0
-  pytest "$CURRENT_DIR/tests/manual" \
+  if ! pytest "$CURRENT_DIR/tests/manual" \
     --cov="$TARGET_DIR" \
     --cov-config=pytest.ini \
     --cov-report=term-missing \
@@ -187,10 +187,8 @@ PYCODE
     --json-report \
     --junitxml="$CURRENT_DIR/test-results.xml" \
     --json-report-file="$CURRENT_DIR/.pytest_manual.json" \
-    -v
-  MANUAL_TEST_EXIT_CODE=$?
-
-  if [ $MANUAL_TEST_EXIT_CODE -ne 0 ]; then
+    -v; then
+    MANUAL_TEST_EXIT_CODE=$?
     echo "Warning: Manual tests had failures, but continuing..."
   fi
 
@@ -328,7 +326,7 @@ PYCODE
 
     echo "Running combined test suite..."
     COMBINED_TEST_EXIT_CODE=0
-    pytest "$CURRENT_DIR/tests/manual" "$CURRENT_DIR/tests/generated" \
+    if pytest "$CURRENT_DIR/tests/manual" "$CURRENT_DIR/tests/generated" \
       --cov="$TARGET_DIR" \
       --cov-config=pytest.ini \
       --cov-report=term-missing \
@@ -338,8 +336,13 @@ PYCODE
       --json-report \
       --junitxml="$CURRENT_DIR/test-results.xml" \
       --json-report-file="$CURRENT_DIR/.pytest_combined.json" \
-      -v
-    COMBINED_TEST_EXIT_CODE=$?
+      -v; then
+      COMBINED_TEST_EXIT_CODE=0
+      echo "All ai-test cases are pass"
+    else
+      COMBINED_TEST_EXIT_CODE=1
+      echo "Warning: AI-generated tests had failures"
+    fi
 
     echo ""
 
@@ -462,7 +465,7 @@ if [ "$TEST_COUNT" -gt 0 ]; then
   echo ""
   echo "Running pytest on AI-generated tests..."
   AI_TEST_EXIT_CODE=0
-  pytest "$CURRENT_DIR/tests/generated" \
+  if pytest "$CURRENT_DIR/tests/generated" \
     --cov="$TARGET_DIR" \
     --cov-config=pytest.ini \
     --cov-report=term-missing \
@@ -472,9 +475,13 @@ if [ "$TEST_COUNT" -gt 0 ]; then
     --json-report \
     --junitxml="$CURRENT_DIR/test-results.xml" \
     --json-report-file="$CURRENT_DIR/.pytest_generated.json" \
-    -v
-  AI_TEST_EXIT_CODE=$?
-
+    -v; then
+    AI_TEST_EXIT_CODE=0
+    echo "All AI- generated tests are passed"
+  else
+    AI_TEST_EXIT_CODE=1
+    echo "Warning: AI-generated tests had failures"
+  fi
 
   if [ $AI_TEST_EXIT_CODE -ne 0 ]; then
      echo ""
