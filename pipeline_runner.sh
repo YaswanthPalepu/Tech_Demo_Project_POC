@@ -177,7 +177,7 @@ PYCODE
   echo ""
 
   MANUAL_TEST_EXIT_CODE=0
-  if ! pytest "$CURRENT_DIR/tests/manual" \
+  pytest "$CURRENT_DIR/tests/manual" \
     --cov="$TARGET_DIR" \
     --cov-config=pytest.ini \
     --cov-report=term-missing \
@@ -187,8 +187,10 @@ PYCODE
     --json-report \
     --junitxml="$CURRENT_DIR/test-results.xml" \
     --json-report-file="$CURRENT_DIR/.pytest_manual.json" \
-    -v; then
-    MANUAL_TEST_EXIT_CODE=$?
+    -v
+  MANUAL_TEST_EXIT_CODE=$?
+
+  if [ $MANUAL_TEST_EXIT_CODE -ne 0 ]; then
     echo "Warning: Manual tests had failures, but continuing..."
   fi
 
@@ -326,7 +328,7 @@ PYCODE
 
     echo "Running combined test suite..."
     COMBINED_TEST_EXIT_CODE=0
-    if ! pytest "$CURRENT_DIR/tests/manual" "$CURRENT_DIR/tests/generated" \
+    pytest "$CURRENT_DIR/tests/manual" "$CURRENT_DIR/tests/generated" \
       --cov="$TARGET_DIR" \
       --cov-config=pytest.ini \
       --cov-report=term-missing \
@@ -336,10 +338,8 @@ PYCODE
       --json-report \
       --junitxml="$CURRENT_DIR/test-results.xml" \
       --json-report-file="$CURRENT_DIR/.pytest_combined.json" \
-      -v; then
-      COMBINED_TEST_EXIT_CODE=$?
-      echo "Warning: Combined tests had failures"
-    fi
+      -v
+    COMBINED_TEST_EXIT_CODE=$?
 
     echo ""
 
@@ -462,7 +462,7 @@ if [ "$TEST_COUNT" -gt 0 ]; then
   echo ""
   echo "Running pytest on AI-generated tests..."
   AI_TEST_EXIT_CODE=0
-  if ! pytest "$CURRENT_DIR/tests/generated" \
+  pytest "$CURRENT_DIR/tests/generated" \
     --cov="$TARGET_DIR" \
     --cov-config=pytest.ini \
     --cov-report=term-missing \
@@ -472,13 +472,12 @@ if [ "$TEST_COUNT" -gt 0 ]; then
     --json-report \
     --junitxml="$CURRENT_DIR/test-results.xml" \
     --json-report-file="$CURRENT_DIR/.pytest_generated.json" \
-    -v; then
-    AI_TEST_EXIT_CODE=$?
-    echo "Warning: AI-generated tests had failures"
-  fi
+    -v
+  AI_TEST_EXIT_CODE=$?
+
 
   if [ $AI_TEST_EXIT_CODE -ne 0 ]; then
-    echo ""
+     echo ""
     echo "Some AI-generated tests failed"
     echo "Starting auto-fix..."
     echo ""
