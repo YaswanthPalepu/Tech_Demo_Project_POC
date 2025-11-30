@@ -172,7 +172,7 @@ PYCODE
     --json-report-file="$CURRENT_DIR/.pytest_manual.json" \
     -v || MANUAL_TEST_EXIT_CODE=$?
 
-  rsync -av "$CURRENT_DIR/tests/manual" "$TARGET_DIR/tests/manual"
+  rsync -av --exclude "__pycache__/" --exclude="conftest.py" "$CURRENT_DIR/tests/manual/" "$TARGET_DIR/tests/manual/"
   sonar-scanner \
     -Dsonar.projectKey=testflask \
     -Dsonar.projectName=testflask \
@@ -181,9 +181,10 @@ PYCODE
     -Dproject.settings="$CURRENT_DIR/sonar-project.properties" \
     -Dsonar.projectBaseDir="$TARGET_DIR" \
     -Dsonar.sources="$TARGET_DIR" \
-    -Dsonar.tests="$TARGET_DIR/tests" \
+    -Dsonar.tests="$TARGET_DIR/tests/manual/" \
     -Dsonar.python.coverage.reportPaths="$CURRENT_DIR/coverage.xml" \
     -Dsonar.python.xunit.reportPath="$CURRENT_DIR/test-results.xml"
+
 
 
   echo "SonarQube upload complete!"

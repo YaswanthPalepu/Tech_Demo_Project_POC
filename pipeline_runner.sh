@@ -244,7 +244,7 @@ PYCODE
     # Upload to SonarQube
     if [ -n "${SONAR_HOST_URL:-}" ] && [ -n "${SONAR_TOKEN:-}" ]; then
       echo "Uploading results to SonarQube..."
-      rsync -av "$CURRENT_DIR/tests/manual/" "$TARGET_DIR/tests/manual/"
+      rsync -av --exclude "__pycache__/" --exclude="conftest.py" "$CURRENT_DIR/tests/manual/" "$TARGET_DIR/tests/manual/"
       if ! sonar-scanner \
         -Dsonar.projectKey="${SONAR_PROJECT_KEY}" \
         -Dsonar.projectName="${SONAR_PROJECT_NAME}" \
@@ -253,7 +253,7 @@ PYCODE
         -Dproject.settings="$CURRENT_DIR/sonar-project.properties" \
         -Dsonar.projectBaseDir="$TARGET_DIR" \
         -Dsonar.sources="$TARGET_DIR" \
-        -Dsonar.tests="$TARGET_DIR/tests" \
+        -Dsonar.tests="$TARGET_DIR/tests/manual/" \
         -Dsonar.python.xunit.reportPath="$CURRENT_DIR/test-results.xml" \
         -Dsonar.python.coverage.reportPaths="$CURRENT_DIR/coverage.xml"; then
         echo "Warning: SonarQube upload failed, but continuing..."
@@ -402,8 +402,8 @@ PYCODE
     # Upload to SonarQube
     if [ -n "${SONAR_HOST_URL:-}" ] && [ -n "${SONAR_TOKEN:-}" ]; then
       echo "Uploading results to SonarQube..."
-      rsync -av "$CURRENT_DIR/tests/manual/" "$TARGET_DIR/tests/manual/"
-      rsync -av "$CURRENT_DIR/tests/generated/" "$TARGET_DIR/tests/generated/"
+      rsync -av --exclude "__pycache__/" --exclude="conftest.py" "$CURRENT_DIR/tests/manual/" "$TARGET_DIR/tests/manual/"
+      rsync -av --exclude "__pycache__/" --exclude="conftest.py" "$CURRENT_DIR/tests/generated/" "$TARGET_DIR/tests/generated/"
       if ! sonar-scanner \
         -Dsonar.projectKey="${SONAR_PROJECT_KEY}" \
         -Dsonar.projectName="${SONAR_PROJECT_NAME}" \
@@ -412,7 +412,7 @@ PYCODE
         -Dproject.settings="$CURRENT_DIR/sonar-project.properties" \
         -Dsonar.projectBaseDir="$TARGET_DIR" \
         -Dsonar.sources="$TARGET_DIR" \
-        -Dsonar.tests="$TARGET_DIR/tests" \
+        -Dsonar.tests="$TARGET_DIR/tests/manual/,$TARGET_DIR/tests/generated/" \
         -Dsonar.python.xunit.reportPath="$CURRENT_DIR/test-results.xml" \
         -Dsonar.python.coverage.reportPaths="$CURRENT_DIR/coverage.xml"; then
         echo "Warning: SonarQube upload failed, but continuing..."
@@ -545,7 +545,7 @@ if [ "$TEST_COUNT" -gt 0 ]; then
   if [ -n "${SONAR_HOST_URL:-}" ] && [ -n "${SONAR_TOKEN:-}" ]; then
     echo ""
     mkdir -p "$TARGET_DIR/tests/"
-    rsync -av "$CURRENT_DIR/tests/generated/" "$TARGET_DIR/tests/generated/"
+    rsync -av --exclude "__pycache__/" --exclude="conftest.py" "$CURRENT_DIR/tests/generated/" "$TARGET_DIR/tests/generated/"
     echo "Uploading results to SonarQube..."
     if ! sonar-scanner \
       -Dsonar.projectKey="${SONAR_PROJECT_KEY}" \
@@ -555,7 +555,7 @@ if [ "$TEST_COUNT" -gt 0 ]; then
       -Dproject.settings="$CURRENT_DIR/sonar-project.properties" \
       -Dsonar.projectBaseDir="$TARGET_DIR" \
       -Dsonar.sources="$TARGET_DIR" \
-      -Dsonar.tests="$TARGET_DIR/tests" \
+      -Dsonar.tests="$TARGET_DIR/tests/generated/" \
       -Dsonar.python.xunit.reportPath="$CURRENT_DIR/test-results.xml" \
       -Dsonar.python.coverage.reportPaths="$CURRENT_DIR/coverage.xml"; then
       echo "Warning: SonarQube upload failed, but continuing..."

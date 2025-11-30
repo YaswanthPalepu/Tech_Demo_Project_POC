@@ -12,10 +12,6 @@ import traceback
 from typing import Any, Dict, List, Optional, Set, Tuple
 
 # Import the enhanced modules
-from .smart_change import (
-    should_generate_tests, 
-    prepare_for_generation, 
-    finalize_generation)
 
 from .gap_aware_analysis import (
     apply_gap_aware_filtering,
@@ -584,7 +580,7 @@ def generate_all(analysis: Dict[str, Any], outdir: str = "tests/generated",
         
         # Check if generation should be skipped
         if analysis.get("skip_generation"):
-            print(" Coverage is adequate, skipping generation")
+            print("Coverage is adequate, skipping generation")
             return []
         
         print(f"Gap analysis complete: Targeting {len(analysis.get('functions', []))} uncovered functions, "
@@ -605,13 +601,10 @@ def generate_all(analysis: Dict[str, Any], outdir: str = "tests/generated",
     conftest_path = _create_universal_conftest(output_dir, target_root)
     print(f"Created universal conftest: {conftest_path}")
     
-    should_generate, changed_files, deleted_files = should_generate_tests(str(target_root))
-    
-    if not should_generate:
-        print("No changes detected")
-        return []
-    
-    prepare_for_generation(str(target_root), changed_files, deleted_files)
+    # Simple change detection - always generate tests
+    changed_files = set()
+    deleted_files = set()
+    print("Change detection disabled - generating all tests")
     
     force_generation = os.getenv("TESTGEN_FORCE", "").lower() in ["true", "1", "yes"]
     
@@ -703,9 +696,6 @@ def generate_all(analysis: Dict[str, Any], outdir: str = "tests/generated",
             except Exception as e:
                 print(f"Error generating {test_kind} test {file_index + 1}: {e}")
                 traceback.print_exc()
-    
-    if generated_files and changed_files:
-        finalize_generation(str(target_root), changed_files, generated_files)
     
     change_summary = {
         "added_or_modified": len(changed_files),
