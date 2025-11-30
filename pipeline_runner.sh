@@ -17,6 +17,25 @@ echo "Pipeline Directory: $CURRENT_DIR"
 echo "Target Repository: $TARGET_DIR"
 echo ""
 
+check_final_coverage() {
+    MIN_COVERAGE="${MIN_COVERAGE_THRESHOLD:-90}"
+    
+    if [ ! -f "coverage.xml" ]; then
+        echo "coverage.xml not found"
+        exit 1
+    fi
+
+    COVERAGE=$(python3 -c "import xml.etree.ElementTree as ET; tree = ET.parse('coverage.xml'); root = tree.getroot(); print(f'{float(root.attrib.get(\"line-rate\", 0)) * 100:.2f}')")
+    
+    echo "Coverage: ${COVERAGE}% | Threshold: ${MIN_COVERAGE}%"
+    
+    if (( $(echo "$COVERAGE >= $MIN_COVERAGE" | bc -l) )); then
+        exit 0
+    else
+        exit 1
+    fi
+}
+
 # Verify target directory exists
 if [ ! -d "$TARGET_DIR" ]; then
   echo "Target directory not found: $TARGET_DIR"
@@ -256,7 +275,8 @@ PYCODE
         -Dsonar.tests="$TARGET_DIR/tests/manual/" \
         -Dsonar.python.xunit.reportPath="$CURRENT_DIR/test-results.xml" \
         -Dsonar.python.coverage.reportPaths="$CURRENT_DIR/coverage.xml"; then
-        echo "Warning: SonarQube upload failed, but continuing..."
+        echo "Warning: SonarQube upload failed"
+        exit 1
       else
         echo "SonarQube upload complete!"
       fi
@@ -415,7 +435,8 @@ PYCODE
         -Dsonar.tests="$TARGET_DIR/tests/manual/,$TARGET_DIR/tests/generated/" \
         -Dsonar.python.xunit.reportPath="$CURRENT_DIR/test-results.xml" \
         -Dsonar.python.coverage.reportPaths="$CURRENT_DIR/coverage.xml"; then
-        echo "Warning: SonarQube upload failed, but continuing..."
+        echo "Warning: SonarQube upload failed"
+        exit 1
       else
         echo "SonarQube upload complete!"
       fi
@@ -423,8 +444,7 @@ PYCODE
       echo "SonarQube credentials not provided, skipping upload"
     fi
 
-    echo "Pipeline completed successfully!"
-    exit 0
+    check_final_coverage
   else
     echo "No AI tests were generated"
     echo "Coverage remains at ${COVERAGE}%"
@@ -558,7 +578,8 @@ if [ "$TEST_COUNT" -gt 0 ]; then
       -Dsonar.tests="$TARGET_DIR/tests/generated/" \
       -Dsonar.python.xunit.reportPath="$CURRENT_DIR/test-results.xml" \
       -Dsonar.python.coverage.reportPaths="$CURRENT_DIR/coverage.xml"; then
-      echo "Warning: SonarQube upload failed, but continuing..."
+      echo "Warning: SonarQube upload failed"
+      exit 1
     else
       echo "SonarQube upload complete!"
     fi
@@ -566,8 +587,7 @@ if [ "$TEST_COUNT" -gt 0 ]; then
     echo "SonarQube credentials not provided, skipping upload"
   fi
   echo ""
-  echo "Pipeline completed successfully!"
-  exit 0
+  check_final_coverage
 else
   echo "No AI-generated tests found. Pipeline cannot proceed."
   exit 1
