@@ -90,9 +90,9 @@ def find_all_manual_test_dirs(repo_root: str = ".") -> Dict[str, any]:
         "all_test_dirs": [list of directories containing tests]
     }
 
-    ✅ Preserves directory structure to avoid import conflicts
-    ✅ Only includes folders that contain .py test files
-    🚫 Skips generated/AI test folders
+    Preserves directory structure to avoid import conflicts
+    Only includes folders that contain .py test files
+    Skips generated/AI test folders
     """
     candidate_dirs = {}
     all_test_files = {}
@@ -183,14 +183,6 @@ def main():
 
     print("\n Detection Result:")
     print(json.dumps(result, indent=2))
-
-    # Write outputs for GitHub Actions
-    if "GITHUB_OUTPUT" in os.environ:
-        with open(os.environ["GITHUB_OUTPUT"], "a") as f:
-            f.write(f"manual_tests_found={str(result['manual_tests_found']).lower()}\n")
-            f.write(f"test_root={result['test_root']}\n")
-            f.write(f"manual_test_paths={json.dumps(result['manual_test_paths'])}\n")
-            f.write(f"test_files_count={result['test_files_count']}\n")
 
     # Save detailed result with structure preservation info
     with open("manual_test_result.json", "w") as f:

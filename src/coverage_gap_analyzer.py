@@ -116,7 +116,14 @@ class CoverageGapAnalyzer:
                         coverage_data["uncovered_lines_by_file"][filename] = sorted(
                             file_coverage["missing_lines"]
                         )
-                    
+                    source_path = self.target_root / filename
+                    if source_path.exists():
+                        self._identify_uncovered_elements(
+                            filename,
+                            source_path,
+                            file_coverage["missing_lines"],
+                            coverage_data
+                        )
                     # Update totals
                     coverage_data["total_statements"] += file_coverage["total_lines"]
                     coverage_data["covered_statements"] += len(file_coverage["covered_lines"])
@@ -303,7 +310,7 @@ class CoverageGapAnalyzer:
             report.append("FILES WITH COVERAGE GAPS:")
             report.append("-" * 80)
             for filename, file_data in coverage_data["files_with_gaps"].items():
-                report.append(f"\n📁 {filename}")
+                report.append(f"\n {filename}")
                 report.append(f"   Coverage: {file_data['coverage_percentage']:.2f}%")
                 report.append(f"   Missing Lines: {len(file_data['missing_lines'])}")
                 report.append(f"   Uncovered: {self._format_line_ranges(file_data['missing_lines'])}")
@@ -315,7 +322,7 @@ class CoverageGapAnalyzer:
             report.append("UNCOVERED FUNCTIONS:")
             report.append("-" * 80)
             for func in coverage_data["uncovered_functions"]:
-                report.append(f"\n🔧 {func['file']}::{func['name']} (lines {func['line_start']}-{func['line_end']})")
+                report.append(f"\n {func['file']}::{func['name']} (lines {func['line_start']}-{func['line_end']})")
                 report.append(f"   Async: {func['is_async']}")
                 report.append(f"   Uncovered Lines: {self._format_line_ranges(func['uncovered_lines'])}")
         
@@ -326,7 +333,7 @@ class CoverageGapAnalyzer:
             report.append("UNCOVERED CLASSES:")
             report.append("-" * 80)
             for cls in coverage_data["uncovered_classes"]:
-                report.append(f"\n📦 {cls['file']}::{cls['name']} (lines {cls['line_start']}-{cls['line_end']})")
+                report.append(f"\n {cls['file']}::{cls['name']} (lines {cls['line_start']}-{cls['line_end']})")
                 report.append(f"   Total Uncovered Lines: {cls['total_uncovered_lines']}")
                 if cls["uncovered_methods"]:
                     report.append("   Uncovered Methods:")

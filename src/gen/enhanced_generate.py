@@ -580,7 +580,7 @@ def generate_all(analysis: Dict[str, Any], outdir: str = "tests/generated",
         
         # Check if generation should be skipped
         if analysis.get("skip_generation"):
-            print("Coverage is adequate, skipping generation")
+            print(" Coverage is adequate, skipping generation")
             return []
         
         print(f"Gap analysis complete: Targeting {len(analysis.get('functions', []))} uncovered functions, "
