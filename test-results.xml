@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="4" failures="0" skipped="0" tests="4" time="7.733" timestamp="2025-12-02T01:07:36.524387" hostname="SV-LAP-0087"><testcase classname="" name="tests.manual.manual.test_api" time="0.000"><error message="collection failure">import file mismatch:
+imported module 'test_api' has this __file__ attribute:
+  /home/sigmoid/my_name/new-tech-demo/tests/manual/test_api.py
+which is not the same as the test file we want to collect:
+  /home/sigmoid/my_name/new-tech-demo/tests/manual/manual/test_api.py
+HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules</error></testcase><testcase classname="" name="tests.manual.manual.test_auth" time="0.000"><error message="collection failure">import file mismatch:
+imported module 'test_auth' has this __file__ attribute:
+  /home/sigmoid/my_name/new-tech-demo/tests/manual/test_auth.py
+which is not the same as the test file we want to collect:
+  /home/sigmoid/my_name/new-tech-demo/tests/manual/manual/test_auth.py
+HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules</error></testcase><testcase classname="" name="tests.manual.manual.test_middleware" time="0.000"><error message="collection failure">import file mismatch:
+imported module 'test_middleware' has this __file__ attribute:
+  /home/sigmoid/my_name/new-tech-demo/tests/manual/test_middleware.py
+which is not the same as the test file we want to collect:
+  /home/sigmoid/my_name/new-tech-demo/tests/manual/manual/test_middleware.py
+HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules</error></testcase><testcase classname="" name="tests.manual.manual.test_model" time="0.000"><error message="collection failure">import file mismatch:
+imported module 'test_model' has this __file__ attribute:
+  /home/sigmoid/my_name/new-tech-demo/tests/manual/test_model.py
+which is not the same as the test file we want to collect:
+  /home/sigmoid/my_name/new-tech-demo/tests/manual/manual/test_model.py
+HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules</error></testcase></testsuite></testsuites>
