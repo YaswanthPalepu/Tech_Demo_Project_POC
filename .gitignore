@@ -34,3 +34,36 @@ debug_prompt.txt
 
 # Test result files
 test-results.xml
+AUTO_FIXER_SUMMARY.md
+
+AUTO_FIX_README.md
+
+AUTO_FIX_TESTS_README.md
+
+CODE_FLOW_DIAGRAM.md
+
+DEMO_RESULTS.md
+
+PIPELINE_SUMMARY.md
+backend_code.log
+
+clinic-2.log
+
+clinic-after-git-push.log
+
+clinic-test-generation.log
+
+clinic.log
+
+clinic1.log
+
+error_handler_auto_fixer.log
+
+error_out.log
+
+feature.log
+
+flask-high-coverage-repo.log
+
+food-menu-1.log
+full_error.txt  
