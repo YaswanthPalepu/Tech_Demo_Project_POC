@@ -66,4 +66,22 @@ feature.log
 flask-high-coverage-repo.log
 
 food-menu-1.log
-full_error.txt  
+full_error.txt
+# Generated archives
+src/all_generation.zip
+
+# Debug & index
+debug_prompts/
+debug_prompt.txt
+.codebase_index/
+
+# SonarQube
+.scannerwork/
+
+# Logs & error dumps
+*.log
+full_error.txt
+
+# JSON files
+*.json
+*.md
