@@ -572,20 +572,36 @@ def generate_all(analysis: Dict[str, Any], outdir: str = "tests/generated",
     from .writer import update_manifest, write_text
     
     print("UNIVERSAL test generation for ANY PROJECT STRUCTURE...")
-    
+
+    # Export full code AST (before any filtering)
+    try:
+        with open("ast_full_analysis.json", 'w') as f:
+            json.dump(analysis, f, indent=2)
+        print("✓ Full code AST exported: ast_full_analysis.json")
+    except Exception as e:
+        print(f"⚠️  Warning: Failed to export full AST: {e}")
+
     # Apply gap-aware filtering if in gap-focused mode
     if is_gap_focused_mode():
         print("\n GAP-FOCUSED MODE: Analyzing coverage gaps...")
         analysis = apply_gap_aware_filtering(analysis)
-        
+
         # Check if generation should be skipped
         if analysis.get("skip_generation"):
             print(" Coverage is adequate, skipping generation")
             return []
-        
+
         print(f"Gap analysis complete: Targeting {len(analysis.get('functions', []))} uncovered functions, "
               f"{len(analysis.get('classes', []))} uncovered classes, "
               f"{len(analysis.get('methods', []))} uncovered methods")
+
+        # Export gap-focused AST (after filtering - uncovered code only)
+        try:
+            with open("ast_gap_analysis.json", 'w') as f:
+                json.dump(analysis, f, indent=2)
+            print("✓ Gap-focused AST exported: ast_gap_analysis.json")
+        except Exception as e:
+            print(f"⚠️  Warning: Failed to export gap AST: {e}")
 
     output_dir = pathlib.Path(outdir)
     output_dir.mkdir(parents=True, exist_ok=True)

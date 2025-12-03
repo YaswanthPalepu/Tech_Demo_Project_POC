@@ -122,6 +122,8 @@ jobs:
           path: |
             ${{ github.workspace }}/coverage.xml
             ${{ github.workspace }}/htmlcov/
+            ${{ github.workspace }}/ast_full_analysis.json
+            ${{ github.workspace }}/ast_gap_analysis.json
           if-no-files-found: warn
       
       - name: Generate Test Summary
@@ -147,6 +149,17 @@ jobs:
             echo "### AI Generated Tests" >> $GITHUB_STEP_SUMMARY
             echo "- **Generated Test Files:** ${TEST_COUNT}" >> $GITHUB_STEP_SUMMARY
           fi
-          
+
+          if [ -f ast_full_analysis.json ] || [ -f ast_gap_analysis.json ]; then
+            echo "### AST Analysis" >> $GITHUB_STEP_SUMMARY
+            if [ -f ast_full_analysis.json ]; then
+              echo "- **Full Code AST:** \`ast_full_analysis.json\`" >> $GITHUB_STEP_SUMMARY
+            fi
+            if [ -f ast_gap_analysis.json ]; then
+              echo "- **Gap-Focused AST:** \`ast_gap_analysis.json\`" >> $GITHUB_STEP_SUMMARY
+            fi
+            echo "*Available in coverage-reports artifact*" >> $GITHUB_STEP_SUMMARY
+          fi
+
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Pipeline completed!" >> $GITHUB_STEP_SUMMARY
