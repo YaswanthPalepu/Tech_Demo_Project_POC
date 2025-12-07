@@ -464,6 +464,34 @@ Auto-generated test cases from pipeline run
 Coverage improvement: $(python3 -c "print(f'{float($FINAL_COVERAGE) - float($COVERAGE):.2f}%')")
 Final coverage: ${FINAL_COVERAGE}%"
               echo "AI-generated tests committed to target repository"
+
+              # Push to remote if GIT_PUSH_TOKEN is provided
+              if [ -n "${GIT_PUSH_TOKEN:-}" ]; then
+                echo "Pushing changes to remote repository..."
+
+                # Get current branch
+                CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+                # Get remote URL
+                REMOTE_URL=$(git config --get remote.origin.url)
+
+                # Configure git to use token for authentication
+                if [[ "$REMOTE_URL" == https://* ]]; then
+                  # HTTPS URL - use token authentication
+                  git push https://${GIT_PUSH_TOKEN}@${REMOTE_URL#https://} "$CURRENT_BRANCH" 2>&1 || {
+                    echo "Warning: Failed to push to remote repository"
+                  }
+                else
+                  # SSH URL or other - try normal push
+                  git push origin "$CURRENT_BRANCH" 2>&1 || {
+                    echo "Warning: Failed to push to remote repository"
+                  }
+                fi
+
+                echo "Changes pushed to remote repository successfully"
+              else
+                echo "Skipping push: GIT_PUSH_TOKEN not provided (set GIT_PUSH_TOKEN environment variable to enable auto-push)"
+              fi
             else
               echo "No new AI tests to commit"
             fi
@@ -645,6 +673,34 @@ if [ "$TEST_COUNT" -gt 0 ]; then
 Auto-generated test cases from pipeline run (no manual tests)
 Final coverage: ${COVERAGE}%"
             echo "AI-generated tests committed to target repository"
+
+            # Push to remote if GIT_PUSH_TOKEN is provided
+            if [ -n "${GIT_PUSH_TOKEN:-}" ]; then
+              echo "Pushing changes to remote repository..."
+
+              # Get current branch
+              CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+              # Get remote URL
+              REMOTE_URL=$(git config --get remote.origin.url)
+
+              # Configure git to use token for authentication
+              if [[ "$REMOTE_URL" == https://* ]]; then
+                # HTTPS URL - use token authentication
+                git push https://${GIT_PUSH_TOKEN}@${REMOTE_URL#https://} "$CURRENT_BRANCH" 2>&1 || {
+                  echo "Warning: Failed to push to remote repository"
+                }
+              else
+                # SSH URL or other - try normal push
+                git push origin "$CURRENT_BRANCH" 2>&1 || {
+                  echo "Warning: Failed to push to remote repository"
+                }
+              fi
+
+              echo "Changes pushed to remote repository successfully"
+            else
+              echo "Skipping push: GIT_PUSH_TOKEN not provided (set GIT_PUSH_TOKEN environment variable to enable auto-push)"
+            fi
           else
             echo "No new AI tests to commit"
           fi
