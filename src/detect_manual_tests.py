@@ -95,12 +95,13 @@ def find_all_manual_test_dirs(repo_root: str = ".") -> Dict[str, any]:
 
         test_files = []
         for file in files:
-            # Skip conftest.py files - they're configuration, not tests
-            if file == "conftest.py":
-                continue
-
+            # Include conftest.py for pytest configuration
+            # Include test files (test_*.py or *_test.py)
             if file.endswith(".py") and (
-                file.startswith("test_") or file.endswith("_test.py") or "test" in file.lower()
+                file == "conftest.py" or
+                file.startswith("test_") or
+                file.endswith("_test.py") or
+                "test" in file.lower()
             ):
                 file_path = os.path.join(root, file)
                 try:
