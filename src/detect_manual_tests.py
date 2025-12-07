@@ -223,11 +223,11 @@ def find_all_manual_test_dirs(repo_root: str = ".") -> Dict[str, any]:
             "ai_generated_tests": ai_tests
         }
 
-    # No manual tests found, return only AI tests if available
+    # No manual tests found, return empty manual but keep AI tests
     return {
-        "test_root": ai_tests.get("test_root", ""),
-        "files_by_relative_path": ai_tests.get("files_by_relative_path", {}),
-        "all_test_dirs": ai_tests.get("all_test_dirs", []),
+        "test_root": "",
+        "files_by_relative_path": {},
+        "all_test_dirs": [],
         "ai_generated_tests": ai_tests
     }
 
