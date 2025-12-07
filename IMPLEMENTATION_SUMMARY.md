@@ -49,11 +49,12 @@ This implementation modifies the detect manual test cases logic to:
   [AI] test_ai_generated.py
   ```
 
-#### Copy Logic After AI Generation (Line 438-445 and 590-597)
+#### Copy and Commit Logic After AI Generation (Line 438-469 and 613-644)
 After successful AI test generation:
-- Simply copies AI-generated tests to `$TARGET_DIR/tests/generated/`
+- Copies AI-generated tests to `$TARGET_DIR/tests/generated/`
 - Uses `rsync` to copy efficiently (excludes cache files)
-- No git commit operations in the pipeline
+- **Commits to target repository's git** (if it's a git repo)
+- Includes coverage metrics in commit message
 - Works for both cases: with/without manual tests
 
 ## Workflow
@@ -74,8 +75,9 @@ After successful AI test generation:
    - Runs combined tests (manual + AI)
    - Analyzes final coverage
 
-4. **Copy to Target Phase** ✨ NEW:
+4. **Copy and Commit Phase** ✨ NEW:
    - Copies AI tests to `$TARGET_DIR/tests/generated/`
+   - Commits tests to target repository's git
    - AI tests now persisted in target repo
 
 ### Second Run (AI Tests Exist)
@@ -93,8 +95,9 @@ After successful AI test generation:
    - Only generates additional AI tests if coverage still < 90%
    - Runs combined tests
 
-4. **Copy to Target Phase**:
+4. **Copy and Commit Phase**:
    - Copies any new AI tests to `$TARGET_DIR/tests/generated/`
+   - Commits new tests to target repository's git
 
 ## Example Output
 
@@ -133,7 +136,7 @@ Copying 5 manual test files and 3 AI-generated test files...
 Copied 8/8 test files
 ```
 
-### Copy to Target Output
+### Copy and Commit to Target Output
 ```bash
 Copying AI-generated tests to target repository: /path/to/target_repo/tests/generated
 sending incremental file list
@@ -143,6 +146,13 @@ test_edge_case.py
 sent 1,234 bytes  received 89 bytes  2,646.00 bytes/sec
 total size is 5,678  speedup is 4.29
 AI-generated tests copied to target repository successfully
+
+Committing AI-generated tests to target repository...
+[main abc1234] chore: add AI-generated test cases
+ 3 files changed, 150 insertions(+)
+ create mode 100644 tests/generated/test_new_feature.py
+ create mode 100644 tests/generated/test_edge_case.py
+AI-generated tests committed to target repository
 ```
 
 ## Benefits
@@ -186,9 +196,10 @@ Test execution confirmed:
 
 ## Notes
 
-- AI-generated tests are simply copied to the target repository's `tests/generated/` folder
-- No git operations are performed by the pipeline
+- AI-generated tests are copied to the target repository's `tests/generated/` folder
+- Pipeline automatically commits AI tests to the target repository's git (if it's a git repo)
+- Commits include coverage improvement metrics in the commit message
+- If target is not a git repository, tests are still copied but a warning is shown
 - SonarQube upload logic remains unchanged
 - All existing functionality is preserved
 - The changes are backward compatible
-- Users can manually commit the AI tests to version control if desired

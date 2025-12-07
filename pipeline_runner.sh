@@ -435,13 +435,37 @@ PYCODE
         echo "Coverage Improvement:   $(python3 -c "print(f'{float($FINAL_COVERAGE) - float($COVERAGE):.2f}%')")"
         echo ""
 
-        # Copy AI-generated tests to target repository
+        # Copy AI-generated tests to target repository and commit
         if [ -d "$CURRENT_DIR/tests/generated" ]; then
           TARGET_TESTS_DIR="$TARGET_DIR/tests/generated"
           echo "Copying AI-generated tests to target repository: $TARGET_TESTS_DIR"
           mkdir -p "$TARGET_TESTS_DIR"
           rsync -av --exclude "__pycache__/" --exclude="*.pyc" "$CURRENT_DIR/tests/generated/" "$TARGET_TESTS_DIR/"
           echo "AI-generated tests copied to target repository successfully"
+
+          # Commit to target repository if it's a git repo
+          if [ -d "$TARGET_DIR/.git" ]; then
+            echo ""
+            echo "Committing AI-generated tests to target repository..."
+            cd "$TARGET_DIR"
+
+            git add tests/generated/
+
+            if ! git diff --cached --quiet 2>/dev/null; then
+              git commit -m "chore: add AI-generated test cases
+
+Auto-generated test cases from pipeline run
+Coverage improvement: $(python3 -c "print(f'{float($FINAL_COVERAGE) - float($COVERAGE):.2f}%')")
+Final coverage: ${FINAL_COVERAGE}%"
+              echo "AI-generated tests committed to target repository"
+            else
+              echo "No new AI tests to commit"
+            fi
+
+            cd "$CURRENT_DIR"
+          else
+            echo "Warning: Target directory is not a git repository, AI tests not committed"
+          fi
         fi
       else
         echo "Error: Failed to parse final coverage"
@@ -586,7 +610,7 @@ if [ "$TEST_COUNT" -gt 0 ]; then
         echo "Quality Gate Passed: Coverage ${COVERAGE}%"
       fi
 
-      # Copy AI-generated tests to target repository
+      # Copy AI-generated tests to target repository and commit
       if [ -d "$CURRENT_DIR/tests/generated" ]; then
         TARGET_TESTS_DIR="$TARGET_DIR/tests/generated"
         echo ""
@@ -594,6 +618,29 @@ if [ "$TEST_COUNT" -gt 0 ]; then
         mkdir -p "$TARGET_TESTS_DIR"
         rsync -av --exclude "__pycache__/" --exclude="*.pyc" "$CURRENT_DIR/tests/generated/" "$TARGET_TESTS_DIR/"
         echo "AI-generated tests copied to target repository successfully"
+
+        # Commit to target repository if it's a git repo
+        if [ -d "$TARGET_DIR/.git" ]; then
+          echo ""
+          echo "Committing AI-generated tests to target repository..."
+          cd "$TARGET_DIR"
+
+          git add tests/generated/
+
+          if ! git diff --cached --quiet 2>/dev/null; then
+            git commit -m "chore: add AI-generated test cases
+
+Auto-generated test cases from pipeline run (no manual tests)
+Final coverage: ${COVERAGE}%"
+            echo "AI-generated tests committed to target repository"
+          else
+            echo "No new AI tests to commit"
+          fi
+
+          cd "$CURRENT_DIR"
+        else
+          echo "Warning: Target directory is not a git repository, AI tests not committed"
+        fi
       fi
     else
       echo "Error: Failed to parse coverage"
