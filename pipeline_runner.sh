@@ -141,7 +141,7 @@ PYCODE
   rm -rf "./tests/manual"
   mkdir -p ./tests/manual
 
-  # Copy ALL tests (manual + AI-generated) to tests/manual
+  # Copy ALL tests to tests/manual (no distinction between manual/AI)
   if ! python3 - <<'PYCODE'
 import json
 import os
@@ -153,22 +153,17 @@ try:
 
     test_root = data.get("test_root", "")
     files_by_rel_path = data.get("files_by_relative_path", {})
-    ai_tests = data.get("ai_generated_tests", {})
-    ai_files = ai_tests.get("files_by_relative_path", {})
 
-    total_manual = len(files_by_rel_path)
-    total_ai = len(ai_files)
-
-    if not files_by_rel_path and not ai_files:
+    if not files_by_rel_path:
         print("No test files found in manual_test_result.json")
         exit(0)
 
     print(f"Test root: {test_root}")
-    print(f"Copying {total_manual} manual test files and {total_ai} AI-generated test files...")
+    print(f"Copying {len(files_by_rel_path)} test files...")
 
     copied_count = 0
 
-    # Copy manual tests
+    # Copy all tests
     for rel_path, full_path in files_by_rel_path.items():
         dest_path = os.path.join("./tests/manual", rel_path)
         dest_dir = os.path.dirname(dest_path)
@@ -176,25 +171,12 @@ try:
 
         try:
             shutil.copy2(full_path, dest_path)
-            print(f"[MANUAL] {rel_path}")
+            print(f"  ✓ {rel_path}")
             copied_count += 1
         except Exception as e:
-            print(f"Failed to copy manual test {rel_path}: {e}")
+            print(f"  ✗ Failed to copy {rel_path}: {e}")
 
-    # Copy AI-generated tests to manual folder (same location, not subfolder)
-    for rel_path, full_path in ai_files.items():
-        dest_path = os.path.join("./tests/manual", rel_path)
-        dest_dir = os.path.dirname(dest_path)
-        os.makedirs(dest_dir, exist_ok=True)
-
-        try:
-            shutil.copy2(full_path, dest_path)
-            print(f"[AI] {rel_path}")
-            copied_count += 1
-        except Exception as e:
-            print(f"Failed to copy AI test {rel_path}: {e}")
-
-    print(f"Copied {copied_count}/{total_manual + total_ai} test files")
+    print(f"Copied {copied_count}/{len(files_by_rel_path)} test files")
 except Exception as e:
     print(f"Error during test copy: {e}")
     exit(1)
