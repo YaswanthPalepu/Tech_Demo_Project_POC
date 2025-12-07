@@ -76,9 +76,81 @@ def find_common_test_root(test_dirs: List[str]) -> str:
     return common
 
 
+def find_ai_generated_tests(repo_root: str = ".") -> Dict[str, any]:
+    """
+    Finds previously generated AI tests from tests/generated folder.
+
+    Returns:
+    {
+        "test_root": "/path/to/tests/generated",
+        "files_by_relative_path": {
+            "test_file.py": "/full/path/to/tests/generated/test_file.py",
+        },
+        "all_test_dirs": [list of directories containing AI tests]
+    }
+    """
+    candidate_dirs = {}
+
+    # Look specifically for tests/generated folder
+    generated_path = os.path.join(repo_root, "tests", "generated")
+
+    if not os.path.exists(generated_path):
+        return {
+            "test_root": "",
+            "files_by_relative_path": {},
+            "all_test_dirs": []
+        }
+
+    for root, dirs, files in os.walk(generated_path):
+        # Skip cache folders
+        if "__pycache__" in root or ".git" in root:
+            continue
+
+        test_files = []
+        for file in files:
+            if file.endswith(".py") and (
+                file.startswith("test_") or file.endswith("_test.py")
+            ):
+                file_path = os.path.join(root, file)
+                try:
+                    # Validate the file is readable
+                    with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+                        f.read()
+                    test_files.append(file_path)
+                except Exception:
+                    continue
+
+        if test_files:
+            candidate_dirs[root] = test_files
+
+    if candidate_dirs:
+        test_root = generated_path
+
+        # Build files_by_relative_path
+        files_by_relative_path = {}
+        for test_dir, files in candidate_dirs.items():
+            for file_path in files:
+                # Calculate relative path from test_root
+                rel_path = os.path.relpath(file_path, test_root)
+                files_by_relative_path[rel_path] = file_path
+
+        return {
+            "test_root": test_root,
+            "files_by_relative_path": files_by_relative_path,
+            "all_test_dirs": list(candidate_dirs.keys())
+        }
+
+    return {
+        "test_root": "",
+        "files_by_relative_path": {},
+        "all_test_dirs": []
+    }
+
+
 def find_all_manual_test_dirs(repo_root: str = ".") -> Dict[str, any]:
     """
     Finds all valid manual test directories and files with preserved structure.
+    Also includes previously generated AI tests from tests/generated folder.
 
     Returns:
     {
@@ -87,12 +159,18 @@ def find_all_manual_test_dirs(repo_root: str = ".") -> Dict[str, any]:
             "test_user.py": "/full/path/to/tests/test_user.py",
             "test_models/test_user.py": "/full/path/to/tests/test_models/test_user.py"
         },
-        "all_test_dirs": [list of directories containing tests]
+        "all_test_dirs": [list of directories containing tests],
+        "ai_generated_tests": {
+            "test_root": "/path/to/tests/generated",
+            "files_by_relative_path": {...},
+            "all_test_dirs": [...]
+        }
     }
 
     Preserves directory structure to avoid import conflicts
     Only includes folders that contain .py test files
-    Skips generated/AI test folders
+    Skips generated/AI test folders for manual detection
+    Separately detects AI-generated tests from tests/generated folder
     """
     candidate_dirs = {}
     all_test_files = {}
@@ -123,7 +201,10 @@ def find_all_manual_test_dirs(repo_root: str = ".") -> Dict[str, any]:
         if test_files:
             candidate_dirs[root] = test_files
 
-    # Find common test root
+    # Find AI-generated tests separately
+    ai_tests = find_ai_generated_tests(repo_root)
+
+    # Find common test root for manual tests
     if candidate_dirs:
         test_root = find_common_test_root(list(candidate_dirs.keys()))
 
@@ -138,13 +219,16 @@ def find_all_manual_test_dirs(repo_root: str = ".") -> Dict[str, any]:
         return {
             "test_root": test_root,
             "files_by_relative_path": files_by_relative_path,
-            "all_test_dirs": list(candidate_dirs.keys())
+            "all_test_dirs": list(candidate_dirs.keys()),
+            "ai_generated_tests": ai_tests
         }
 
+    # No manual tests found, return only AI tests if available
     return {
-        "test_root": "",
-        "files_by_relative_path": {},
-        "all_test_dirs": []
+        "test_root": ai_tests.get("test_root", ""),
+        "files_by_relative_path": ai_tests.get("files_by_relative_path", {}),
+        "all_test_dirs": ai_tests.get("all_test_dirs", []),
+        "ai_generated_tests": ai_tests
     }
 
 
@@ -155,31 +239,51 @@ def main():
     print(f"Scanning repository for manual test directories in: {os.path.abspath(repo_root)}")
 
     detection_result = find_all_manual_test_dirs(repo_root)
+    ai_tests = detection_result.get("ai_generated_tests", {})
 
-    if not detection_result["files_by_relative_path"]:
-        print("No manual test files found.")
+    # Check if we have any tests (manual or AI)
+    has_manual_tests = bool(detection_result.get("files_by_relative_path"))
+    has_ai_tests = bool(ai_tests.get("files_by_relative_path"))
+
+    if not has_manual_tests and not has_ai_tests:
+        print("No manual or AI-generated test files found.")
         result = {
             "manual_tests_found": False,
             "test_root": "",
             "manual_test_paths": [],
             "test_files_count": 0,
-            "files_by_relative_path": {}
+            "files_by_relative_path": {},
+            "ai_generated_tests": {
+                "test_root": "",
+                "files_by_relative_path": {},
+                "all_test_dirs": []
+            }
         }
     else:
         result = {
-            "manual_tests_found": True,
+            "manual_tests_found": has_manual_tests or has_ai_tests,
             "test_root": detection_result["test_root"],
             "manual_test_paths": detection_result["all_test_dirs"],
-            "test_files_count": len(detection_result["files_by_relative_path"]),
-            "files_by_relative_path": detection_result["files_by_relative_path"]
+            "test_files_count": len(detection_result.get("files_by_relative_path", {})),
+            "files_by_relative_path": detection_result.get("files_by_relative_path", {}),
+            "ai_generated_tests": ai_tests
         }
 
-        print(f"\n Found {result['test_files_count']} manual test files")
-        print(f"Test root: {result['test_root']}")
-        print(f"Test directories: {len(result['manual_test_paths'])}")
-        print("\n Files with preserved structure:")
-        for rel_path in sorted(result["files_by_relative_path"].keys()):
-            print(f"   {rel_path}")
+        if has_manual_tests:
+            print(f"\n Found {result['test_files_count']} manual test files")
+            print(f"Test root: {result['test_root']}")
+            print(f"Test directories: {len(result['manual_test_paths'])}")
+            print("\n Manual test files with preserved structure:")
+            for rel_path in sorted(result["files_by_relative_path"].keys()):
+                print(f"   {rel_path}")
+
+        if has_ai_tests:
+            ai_count = len(ai_tests.get("files_by_relative_path", {}))
+            print(f"\n Found {ai_count} previously generated AI test files")
+            print(f"AI test root: {ai_tests.get('test_root', '')}")
+            print("\n AI-generated test files:")
+            for rel_path in sorted(ai_tests.get("files_by_relative_path", {}).keys()):
+                print(f"   {rel_path}")
 
     print("\n Detection Result:")
     print(json.dumps(result, indent=2))
