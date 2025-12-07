@@ -39,36 +39,22 @@ This implementation modifies the detect manual test cases logic to:
 ### 2. Modified `pipeline_runner.sh`
 
 #### Test Copy Logic (Line 140-205)
-- Copies both manual tests and previously generated AI tests to `./tests/manual`
-- AI tests are copied to `./tests/manual/ai_generated/` subfolder
-- Preserves directory structure for both test types
+- **Copies ALL tests (manual + AI) to `./tests/manual`** - NO separate subfolders
+- Manual tests preserve their original directory structure
+- AI tests are copied with their relative paths
 - Prints clear indicators: `[MANUAL]` and `[AI]` for each file copied
-
-#### Commit Logic - Case 1: With Manual Tests (Line 438-470)
-After successful AI test generation and combined testing:
-- Copies AI-generated tests to `$TARGET_DIR/tests/generated/`
-- Commits them to the target repository (if it's a git repo)
-- Includes coverage improvement metrics in commit message
-- Format:
+- Example output:
   ```
-  chore: add AI-generated test cases
-
-  Auto-generated test cases from pipeline run
-  Coverage improvement: X.XX%
-  Final coverage: XX.XX%
+  [MANUAL] tests/test_user.py
+  [AI] test_ai_generated.py
   ```
 
-#### Commit Logic - Case 2: No Manual Tests (Line 614-646)
-After successful AI test generation (full generation mode):
-- Same copy and commit logic
-- Different commit message to indicate no manual tests existed
-- Format:
-  ```
-  chore: add AI-generated test cases
-
-  Auto-generated test cases from pipeline run (no manual tests)
-  Final coverage: XX.XX%
-  ```
+#### Copy Logic After AI Generation (Line 438-445 and 590-597)
+After successful AI test generation:
+- Simply copies AI-generated tests to `$TARGET_DIR/tests/generated/`
+- Uses `rsync` to copy efficiently (excludes cache files)
+- No git commit operations in the pipeline
+- Works for both cases: with/without manual tests
 
 ## Workflow
 
@@ -88,9 +74,8 @@ After successful AI test generation (full generation mode):
    - Runs combined tests (manual + AI)
    - Analyzes final coverage
 
-4. **Commit Phase** ✨ NEW:
+4. **Copy to Target Phase** ✨ NEW:
    - Copies AI tests to `$TARGET_DIR/tests/generated/`
-   - Commits to target repository
    - AI tests now persisted in target repo
 
 ### Second Run (AI Tests Exist)
@@ -100,17 +85,16 @@ After successful AI test generation (full generation mode):
    - **NOW ALSO FINDS** AI tests in `tests/generated`
 
 2. **Execution Phase** ✨ UPDATED:
-   - Copies manual tests to `./tests/manual`
-   - **NOW ALSO COPIES** AI tests to `./tests/manual/ai_generated/`
+   - **Copies ALL tests to `./tests/manual`**
+   - Both manual and AI tests copied to same folder
    - Runs all tests together (manual + previously generated AI)
 
 3. **AI Generation Phase**:
    - Only generates additional AI tests if coverage still < 90%
    - Runs combined tests
 
-4. **Commit Phase**:
-   - Commits any new AI tests to target repository
-   - Updates existing tests if they changed
+4. **Copy to Target Phase**:
+   - Copies any new AI tests to `$TARGET_DIR/tests/generated/`
 
 ## Example Output
 
@@ -138,21 +122,27 @@ AI test root: /path/to/target_repo/tests/generated
 
 ### Copy Output
 ```bash
+Copying all tests to local folder: ./tests/manual
 Copying 5 manual test files and 3 AI-generated test files...
 [MANUAL] tests/test_user.py
 [MANUAL] tests/test_models.py
 [MANUAL] tests/integration/test_api.py
-[AI] ai_generated/test_coverage_gap_1.py
-[AI] ai_generated/test_coverage_gap_2.py
-[AI] ai_generated/test_edge_cases.py
+[AI] test_coverage_gap_1.py
+[AI] test_coverage_gap_2.py
+[AI] test_edge_cases.py
 Copied 8/8 test files
 ```
 
-### Commit Output
+### Copy to Target Output
 ```bash
-Committing AI-generated tests to target repository...
-Copying AI tests to /path/to/target_repo/tests/generated
-AI-generated tests committed to target repository
+Copying AI-generated tests to target repository: /path/to/target_repo/tests/generated
+sending incremental file list
+test_new_feature.py
+test_edge_case.py
+
+sent 1,234 bytes  received 89 bytes  2,646.00 bytes/sec
+total size is 5,678  speedup is 4.29
+AI-generated tests copied to target repository successfully
 ```
 
 ## Benefits
@@ -196,8 +186,9 @@ Test execution confirmed:
 
 ## Notes
 
-- The implementation does NOT push to GitHub (as requested)
-- Commits are made to the local target repository only
+- AI-generated tests are simply copied to the target repository's `tests/generated/` folder
+- No git operations are performed by the pipeline
 - SonarQube upload logic remains unchanged
 - All existing functionality is preserved
 - The changes are backward compatible
+- Users can manually commit the AI tests to version control if desired

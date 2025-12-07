@@ -137,11 +137,11 @@ PYCODE
   fi
   echo ""
 
-  echo "Copying manual tests to local folder: ./tests/manual"
+  echo "Copying all tests to local folder: ./tests/manual"
   rm -rf "./tests/manual"
   mkdir -p ./tests/manual
 
-  # Copy tests preserving directory structure (both manual and AI-generated)
+  # Copy ALL tests (manual + AI-generated) to tests/manual
   if ! python3 - <<'PYCODE'
 import json
 import os
@@ -181,15 +181,15 @@ try:
         except Exception as e:
             print(f"Failed to copy manual test {rel_path}: {e}")
 
-    # Copy AI-generated tests to manual folder as well
+    # Copy AI-generated tests to manual folder (same location, not subfolder)
     for rel_path, full_path in ai_files.items():
-        dest_path = os.path.join("./tests/manual", "ai_generated", rel_path)
+        dest_path = os.path.join("./tests/manual", rel_path)
         dest_dir = os.path.dirname(dest_path)
         os.makedirs(dest_dir, exist_ok=True)
 
         try:
             shutil.copy2(full_path, dest_path)
-            print(f"[AI] ai_generated/{rel_path}")
+            print(f"[AI] {rel_path}")
             copied_count += 1
         except Exception as e:
             print(f"Failed to copy AI test {rel_path}: {e}")
@@ -200,7 +200,7 @@ except Exception as e:
     exit(1)
 PYCODE
   then
-    echo "Error: Failed to copy manual tests"
+    echo "Error: Failed to copy tests"
     exit 1
   fi
 
@@ -435,38 +435,13 @@ PYCODE
         echo "Coverage Improvement:   $(python3 -c "print(f'{float($FINAL_COVERAGE) - float($COVERAGE):.2f}%')")"
         echo ""
 
-        # Commit AI-generated tests to target repository
-        echo "Committing AI-generated tests to target repository..."
+        # Copy AI-generated tests to target repository
         if [ -d "$CURRENT_DIR/tests/generated" ]; then
           TARGET_TESTS_DIR="$TARGET_DIR/tests/generated"
+          echo "Copying AI-generated tests to target repository: $TARGET_TESTS_DIR"
           mkdir -p "$TARGET_TESTS_DIR"
-
-          echo "Copying AI tests to $TARGET_TESTS_DIR"
           rsync -av --exclude "__pycache__/" --exclude="*.pyc" "$CURRENT_DIR/tests/generated/" "$TARGET_TESTS_DIR/"
-
-          # Check if target is a git repository and commit
-          if [ -d "$TARGET_DIR/.git" ]; then
-            cd "$TARGET_DIR"
-
-            # Add the generated tests
-            git add tests/generated/
-
-            # Check if there are changes to commit
-            if ! git diff --cached --quiet; then
-              git commit -m "chore: add AI-generated test cases
-
-Auto-generated test cases from pipeline run
-Coverage improvement: $(python3 -c "print(f'{float($FINAL_COVERAGE) - float($COVERAGE):.2f}%')")
-Final coverage: ${FINAL_COVERAGE}%"
-              echo "AI-generated tests committed to target repository"
-            else
-              echo "No new AI tests to commit"
-            fi
-
-            cd "$CURRENT_DIR"
-          else
-            echo "Target directory is not a git repository, skipping commit"
-          fi
+          echo "AI-generated tests copied to target repository successfully"
         fi
       else
         echo "Error: Failed to parse final coverage"
@@ -611,38 +586,14 @@ if [ "$TEST_COUNT" -gt 0 ]; then
         echo "Quality Gate Passed: Coverage ${COVERAGE}%"
       fi
 
-      # Commit AI-generated tests to target repository
-      echo ""
-      echo "Committing AI-generated tests to target repository..."
+      # Copy AI-generated tests to target repository
       if [ -d "$CURRENT_DIR/tests/generated" ]; then
         TARGET_TESTS_DIR="$TARGET_DIR/tests/generated"
+        echo ""
+        echo "Copying AI-generated tests to target repository: $TARGET_TESTS_DIR"
         mkdir -p "$TARGET_TESTS_DIR"
-
-        echo "Copying AI tests to $TARGET_TESTS_DIR"
         rsync -av --exclude "__pycache__/" --exclude="*.pyc" "$CURRENT_DIR/tests/generated/" "$TARGET_TESTS_DIR/"
-
-        # Check if target is a git repository and commit
-        if [ -d "$TARGET_DIR/.git" ]; then
-          cd "$TARGET_DIR"
-
-          # Add the generated tests
-          git add tests/generated/
-
-          # Check if there are changes to commit
-          if ! git diff --cached --quiet; then
-            git commit -m "chore: add AI-generated test cases
-
-Auto-generated test cases from pipeline run (no manual tests)
-Final coverage: ${COVERAGE}%"
-            echo "AI-generated tests committed to target repository"
-          else
-            echo "No new AI tests to commit"
-          fi
-
-          cd "$CURRENT_DIR"
-        else
-          echo "Target directory is not a git repository, skipping commit"
-        fi
+        echo "AI-generated tests copied to target repository successfully"
       fi
     else
       echo "Error: Failed to parse coverage"
