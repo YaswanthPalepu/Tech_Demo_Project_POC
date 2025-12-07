@@ -449,6 +449,12 @@ PYCODE
             echo "Committing AI-generated tests to target repository..."
             cd "$TARGET_DIR"
 
+            # Configure git user if not already set
+            if [ -z "$(git config user.email)" ]; then
+              git config user.email "yashuyaswanth64@gmail.com"
+              git config user.name "YaswanthPalepu"
+            fi
+
             git add tests/generated/
 
             if ! git diff --cached --quiet 2>/dev/null; then
@@ -624,6 +630,12 @@ if [ "$TEST_COUNT" -gt 0 ]; then
           echo ""
           echo "Committing AI-generated tests to target repository..."
           cd "$TARGET_DIR"
+
+          # Configure git user if not already set
+          if [ -z "$(git config user.email)" ]; then
+            git config user.email "yashuyaswanth64@gmail.com"
+            git config user.name "YaswanthPalepu"
+          fi
 
           git add tests/generated/
 
