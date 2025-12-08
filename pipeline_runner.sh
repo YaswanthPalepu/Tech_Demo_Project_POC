@@ -137,11 +137,11 @@ PYCODE
   fi
   echo ""
 
-  echo "Copying manual tests to local folder: ./tests/manual"
+  echo "Copying all tests to local folder: ./tests/manual"
   rm -rf "./tests/manual"
   mkdir -p ./tests/manual
 
-  # Copy tests preserving directory structure
+  # Copy ALL tests to tests/manual (no distinction between manual/AI)
   if ! python3 - <<'PYCODE'
 import json
 import os
@@ -162,17 +162,25 @@ try:
     print(f"Copying {len(files_by_rel_path)} test files...")
 
     copied_count = 0
+
+    # Copy all tests
     for rel_path, full_path in files_by_rel_path.items():
-        dest_path = os.path.join("./tests/manual", rel_path)
+        # Special handling for conftest.py - copy to top level to avoid "non-top-level conftest" error
+        if os.path.basename(full_path) == "conftest.py":
+            dest_path = os.path.join("./tests/manual", "conftest.py")
+            print(f"  ✓ {rel_path} → conftest.py (top-level)")
+        else:
+            dest_path = os.path.join("./tests/manual", rel_path)
+            print(f"  ✓ {rel_path}")
+
         dest_dir = os.path.dirname(dest_path)
         os.makedirs(dest_dir, exist_ok=True)
 
         try:
             shutil.copy2(full_path, dest_path)
-            print(f"{rel_path}")
             copied_count += 1
         except Exception as e:
-            print(f"Failed to copy {rel_path}: {e}")
+            print(f"  ✗ Failed to copy {rel_path}: {e}")
 
     print(f"Copied {copied_count}/{len(files_by_rel_path)} test files")
 except Exception as e:
@@ -180,7 +188,7 @@ except Exception as e:
     exit(1)
 PYCODE
   then
-    echo "Error: Failed to copy manual tests"
+    echo "Error: Failed to copy tests"
     exit 1
   fi
 
@@ -414,6 +422,73 @@ PYCODE
         echo "Final Coverage:         $FINAL_COVERAGE%"
         echo "Coverage Improvement:   $(python3 -c "print(f'{float($FINAL_COVERAGE) - float($COVERAGE):.2f}%')")"
         echo ""
+
+        # Copy AI-generated tests to target repository and commit
+        if [ -d "$CURRENT_DIR/tests/generated" ]; then
+          TARGET_TESTS_DIR="$TARGET_DIR/tests/generated"
+          echo "Copying AI-generated tests to target repository: $TARGET_TESTS_DIR"
+          mkdir -p "$TARGET_TESTS_DIR"
+          rsync -av --exclude "__pycache__/" --exclude="*.pyc" "$CURRENT_DIR/tests/generated/" "$TARGET_TESTS_DIR/"
+          echo "AI-generated tests copied to target repository successfully"
+
+          # Commit to target repository if it's a git repo
+          if [ -d "$TARGET_DIR/.git" ]; then
+            echo ""
+            echo "Committing AI-generated tests to target repository..."
+            cd "$TARGET_DIR"
+
+            # Configure git user if not already set
+            if [ -z "$(git config user.email)" ]; then
+              git config user.email "yashuyaswanth64@gmail.com"
+              git config user.name "YaswanthPalepu"
+            fi
+
+            git add tests/generated/
+
+            if ! git diff --cached --quiet 2>/dev/null; then
+              git commit -m "chore: add AI-generated test cases
+
+Auto-generated test cases from pipeline run
+Coverage improvement: $(python3 -c "print(f'{float($FINAL_COVERAGE) - float($COVERAGE):.2f}%')")
+Final coverage: ${FINAL_COVERAGE}%"
+              echo "AI-generated tests committed to target repository"
+
+              # Push to remote if GIT_PUSH_TOKEN is provided
+              if [ -n "${GIT_PUSH_TOKEN:-}" ]; then
+                echo "Pushing changes to remote repository..."
+
+                # Get current branch
+                CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+                # Get remote URL
+                REMOTE_URL=$(git config --get remote.origin.url)
+
+                # Configure git to use token for authentication
+                if [[ "$REMOTE_URL" == https://* ]]; then
+                  # HTTPS URL - use token authentication
+                  git push https://${GIT_PUSH_TOKEN}@${REMOTE_URL#https://} "$CURRENT_BRANCH" 2>&1 || {
+                    echo "Warning: Failed to push to remote repository"
+                  }
+                else
+                  # SSH URL or other - try normal push
+                  git push origin "$CURRENT_BRANCH" 2>&1 || {
+                    echo "Warning: Failed to push to remote repository"
+                  }
+                fi
+
+                echo "Changes pushed to remote repository successfully"
+              else
+                echo "Skipping push: GIT_PUSH_TOKEN not provided (set GIT_PUSH_TOKEN environment variable to enable auto-push)"
+              fi
+            else
+              echo "No new AI tests to commit"
+            fi
+
+            cd "$CURRENT_DIR"
+          else
+            echo "Warning: Target directory is not a git repository, AI tests not committed"
+          fi
+        fi
       else
         echo "Error: Failed to parse final coverage"
       fi
@@ -555,6 +630,73 @@ if [ "$TEST_COUNT" -gt 0 ]; then
         echo "Coverage below ${MIN_COVERAGE}%"
       else
         echo "Quality Gate Passed: Coverage ${COVERAGE}%"
+      fi
+
+      # Copy AI-generated tests to target repository and commit
+      if [ -d "$CURRENT_DIR/tests/generated" ]; then
+        TARGET_TESTS_DIR="$TARGET_DIR/tests/generated"
+        echo ""
+        echo "Copying AI-generated tests to target repository: $TARGET_TESTS_DIR"
+        mkdir -p "$TARGET_TESTS_DIR"
+        rsync -av --exclude "__pycache__/" --exclude="*.pyc" "$CURRENT_DIR/tests/generated/" "$TARGET_TESTS_DIR/"
+        echo "AI-generated tests copied to target repository successfully"
+
+        # Commit to target repository if it's a git repo
+        if [ -d "$TARGET_DIR/.git" ]; then
+          echo ""
+          echo "Committing AI-generated tests to target repository..."
+          cd "$TARGET_DIR"
+
+          # Configure git user if not already set
+          if [ -z "$(git config user.email)" ]; then
+            git config user.email "yashuyaswanth64@gmail.com"
+            git config user.name "YaswanthPalepu"
+          fi
+
+          git add tests/generated/
+
+          if ! git diff --cached --quiet 2>/dev/null; then
+            git commit -m "chore: add AI-generated test cases
+
+Auto-generated test cases from pipeline run (no manual tests)
+Final coverage: ${COVERAGE}%"
+            echo "AI-generated tests committed to target repository"
+
+            # Push to remote if GIT_PUSH_TOKEN is provided
+            if [ -n "${GIT_PUSH_TOKEN:-}" ]; then
+              echo "Pushing changes to remote repository..."
+
+              # Get current branch
+              CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+              # Get remote URL
+              REMOTE_URL=$(git config --get remote.origin.url)
+
+              # Configure git to use token for authentication
+              if [[ "$REMOTE_URL" == https://* ]]; then
+                # HTTPS URL - use token authentication
+                git push https://${GIT_PUSH_TOKEN}@${REMOTE_URL#https://} "$CURRENT_BRANCH" 2>&1 || {
+                  echo "Warning: Failed to push to remote repository"
+                }
+              else
+                # SSH URL or other - try normal push
+                git push origin "$CURRENT_BRANCH" 2>&1 || {
+                  echo "Warning: Failed to push to remote repository"
+                }
+              fi
+
+              echo "Changes pushed to remote repository successfully"
+            else
+              echo "Skipping push: GIT_PUSH_TOKEN not provided (set GIT_PUSH_TOKEN environment variable to enable auto-push)"
+            fi
+          else
+            echo "No new AI tests to commit"
+          fi
+
+          cd "$CURRENT_DIR"
+        else
+          echo "Warning: Target directory is not a git repository, AI tests not committed"
+        fi
       fi
     else
       echo "Error: Failed to parse coverage"
