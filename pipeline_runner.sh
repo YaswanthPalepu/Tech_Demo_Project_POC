@@ -219,6 +219,42 @@ PYCODE
     echo "Warning: Manual tests had failures, but continuing..."
   fi
 
+  # Auto-fix failing manual tests if any failures detected
+  if [ $MANUAL_TEST_EXIT_CODE -ne 0 ]; then
+    echo ""
+    echo "Some manual tests failed"
+    echo "Starting auto-fix for failing manual tests..."
+    echo ""
+
+    if ! python run_auto_fixer.py \
+      --test-dir "$CURRENT_DIR/tests/manual" \
+      --project-root "$TARGET_DIR" \
+      --max-iterations 3; then
+      echo "Warning: Auto-fixer had issues, but continuing..."
+    fi
+
+    echo ""
+    echo "Re-running manual tests after auto-fix..."
+    if ! pytest "$CURRENT_DIR/tests/manual" \
+      --cov="$TARGET_DIR" \
+      --cov-config=pytest.ini \
+      --cov-report=term-missing \
+      --cov-report=xml \
+      --cov-report=html \
+      --cov-fail-under=0 \
+      --json-report \
+      --junitxml="$CURRENT_DIR/test-results.xml" \
+      --json-report-file="$CURRENT_DIR/.pytest_manual_fixed.json" \
+      -v; then
+      MANUAL_TEST_EXIT_CODE=$?
+      echo "Warning: Re-run manual tests still have failures"
+    else
+      MANUAL_TEST_EXIT_CODE=0
+      echo "✅ Manual tests passed after auto-fix!"
+    fi
+  fi
+
+  echo ""
   echo "Coverage report generated"
   if ! coverage report --show-missing; then
     echo "Warning: Coverage report generation had issues"
