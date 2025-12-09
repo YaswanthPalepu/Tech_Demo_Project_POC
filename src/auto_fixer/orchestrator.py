@@ -88,12 +88,13 @@ class AutoTestFixerOrchestrator:
         self.fix_history: List[FixResult] = []
         self.code_bugs: List[TestFailure] = []
 
-    def run(self, extra_pytest_args: List[str] = None) -> Dict[str, Any]:
+    def run(self, extra_pytest_args: List[str] = None, json_report_file: str = None) -> Dict[str, Any]:
         """
         Run the auto-fixer workflow.
 
         Args:
             extra_pytest_args: Additional pytest arguments
+            json_report_file: Path to existing pytest JSON report file (optional)
 
         Returns:
             Summary of fixes and results
@@ -113,7 +114,11 @@ class AutoTestFixerOrchestrator:
 
             # Step 1: Run pytest and parse failures
             print("Step 1: Running pytest and parsing failures...")
-            failures = self.failure_parser.run_and_parse(extra_pytest_args)
+            # Use existing JSON report for first iteration if provided
+            if iteration == 1 and json_report_file:
+                failures = self.failure_parser.parse_from_file(json_report_file)
+            else:
+                failures = self.failure_parser.run_and_parse(extra_pytest_args)
 
             if not failures:
                 print("No test failures found!")

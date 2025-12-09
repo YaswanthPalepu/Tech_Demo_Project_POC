@@ -374,6 +374,33 @@ class FailureParser:
 
         return None
 
+    def parse_from_file(self, json_file_path: str) -> List[TestFailure]:
+        """
+        Parse failures from an existing pytest JSON report file.
+
+        Args:
+            json_file_path: Path to the pytest JSON report file
+
+        Returns:
+            List of TestFailure objects
+        """
+        import os
+
+        if not os.path.exists(json_file_path):
+            print(f"Warning: JSON report file not found: {json_file_path}")
+            print("Will run pytest to generate failures...")
+            return self.run_and_parse()
+
+        try:
+            with open(json_file_path, 'r') as f:
+                json_output = json.load(f)
+            print(f"✓ Loaded existing failures from {json_file_path}")
+            return self.parse_failures(json_output)
+        except (json.JSONDecodeError, IOError) as e:
+            print(f"Warning: Failed to load JSON report: {e}")
+            print("Will run pytest to generate failures...")
+            return self.run_and_parse()
+
     def run_and_parse(self, extra_args: List[str] = None) -> List[TestFailure]:
         """
         Run pytest and parse failures in one step.

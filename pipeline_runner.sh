@@ -231,7 +231,8 @@ PYCODE
     if ! python run_auto_fixer.py \
       --test-dir "$CURRENT_DIR/tests/manual" \
       --project-root "$TARGET_DIR" \
-      --max-iterations 3; then
+      --max-iterations 3 \
+      --json-report "$CURRENT_DIR/.pytest_manual.json"; then
       echo "Warning: Auto-fixer had issues, but continuing..."
     fi
     echo ""
@@ -422,7 +423,8 @@ PYCODE
       if ! python run_auto_fixer.py \
         --test-dir "$CURRENT_DIR/tests/generated" \
         --project-root "$TARGET_DIR" \
-        --max-iterations 3; then
+        --max-iterations 3 \
+        --json-report "$CURRENT_DIR/.pytest_combined.json"; then
         echo "Warning: Auto-fixer had issues, but continuing..."
       fi
 
@@ -631,7 +633,8 @@ if [ "$TEST_COUNT" -gt 0 ]; then
     if ! python run_auto_fixer.py \
       --test-dir "$CURRENT_DIR/tests/generated" \
       --project-root "$TARGET_DIR" \
-      --max-iterations 3; then
+      --max-iterations 3 \
+      --json-report "$CURRENT_DIR/.pytest_generated.json"; then
       echo "Warning: Auto-fixer had issues, but continuing..."
     fi
 

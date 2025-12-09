@@ -64,6 +64,12 @@ def main():
         help='Additional pytest arguments (space-separated, like: --pytest-args -v -x)'
     )
 
+    parser.add_argument(
+        '--json-report',
+        default=None,
+        help='Path to existing pytest JSON report file (to reuse failures from previous run)'
+    )
+
     args = parser.parse_args()
 
     # Parse pytest args
@@ -76,6 +82,8 @@ def main():
     print(f"  Max iterations: {args.max_iterations}")
     if pytest_args:
         print(f"  Pytest args: {pytest_args}")
+    if args.json_report:
+        print(f"  Using existing JSON report: {args.json_report}")
 
     orchestrator = AutoTestFixerOrchestrator(
         test_directory=args.test_dir,
@@ -85,7 +93,7 @@ def main():
 
     # Run the fixer
     try:
-        summary = orchestrator.run(pytest_args)
+        summary = orchestrator.run(pytest_args, json_report_file=args.json_report)
 
         # Exit with appropriate code
         if summary['code_bugs'] > 0:
