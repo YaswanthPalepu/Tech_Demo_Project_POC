@@ -38,8 +38,9 @@ class TestFailure:
 class FailureParser:
     """Parses pytest output and extracts test failures."""
 
-    def __init__(self, test_directory: str = "tests"):
+    def __init__(self, test_directory: str = "tests", project_root: str = None):
         self.test_directory = test_directory
+        self.project_root = project_root
 
     def run_pytest_json(self, extra_args: List[str] = None) -> Dict[str, Any]:
         """
@@ -84,13 +85,25 @@ class FailureParser:
             "-v"
         ] + args
 
+        # Set up environment with PYTHONPATH if project_root is provided
+        env = os.environ.copy()
+        if self.project_root:
+            # Add project root to PYTHONPATH for proper imports
+            existing_pythonpath = env.get('PYTHONPATH', '')
+            if existing_pythonpath:
+                env['PYTHONPATH'] = f"{self.project_root}:{existing_pythonpath}"
+            else:
+                env['PYTHONPATH'] = self.project_root
+            print(f"✓ Set PYTHONPATH={self.project_root} for pytest")
+
         # Run pytest, capture output but don't fail on non-zero exit
         # Add timeout to prevent hanging on stuck tests
         try:
             result = subprocess.run(
                 cmd,
                 capture_output=True,
-                text=True
+                text=True,
+                env=env  # Pass environment with PYTHONPATH
             )
         except subprocess.TimeoutExpired:
             print("Pytest timed out after 120 seconds - tests may be hanging")
@@ -118,7 +131,8 @@ class FailureParser:
                 cmd,
                 capture_output=True,
                 text=True,
-                timeout=120  # 2 minute overall timeout
+                timeout=120,  # 2 minute overall timeout
+                env=env if self.project_root else None  # Use env if PYTHONPATH was set
             )
         except subprocess.TimeoutExpired:
             print(" Pytest timed out after 120 seconds - tests may be hanging")

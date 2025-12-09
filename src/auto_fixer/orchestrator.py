@@ -62,7 +62,7 @@ class AutoTestFixerOrchestrator:
         use_embeddings = os.getenv("USE_EMBEDDINGS", "true").lower() in ("true", "1", "yes")
 
         # Initialize components
-        self.failure_parser = FailureParser(test_directory)
+        self.failure_parser = FailureParser(test_directory, project_root=project_root)
         self.rule_classifier = RuleBasedClassifier()
         self.llm_classifier = LLMClassifier()
 
