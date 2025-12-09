@@ -65,14 +65,8 @@ class FailureParser:
             except OSError as e:
                 print(f"Warning: Could not remove old {report_file}: {e}")
 
-        # Remove pytest cache to prevent stale results
-        cache_dir = ".pytest_cache"
-        if os.path.exists(cache_dir):
-            try:
-                shutil.rmtree(cache_dir)
-                print(f"Cleared pytest cache")
-            except OSError as e:
-                print(f"Warning: Could not clear pytest cache: {e}")
+        # Don't clear pytest cache - it breaks test collection
+        # The cache is harmless for auto-fixer and helps pytest collect tests correctly
                 
         # Try with JSON report first
         cmd = [
