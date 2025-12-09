@@ -168,10 +168,10 @@ try:
         # Special handling for conftest.py - copy to top level to avoid "non-top-level conftest" error
         if os.path.basename(full_path) == "conftest.py":
             dest_path = os.path.join("./tests/manual", "conftest.py")
-            print(f"  ✓ {rel_path} → conftest.py (top-level)")
+            print(f"{rel_path} → conftest.py (top-level)")
         else:
             dest_path = os.path.join("./tests/manual", rel_path)
-            print(f"  ✓ {rel_path}")
+            print(f"{rel_path}")
 
         dest_dir = os.path.dirname(dest_path)
         os.makedirs(dest_dir, exist_ok=True)
@@ -180,7 +180,7 @@ try:
             shutil.copy2(full_path, dest_path)
             copied_count += 1
         except Exception as e:
-            print(f"  ✗ Failed to copy {rel_path}: {e}")
+            print(f"Failed to copy {rel_path}: {e}")
 
     print(f"Copied {copied_count}/{len(files_by_rel_path)} test files")
 except Exception as e:
@@ -218,6 +218,40 @@ PYCODE
     MANUAL_TEST_EXIT_CODE=$?
     echo "Warning: Manual tests had failures, but continuing..."
   fi
+
+  # Auto-fix failing manual tests if any failures detected
+  if [ $MANUAL_TEST_EXIT_CODE -ne 0 ]; then
+    echo ""
+    echo "Some manual tests failed"
+    echo "Starting auto-fix for failing manual tests..."
+    echo ""
+    if ! python run_auto_fixer.py \
+      --test-dir "$CURRENT_DIR/tests/manual" \
+      --project-root "$TARGET_DIR" \
+      --max-iterations 3; then
+      echo "Warning: Auto-fixer had issues, but continuing..."
+    fi
+    echo ""
+    echo "Re-running manual tests after auto-fix..."
+    if ! pytest "$CURRENT_DIR/tests/manual" \
+      --cov="$TARGET_DIR" \
+      --cov-config=pytest.ini \
+      --cov-report=term-missing \
+      --cov-report=xml \
+      --cov-report=html \
+      --cov-fail-under=0 \
+      --json-report \
+      --junitxml="$CURRENT_DIR/test-results.xml" \
+      --json-report-file="$CURRENT_DIR/.pytest_manual_fixed.json" \
+      -v; then
+      MANUAL_TEST_EXIT_CODE=$?
+      echo "Warning: Re-run manual tests still have failures"
+    else
+      MANUAL_TEST_EXIT_CODE=0
+      echo "Manual tests passed after auto-fix!"
+    fi
+  fi
+
 
   echo "Coverage report generated"
   if ! coverage report --show-missing; then
