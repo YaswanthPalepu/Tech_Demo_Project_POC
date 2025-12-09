@@ -230,7 +230,7 @@ PYCODE
     echo ""
 
     if ! python run_auto_fixer.py \
-      --test-dir "./tests/manual" \
+      --test-dir "$CURRENT_DIR/tests/manual" \
       --project-root "$TARGET_DIR" \
       --max-iterations 3; then
       echo "Warning: Auto-fixer had issues, but continuing..."
