@@ -204,7 +204,7 @@ PYCODE
   echo ""
 
   MANUAL_TEST_EXIT_CODE=0
-  if ! pytest "$CURRENT_DIR/tests/manual" \
+  if pytest "$CURRENT_DIR/tests/manual" \
     --cov="$TARGET_DIR" \
     --cov-config=pytest.ini \
     --cov-report=term-missing \
@@ -215,7 +215,10 @@ PYCODE
     --junitxml="$CURRENT_DIR/test-results.xml" \
     --json-report-file="$CURRENT_DIR/.pytest_manual.json" \
     -v; then
-    MANUAL_TEST_EXIT_CODE=$?
+    MANUAL_TEST_EXIT_CODE=0
+    echo "All manual tests passed"
+  else
+    MANUAL_TEST_EXIT_CODE=1
     echo "Warning: Manual tests had failures, but continuing..."
   fi
 
@@ -233,7 +236,7 @@ PYCODE
     fi
     echo ""
     echo "Re-running manual tests after auto-fix..."
-    if ! pytest "$CURRENT_DIR/tests/manual" \
+    if pytest "$CURRENT_DIR/tests/manual" \
       --cov="$TARGET_DIR" \
       --cov-config=pytest.ini \
       --cov-report=term-missing \
@@ -244,11 +247,11 @@ PYCODE
       --junitxml="$CURRENT_DIR/test-results.xml" \
       --json-report-file="$CURRENT_DIR/.pytest_manual_fixed.json" \
       -v; then
-      MANUAL_TEST_EXIT_CODE=$?
-      echo "Warning: Re-run manual tests still have failures"
-    else
       MANUAL_TEST_EXIT_CODE=0
-      echo "Manual tests passed after auto-fix!"
+      echo "tests passed after auto-fix!"
+    else
+      MANUAL_TEST_EXIT_CODE=1
+      echo "Warning: Re-run all tests still have failures!"
     fi
   fi
 
