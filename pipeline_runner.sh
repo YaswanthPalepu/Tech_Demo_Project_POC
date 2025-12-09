@@ -203,8 +203,8 @@ PYCODE
   echo "Running manual tests with coverage analysis..."
   echo ""
 
-  set +e  # Temporarily allow command failures
-  pytest "$CURRENT_DIR/tests/manual" \
+  MANUAL_TEST_EXIT_CODE=0
+  if pytest "$CURRENT_DIR/tests/manual" \
     --cov="$TARGET_DIR" \
     --cov-config=pytest.ini \
     --cov-report=term-missing \
@@ -214,11 +214,11 @@ PYCODE
     --json-report \
     --junitxml="$CURRENT_DIR/test-results.xml" \
     --json-report-file="$CURRENT_DIR/.pytest_manual.json" \
-    -v
-  MANUAL_TEST_EXIT_CODE=$?
-  set -e  # Re-enable exit on error
-
-  if [ $MANUAL_TEST_EXIT_CODE -ne 0 ]; then
+    -v; then
+    MANUAL_TEST_EXIT_CODE=0
+    echo "All manual tests passed"
+  else
+    MANUAL_TEST_EXIT_CODE=1
     echo "Warning: Manual tests had failures, but continuing..."
   fi
 
@@ -238,8 +238,7 @@ PYCODE
 
     echo ""
     echo "Re-running manual tests after auto-fix..."
-    set +e
-    pytest "$CURRENT_DIR/tests/manual" \
+    if pytest "$CURRENT_DIR/tests/manual" \
       --cov="$TARGET_DIR" \
       --cov-config=pytest.ini \
       --cov-report=term-missing \
@@ -249,14 +248,12 @@ PYCODE
       --json-report \
       --junitxml="$CURRENT_DIR/test-results.xml" \
       --json-report-file="$CURRENT_DIR/.pytest_manual_fixed.json" \
-      -v
-    MANUAL_TEST_EXIT_CODE=$?
-    set -e
-
-    if [ $MANUAL_TEST_EXIT_CODE -ne 0 ]; then
-      echo "Warning: Re-run manual tests still have failures"
-    else
+      -v; then
+      MANUAL_TEST_EXIT_CODE=0
       echo "✅ Manual tests passed after auto-fix!"
+    else
+      MANUAL_TEST_EXIT_CODE=1
+      echo "Warning: Re-run manual tests still have failures"
     fi
   fi
 
