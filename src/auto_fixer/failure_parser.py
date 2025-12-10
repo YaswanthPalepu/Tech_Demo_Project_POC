@@ -261,6 +261,8 @@ class FailureParser:
         # Handle different JSON report formats
         tests = json_output.get("tests", [])
 
+        print(f"\n🔍 Parsing {len(tests)} tests from JSON output")
+
         for test in tests:
             # Only process failed tests
             outcome = test.get("outcome", "")
@@ -270,6 +272,10 @@ class FailureParser:
             # Extract test information
             nodeid = test.get("nodeid", "")
             test_file, test_name = self._parse_nodeid(nodeid)
+
+            print(f"   Found failure: {nodeid}")
+            print(f"      → File: {test_file}")
+            print(f"      → Test: {test_name}")
 
             # Extract failure information
             call = test.get("call", {})
@@ -294,6 +300,12 @@ class FailureParser:
             )
 
             failures.append(failure)
+
+        print(f"\n✅ Total failures parsed: {len(failures)}")
+        if failures:
+            print(f"   Files with failures:")
+            for f in failures:
+                print(f"      - {f.test_file}")
 
         return failures
 
