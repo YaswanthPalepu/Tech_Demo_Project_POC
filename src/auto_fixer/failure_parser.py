@@ -79,6 +79,7 @@ class FailureParser:
         cmd = [
             "pytest",
             self.test_directory,
+            "-c", "pytest.ini",  # Use pytest.ini for consistent test discovery
             "--tb=short",
             "--json-report",
             "--json-report-file=pytest_report.json",
@@ -122,6 +123,7 @@ class FailureParser:
         cmd = [
             "pytest",
             self.test_directory,
+            "-c", "pytest.ini",  # Use pytest.ini for consistent test discovery
             "--tb=short",
             "-v"
         ] + args
