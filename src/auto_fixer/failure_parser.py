@@ -65,15 +65,14 @@ class FailureParser:
             except OSError as e:
                 print(f"Warning: Could not remove old {report_file}: {e}")
 
-        # Remove pytest cache to prevent stale results
-        cache_dir = ".pytest_cache"
-        if os.path.exists(cache_dir):
-            try:
-                shutil.rmtree(cache_dir)
-                print(f"Cleared pytest cache")
-            except OSError as e:
-                print(f"Warning: Could not clear pytest cache: {e}")
-                
+        # CRITICAL FIX: Don't manually delete .pytest_cache - it breaks test discovery
+        # for tests in subdirectories! Instead, let pytest handle cache with --cache-clear
+        #
+        # Old buggy code (commented out):
+        # cache_dir = ".pytest_cache"
+        # if os.path.exists(cache_dir):
+        #     shutil.rmtree(cache_dir)  # ← This breaks test discovery!
+
         # Try with JSON report first
         cmd = [
             "pytest",
@@ -81,6 +80,7 @@ class FailureParser:
             "--tb=short",
             "--json-report",
             "--json-report-file=pytest_report.json",
+            "--cache-clear",  # ← Proper way to clear cache without breaking discovery
             "-v"
         ] + args
 
