@@ -55,6 +55,11 @@ class ASTContextExtractor:
         Returns:
             Dictionary mapping source file paths to their relevant code
         """
+        # Resolve test file path to absolute path for reliable file operations
+        import os
+        if not os.path.isabs(test_file_path):
+            test_file_path = os.path.abspath(test_file_path)
+
         # Read test file
         try:
             with open(test_file_path, 'r') as f:

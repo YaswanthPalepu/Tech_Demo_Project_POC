@@ -413,7 +413,13 @@ class AutoTestFixerOrchestrator:
             Test function source code
         """
         try:
-            with open(failure.test_file, 'r') as f:
+            # Resolve test file path to absolute path
+            import os
+            test_file_path = failure.test_file
+            if not os.path.isabs(test_file_path):
+                test_file_path = os.path.abspath(test_file_path)
+
+            with open(test_file_path, 'r') as f:
                 content = f.read()
 
             # Try to extract just the function

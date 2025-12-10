@@ -52,6 +52,12 @@ class ASTPatcher:
             - success: True if patch successful, False otherwise
             - failure_output: Pytest failure output if test failed, empty string otherwise
         """
+        # Resolve test_file_path to absolute path for reliable file operations
+        # This handles cases where pytest may return paths relative to test_directory
+        import os
+        if not os.path.isabs(test_file_path):
+            test_file_path = os.path.abspath(test_file_path)
+
         # Read original file
         try:
             with open(test_file_path, 'r') as f:
@@ -149,6 +155,11 @@ class ASTPatcher:
         Returns:
             True if patch successful, False otherwise
         """
+        # Resolve test_file_path to absolute path for reliable file operations
+        import os
+        if not os.path.isabs(test_file_path):
+            test_file_path = os.path.abspath(test_file_path)
+
         # Read original file
         try:
             with open(test_file_path, 'r') as f:
@@ -515,17 +526,31 @@ class ASTPatcher:
         base_test_name = test_function_name.split('[')[0] if '[' in test_function_name else test_function_name
 
         try:
+            # Resolve test_file_path to absolute path for reliable file operations
+            # This handles cases where pytest may return paths relative to test_directory
+            import os
+            if not os.path.isabs(test_file_path):
+                # If path is relative, resolve it from current working directory
+                test_file_path = os.path.abspath(test_file_path)
+
+            # Verify the file exists before attempting to patch
+            if not os.path.exists(test_file_path):
+                print(f"Error: Test file not found at {test_file_path}")
+                return False, f"File not found: {test_file_path}"
+
             # Write the patched content temporarily
             with open(test_file_path, 'w') as f:
                 f.write(patched_content)
 
             # Run pytest on this specific test
+            # Use absolute path for reliability across different working directories
             test_nodeid = f"{test_file_path}::{base_test_name}"
             result = subprocess.run(
                 ['pytest', test_nodeid, '-v', '--tb=short', '-x'],
                 capture_output=True,
                 text=True,
-                timeout=30  # 30 second timeout
+                timeout=30,  # 30 second timeout
+                cwd=os.getcwd()  # Explicitly set working directory
             )
 
             # Restore original content IMMEDIATELY
