@@ -162,19 +162,19 @@ try:
     print(f"Copying {len(files_by_rel_path)} test files...")
 
     copied_count = 0
+    subdirs_created = set()
 
     # Copy all tests
     for rel_path, full_path in files_by_rel_path.items():
-        # Special handling for conftest.py - copy to top level to avoid "non-top-level conftest" error
-        if os.path.basename(full_path) == "conftest.py":
-            dest_path = os.path.join("./tests/manual", "conftest.py")
-            print(f"{rel_path} → conftest.py (top-level)")
-        else:
-            dest_path = os.path.join("./tests/manual", rel_path)
-            print(f"{rel_path}")
+        dest_path = os.path.join("./tests/manual", rel_path)
+        print(f"{rel_path}")
 
         dest_dir = os.path.dirname(dest_path)
         os.makedirs(dest_dir, exist_ok=True)
+
+        # Track subdirectories for __init__.py creation
+        if dest_dir != "./tests/manual":
+            subdirs_created.add(dest_dir)
 
         try:
             shutil.copy2(full_path, dest_path)
@@ -182,7 +182,36 @@ try:
         except Exception as e:
             print(f"Failed to copy {rel_path}: {e}")
 
-    print(f"Copied {copied_count}/{len(files_by_rel_path)} test files")
+    # Create __init__.py in all subdirectories to ensure proper test discovery
+    print(f"\nCreating __init__.py files in subdirectories...")
+    init_count = 0
+
+    # Always create __init__.py in the root tests/manual directory
+    root_init = os.path.join("./tests/manual", "__init__.py")
+    if not os.path.exists(root_init):
+        try:
+            with open(root_init, "w") as f:
+                f.write("# Auto-generated for pytest test discovery\n")
+            init_count += 1
+            print(f"Created: tests/manual/__init__.py")
+        except Exception as e:
+            print(f"Warning: Failed to create {root_init}: {e}")
+
+    # Create __init__.py in all subdirectories
+    for subdir in sorted(subdirs_created):
+        init_file = os.path.join(subdir, "__init__.py")
+        if not os.path.exists(init_file):
+            try:
+                with open(init_file, "w") as f:
+                    f.write("# Auto-generated for pytest test discovery\n")
+                init_count += 1
+                rel_init = os.path.relpath(init_file, "./tests/manual")
+                print(f"Created: {rel_init}")
+            except Exception as e:
+                print(f"Warning: Failed to create {init_file}: {e}")
+
+    print(f"\nCopied {copied_count}/{len(files_by_rel_path)} test files")
+    print(f"Created {init_count} __init__.py file(s)")
 except Exception as e:
     print(f"Error during test copy: {e}")
     exit(1)
@@ -308,7 +337,7 @@ PYCODE
     # Upload to SonarQube
     if [ -n "${SONAR_HOST_URL:-}" ] && [ -n "${SONAR_TOKEN:-}" ]; then
       echo "Uploading results to SonarQube..."
-      rsync -av --exclude "__pycache__/" --exclude="conftest.py" "$CURRENT_DIR/tests/manual/" "$TARGET_DIR/tests/manual/"
+      rsync -av --exclude "__pycache__/" "$CURRENT_DIR/tests/manual/" "$TARGET_DIR/tests/manual/"
       if ! sonar-scanner \
         -Dsonar.projectKey="${SONAR_PROJECT_KEY}" \
         -Dsonar.projectName="${SONAR_PROJECT_NAME}" \
@@ -534,8 +563,8 @@ Final coverage: ${FINAL_COVERAGE}%"
     # Upload to SonarQube
     if [ -n "${SONAR_HOST_URL:-}" ] && [ -n "${SONAR_TOKEN:-}" ]; then
       echo "Uploading results to SonarQube..."
-      rsync -av --exclude "__pycache__/" --exclude="conftest.py" "$CURRENT_DIR/tests/manual/" "$TARGET_DIR/tests/manual/"
-      rsync -av --exclude "__pycache__/" --exclude="conftest.py" "$CURRENT_DIR/tests/generated/" "$TARGET_DIR/tests/generated/"
+      rsync -av --exclude "__pycache__/" "$CURRENT_DIR/tests/manual/" "$TARGET_DIR/tests/manual/"
+      rsync -av --exclude "__pycache__/" "$CURRENT_DIR/tests/generated/" "$TARGET_DIR/tests/generated/"
       if ! sonar-scanner \
         -Dsonar.projectKey="${SONAR_PROJECT_KEY}" \
         -Dsonar.projectName="${SONAR_PROJECT_NAME}" \
