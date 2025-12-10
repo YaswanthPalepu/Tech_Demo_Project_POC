@@ -84,6 +84,14 @@ class FailureParser:
             "-v"
         ] + args
 
+        print(f"\n{'='*60}")
+        print(f"🔍 AUTO-FIXER DEBUG - Running pytest")
+        print(f"{'='*60}")
+        print(f"Test directory: {self.test_directory}")
+        print(f"Working directory: {os.getcwd()}")
+        print(f"Command: {' '.join(cmd)}")
+        print(f"{'='*60}\n")
+
         # Run pytest, capture output but don't fail on non-zero exit
         # Add timeout to prevent hanging on stuck tests
         try:
@@ -92,18 +100,32 @@ class FailureParser:
                 capture_output=True,
                 text=True
             )
+            print(f"\n✅ Pytest completed")
+            print(f"   Exit code: {result.returncode}")
+            print(f"   Stdout: {len(result.stdout)} chars")
+            print(f"   Stderr: {len(result.stderr)} chars")
         except subprocess.TimeoutExpired:
             print("Pytest timed out after 120 seconds - tests may be hanging")
             print("Try running pytest manually to debug: pytest", self.test_directory, "-v")
             return {"tests": [], "summary": {"total": 0, "passed": 0, "failed": 0}}
 
         # Read the JSON report
+        print(f"\n🔍 Checking for pytest_report.json")
+        print(f"   Current dir: {os.getcwd()}")
+        print(f"   File exists: {os.path.exists('pytest_report.json')}")
+
         try:
             with open("pytest_report.json", "r") as f:
-                return json.load(f)
-        except (FileNotFoundError, json.JSONDecodeError):
-            # JSON report not available, try verbose text output
-            pass
+                data = json.load(f)
+                print(f"   ✅ JSON report loaded!")
+                print(f"   Total tests in report: {len(data.get('tests', []))}")
+                return data
+        except FileNotFoundError:
+            print(f"   ❌ JSON report NOT FOUND")
+            print(f"   Falling back to text parsing...")
+        except json.JSONDecodeError as e:
+            print(f"   ❌ JSON report MALFORMED: {e}")
+            print(f"   Falling back to text parsing...")
 
         # Fallback: run without JSON report and parse text output
         cmd = [
