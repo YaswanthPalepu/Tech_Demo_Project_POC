@@ -163,15 +163,12 @@ try:
 
     copied_count = 0
 
-    # Copy all tests
+    # Copy all tests (preserving directory structure including conftest.py)
     for rel_path, full_path in files_by_rel_path.items():
-        # Special handling for conftest.py - copy to top level to avoid "non-top-level conftest" error
-        if os.path.basename(full_path) == "conftest.py":
-            dest_path = os.path.join("./tests/manual", "conftest.py")
-            print(f"{rel_path} → conftest.py (top-level)")
-        else:
-            dest_path = os.path.join("./tests/manual", rel_path)
-            print(f"{rel_path}")
+        # Preserve directory structure for all files including conftest.py
+        # This ensures each directory keeps its own conftest.py with the correct fixtures
+        dest_path = os.path.join("./tests/manual", rel_path)
+        print(f"{rel_path}")
 
         dest_dir = os.path.dirname(dest_path)
         os.makedirs(dest_dir, exist_ok=True)
