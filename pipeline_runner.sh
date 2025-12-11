@@ -462,7 +462,7 @@ PYCODE
 
         # Copy AI-generated tests to target repository and commit
         if [ -d "$CURRENT_DIR/tests/generated" ]; then
-          TARGET_TESTS_DIR="$TARGET_DIR/tests/generated"
+          TARGET_TESTS_DIR="$TARGET_DIR/tests/generated/"
           echo "Copying AI-generated tests to target repository: $TARGET_TESTS_DIR"
           mkdir -p "$TARGET_TESTS_DIR"
           rsync -av --exclude "__pycache__/" --exclude="*.pyc" "$CURRENT_DIR/tests/generated/" "$TARGET_TESTS_DIR/"
@@ -671,7 +671,7 @@ if [ "$TEST_COUNT" -gt 0 ]; then
 
       # Copy AI-generated tests to target repository and commit
       if [ -d "$CURRENT_DIR/tests/generated" ]; then
-        TARGET_TESTS_DIR="$TARGET_DIR/tests/generated"
+        TARGET_TESTS_DIR="$TARGET_DIR/tests/generated/"
         echo ""
         echo "Copying AI-generated tests to target repository: $TARGET_TESTS_DIR"
         mkdir -p "$TARGET_TESTS_DIR"

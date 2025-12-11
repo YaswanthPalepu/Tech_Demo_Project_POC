@@ -228,7 +228,7 @@ class FailureParser:
         """
         # Look for file path pattern in traceback
         # Pattern: tests/some/path.py:line_number:
-        file_match = re.search(r'(tests/[^\s:]+\.py):\d+:', traceback_text)
+        file_match = re.search(r'([^\s:]*tests/[^\s:]+\.py):\d+:', traceback_text)
 
         if file_match:
             file_path = file_match.group(1)
