@@ -167,10 +167,10 @@ try:
     for rel_path, full_path in files_by_rel_path.items():
         # Special handling for conftest.py - copy to top level to avoid "non-top-level conftest" error
         if os.path.basename(full_path) == "conftest.py":
-            dest_path = os.path.join("./tests/", "conftest.py")
+            dest_path = os.path.join("./tests/manual", "conftest.py")
             print(f"{rel_path} → conftest.py (top-level)")
         else:
-            dest_path = os.path.join("./tests/", rel_path)
+            dest_path = os.path.join("./tests/manual", rel_path)
             print(f"{rel_path}")
 
         dest_dir = os.path.dirname(dest_path)
@@ -193,18 +193,18 @@ PYCODE
   fi
 
   echo ""
-  if ! find ./tests/ -type f -name 'test_*.py' 2>/dev/null; then
+  if ! find ./tests/manual -type f -name 'test_*.py' 2>/dev/null; then
     echo "No test files found after copying"
   fi
   echo ""
 
-  find ./tests/ -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+  find ./tests/manual -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
 
   echo "Running manual tests with coverage analysis..."
   echo ""
 
   MANUAL_TEST_EXIT_CODE=0
-  if pytest "$CURRENT_DIR/tests" \
+  if pytest "$CURRENT_DIR/tests/manual" \
     --cov="$TARGET_DIR" \
     --cov-config=pytest.ini \
     --cov-report=term-missing \
@@ -229,14 +229,14 @@ PYCODE
     echo "Starting auto-fix for failing manual tests..."
     echo ""
     if ! python run_auto_fixer.py \
-      --test-dir "$CURRENT_DIR/tests" \
+      --test-dir "$CURRENT_DIR/tests/manual" \
       --project-root "$TARGET_DIR" \
       --max-iterations 3; then
       echo "Warning: Auto-fixer had issues, but continuing..."
     fi
     echo ""
     echo "Re-running manual tests after auto-fix..."
-    if pytest "$CURRENT_DIR/tests" \
+    if pytest "$CURRENT_DIR/tests/manual" \
       --cov="$TARGET_DIR" \
       --cov-config=pytest.ini \
       --cov-report=term-missing \
@@ -462,7 +462,7 @@ PYCODE
 
         # Copy AI-generated tests to target repository and commit
         if [ -d "$CURRENT_DIR/tests/generated" ]; then
-          TARGET_TESTS_DIR="$TARGET_DIR/tests/generated/"
+          TARGET_TESTS_DIR="$TARGET_DIR/tests/generated"
           echo "Copying AI-generated tests to target repository: $TARGET_TESTS_DIR"
           mkdir -p "$TARGET_TESTS_DIR"
           rsync -av --exclude "__pycache__/" --exclude="*.pyc" "$CURRENT_DIR/tests/generated/" "$TARGET_TESTS_DIR/"
@@ -671,7 +671,7 @@ if [ "$TEST_COUNT" -gt 0 ]; then
 
       # Copy AI-generated tests to target repository and commit
       if [ -d "$CURRENT_DIR/tests/generated" ]; then
-        TARGET_TESTS_DIR="$TARGET_DIR/tests/generated/"
+        TARGET_TESTS_DIR="$TARGET_DIR/tests/generated"
         echo ""
         echo "Copying AI-generated tests to target repository: $TARGET_TESTS_DIR"
         mkdir -p "$TARGET_TESTS_DIR"
