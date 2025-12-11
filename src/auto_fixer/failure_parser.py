@@ -218,6 +218,8 @@ class FailureParser:
         Looks for patterns like:
         - tests/test_file.py:123: in test_name
         - tests/generated/test_file.py:456:
+        - /absolute/path/tests/manual/generated/test_file.py:789:
+        - ./relative/tests/test_file.py:100:
 
         Args:
             traceback_text: The traceback content
@@ -226,16 +228,102 @@ class FailureParser:
         Returns:
             Constructed nodeid like "tests/test_file.py::test_name"
         """
-        # Look for file path pattern in traceback
-        # Pattern: tests/some/path.py:line_number:
-        file_match = re.search(r'(tests/[^\s:]+\.py):\d+:', traceback_text)
+        # Improved pattern that handles:
+        # 1. Absolute paths: /home/user/project/tests/manual/test_foo.py:123:
+        # 2. Relative paths: tests/manual/test_foo.py:123: or ./tests/manual/test_foo.py:123:
+        # 3. Nested test directories: tests/manual/generated/subfolder/test_foo.py:123:
+        #
+        # The pattern captures the FULL path (including absolute paths if present)
+        # Then we normalize it to be usable
+        file_match = re.search(r'([^\s:]*tests/[^\s:]+\.py):\d+:', traceback_text)
 
         if file_match:
             file_path = file_match.group(1)
+            # Normalize the path to handle both absolute and relative paths
+            file_path = self._normalize_test_path(file_path)
             return f"{file_path}::{test_name}"
 
-        # Fallback: return test name only
+        # Fallback: Try to match ANY .py file in the traceback
+        # This handles edge cases where test files might not be in 'tests/' directory
+        file_match = re.search(r'([^\s:]+\.py):\d+:', traceback_text)
+        if file_match:
+            file_path = file_match.group(1)
+            file_path = self._normalize_test_path(file_path)
+            return f"{file_path}::{test_name}"
+
+        # Last resort: return test name only
         return f"unknown::{test_name}"
+
+    def _normalize_test_path(self, file_path: str) -> str:
+        """
+        Normalize a test file path to be usable for file operations.
+
+        Handles:
+        - Absolute paths: /home/user/project/tests/manual/test_foo.py
+        - Relative paths with ./: ./tests/manual/test_foo.py
+        - Standard relative: tests/manual/test_foo.py
+
+        Args:
+            file_path: Raw file path from traceback
+
+        Returns:
+            Normalized path that can be used to open/read the file
+        """
+        import os
+        from pathlib import Path
+
+        # Remove leading './' if present
+        if file_path.startswith('./'):
+            file_path = file_path[2:]
+
+        # If it's an absolute path, try to make it relative to current working directory
+        if os.path.isabs(file_path):
+            try:
+                # Try to make it relative to cwd
+                cwd = Path(os.getcwd())
+                abs_path = Path(file_path)
+                try:
+                    rel_path = abs_path.relative_to(cwd)
+                    file_path = str(rel_path)
+                except ValueError:
+                    # Path is not relative to cwd, keep absolute
+                    pass
+            except Exception:
+                # If conversion fails, keep the absolute path
+                pass
+
+        # If the path doesn't exist as-is, try to resolve it relative to test_directory
+        if not os.path.exists(file_path) and hasattr(self, 'test_directory'):
+            # Extract just the test filename and subdirs under tests/
+            # Example: /abs/path/tests/manual/generated/test_foo.py -> tests/manual/generated/test_foo.py
+            if 'tests/' in file_path:
+                # Get everything from 'tests/' onwards
+                parts = file_path.split('tests/', 1)
+                if len(parts) == 2:
+                    relative_test_path = 'tests/' + parts[1]
+
+                    # Now check if this exists relative to test_directory
+                    # test_directory might be something like "$CURRENT_DIR/tests/manual"
+                    # and relative_test_path might be "tests/manual/generated/test_foo.py"
+                    #
+                    # We need to check if the file exists at test_directory/../relative_test_path
+                    test_dir_path = Path(self.test_directory)
+
+                    # Try different resolution strategies
+                    candidates = [
+                        file_path,  # Original
+                        relative_test_path,  # tests/manual/generated/test_foo.py
+                        str(test_dir_path / parts[1]),  # test_dir + the part after 'tests/'
+                    ]
+
+                    for candidate in candidates:
+                        if os.path.exists(candidate):
+                            return candidate
+
+                    # If none exist, return the relative path (best guess)
+                    return relative_test_path
+
+        return file_path
 
     def _parse_legacy_output(self, stdout: str, stderr: str) -> Dict[str, Any]:
         """Fallback parser for when JSON report is not available."""
@@ -302,11 +390,23 @@ class FailureParser:
         Parse pytest nodeid to extract file and test name.
 
         Example: tests/test_foo.py::TestClass::test_method
-        Returns: ("tests/test_foo.py", "test_method")
+        Example: /abs/path/tests/manual/generated/test_foo.py::test_method
+        Returns: ("tests/test_foo.py", "test_method") or normalized path
+
+        Args:
+            nodeid: pytest nodeid string
+
+        Returns:
+            Tuple of (test_file_path, test_name)
         """
         parts = nodeid.split("::")
         test_file = parts[0] if parts else ""
         test_name = parts[-1] if len(parts) > 1 else ""
+
+        # Normalize the test file path to handle absolute paths and nested directories
+        if test_file:
+            test_file = self._normalize_test_path(test_file)
+
         return test_file, test_name
 
     def _parse_exception(self, longrepr: str) -> tuple[str, str]:
