@@ -141,7 +141,7 @@ PYCODE
   rm -rf "./tests/manual"
   mkdir -p ./tests/manual
 
-  # Copy ALL tests to tests/manual (no distinction between manual/AI)
+  # Copy ALL tests to tests/manual (FLATTEN directory structure)
   if ! python3 - <<'PYCODE'
 import json
 import os
@@ -159,22 +159,38 @@ try:
         exit(0)
 
     print(f"Test root: {test_root}")
-    print(f"Copying {len(files_by_rel_path)} test files...")
+    print(f"Copying {len(files_by_rel_path)} test files to tests/manual (flattened structure)...")
 
     copied_count = 0
+    filename_tracker = {}  # Track filenames to detect conflicts
 
-    # Copy all tests
+    # Copy all tests - FLATTEN directory structure
     for rel_path, full_path in files_by_rel_path.items():
-        # Special handling for conftest.py - copy to top level to avoid "non-top-level conftest" error
-        if os.path.basename(full_path) == "conftest.py":
-            dest_path = os.path.join("./tests/manual", "conftest.py")
-            print(f"{rel_path} → conftest.py (top-level)")
-        else:
-            dest_path = os.path.join("./tests/manual", rel_path)
-            print(f"{rel_path}")
+        basename = os.path.basename(full_path)
 
-        dest_dir = os.path.dirname(dest_path)
-        os.makedirs(dest_dir, exist_ok=True)
+        # Special handling for conftest.py - always copy to top level
+        if basename == "conftest.py":
+            dest_filename = "conftest.py"
+            dest_path = os.path.join("./tests/manual", dest_filename)
+            print(f"{rel_path} → {dest_filename}")
+        else:
+            # Check for filename conflicts
+            if basename in filename_tracker:
+                # Conflict detected - prepend directory name to make unique
+                parent_dir = os.path.basename(os.path.dirname(rel_path))
+                if parent_dir:
+                    # Remove .py extension, add parent dir, add .py back
+                    name_without_ext = basename.rsplit('.', 1)[0]
+                    ext = basename.rsplit('.', 1)[1] if '.' in basename else ''
+                    dest_filename = f"{parent_dir}_{name_without_ext}.{ext}" if ext else f"{parent_dir}_{name_without_ext}"
+                else:
+                    dest_filename = basename
+            else:
+                dest_filename = basename
+
+            dest_path = os.path.join("./tests/manual", dest_filename)
+            filename_tracker[basename] = rel_path
+            print(f"{rel_path} → {dest_filename}")
 
         try:
             shutil.copy2(full_path, dest_path)
@@ -182,7 +198,7 @@ try:
         except Exception as e:
             print(f"Failed to copy {rel_path}: {e}")
 
-    print(f"Copied {copied_count}/{len(files_by_rel_path)} test files")
+    print(f"\nCopied {copied_count}/{len(files_by_rel_path)} test files (flattened to tests/manual/)")
 except Exception as e:
     print(f"Error during test copy: {e}")
     exit(1)
