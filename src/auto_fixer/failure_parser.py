@@ -218,7 +218,8 @@ class FailureParser:
         Looks for patterns like:
         - tests/test_file.py:123: in test_name
         - tests/generated/test_file.py:456:
-
+        - /absolute/path/tests/manual/generated/test_file.py:789:
+        - ./relative/tests/test_file.py:100:
         Args:
             traceback_text: The traceback content
             test_name: The test function name from the separator
@@ -226,15 +227,28 @@ class FailureParser:
         Returns:
             Constructed nodeid like "tests/test_file.py::test_name"
         """
-        # Look for file path pattern in traceback
-        # Pattern: tests/some/path.py:line_number:
+         # Improved pattern that handles:
+        # 1. Absolute paths: /home/user/project/tests/manual/test_foo.py:123:
+        # 2. Relative paths: tests/manual/test_foo.py:123: or ./tests/manual/test_foo.py:123:
+        # 3. Nested test directories: tests/manual/generated/subfolder/test_foo.py:123:
+        # The pattern captures the FULL path (including absolute paths if present)
+        # Then we normalize it to be usable
         file_match = re.search(r'([^\s:]*tests/[^\s:]+\.py):\d+:', traceback_text)
 
         if file_match:
             file_path = file_match.group(1)
+            # Normalize the path to handle both absolute and relative paths
+            file_path = self._normalize_test_path(file_path)
             return f"{file_path}::{test_name}"
 
-        # Fallback: return test name only
+        # Fallback: Try to match ANY .py file in the traceback
+        # This handles edge cases where test files might not be in 'tests/' directory
+        file_match = re.search(r'([^\s:]+\.py):\d+:', traceback_text)
+        if file_match:
+            file_path = file_match.group(1)
+            file_path = self._normalize_test_path(file_path)
+            return f"{file_path}::{test_name}"
+        # Last resort: return test name only
         return f"unknown::{test_name}"
 
     def _parse_legacy_output(self, stdout: str, stderr: str) -> Dict[str, Any]:
@@ -302,11 +316,19 @@ class FailureParser:
         Parse pytest nodeid to extract file and test name.
 
         Example: tests/test_foo.py::TestClass::test_method
-        Returns: ("tests/test_foo.py", "test_method")
+        Example: /abs/path/tests/manual/generated/test_foo.py::test_method
+        Returns: ("tests/test_foo.py", "test_method") or normalized path
+        Args:
+            nodeid: pytest nodeid string
+        Returns:
+            Tuple of (test_file_path, test_name)
         """
         parts = nodeid.split("::")
         test_file = parts[0] if parts else ""
         test_name = parts[-1] if len(parts) > 1 else ""
+        # Normalize the test file path to handle absolute paths and nested directories
+        if test_file:
+            test_file = self._normalize_test_path(test_file)
         return test_file, test_name
 
     def _parse_exception(self, longrepr: str) -> tuple[str, str]:
