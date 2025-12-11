@@ -38,8 +38,9 @@ class TestFailure:
 class FailureParser:
     """Parses pytest output and extracts test failures."""
 
-    def __init__(self, test_directory: str = "tests"):
+    def __init__(self, test_directory: str = "tests", project_root: str = None):
         self.test_directory = test_directory
+        self.project_root = project_root  # Store project_root for PYTHONPATH
 
     def run_pytest_json(self, extra_args: List[str] = None) -> Dict[str, Any]:
         """
@@ -74,6 +75,19 @@ class FailureParser:
             except OSError as e:
                 print(f"Warning: Could not clear pytest cache: {e}")
                 
+        # Set up environment for pytest (add project_root to PYTHONPATH)
+        import copy
+        env = copy.deepcopy(os.environ)
+
+        if self.project_root:
+            # Add project_root to PYTHONPATH so tests can import from target repo
+            pythonpath = env.get('PYTHONPATH', '')
+            if pythonpath:
+                env['PYTHONPATH'] = f"{self.project_root}:{pythonpath}"
+            else:
+                env['PYTHONPATH'] = self.project_root
+            print(f"Set PYTHONPATH={self.project_root} for pytest")
+
         # Try with JSON report first
         cmd = [
             "pytest",
@@ -90,7 +104,8 @@ class FailureParser:
             result = subprocess.run(
                 cmd,
                 capture_output=True,
-                text=True
+                text=True,
+                env=env  # Pass environment with PYTHONPATH
             )
         except subprocess.TimeoutExpired:
             print("Pytest timed out after 120 seconds - tests may be hanging")
@@ -118,7 +133,8 @@ class FailureParser:
                 cmd,
                 capture_output=True,
                 text=True,
-                timeout=120  # 2 minute overall timeout
+                timeout=120,  # 2 minute overall timeout
+                env=env  # Pass environment with PYTHONPATH
             )
         except subprocess.TimeoutExpired:
             print(" Pytest timed out after 120 seconds - tests may be hanging")

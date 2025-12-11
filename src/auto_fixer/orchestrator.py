@@ -62,7 +62,7 @@ class AutoTestFixerOrchestrator:
         use_embeddings = os.getenv("USE_EMBEDDINGS", "true").lower() in ("true", "1", "yes")
 
         # Initialize components
-        self.failure_parser = FailureParser(test_directory)
+        self.failure_parser = FailureParser(test_directory, project_root)
         self.rule_classifier = RuleBasedClassifier()
         self.llm_classifier = LLMClassifier()
 
@@ -82,7 +82,7 @@ class AutoTestFixerOrchestrator:
                 print("Using AST-only context extraction")
 
         self.llm_fixer = LLMFixer()
-        self.ast_patcher = ASTPatcher()
+        self.ast_patcher = ASTPatcher(project_root=project_root)
 
         # Track results
         self.fix_history: List[FixResult] = []

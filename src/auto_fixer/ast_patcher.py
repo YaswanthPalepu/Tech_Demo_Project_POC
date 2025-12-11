@@ -23,15 +23,17 @@ class ASTPatcher:
     new failures (regression prevention).
     """
 
-    def __init__(self, enable_test_validation: bool = True):
+    def __init__(self, enable_test_validation: bool = True, project_root: str = None):
         """
         Initialize ASTPatcher.
 
         Args:
             enable_test_validation: If True, run pytest on fixes before applying.
                                    Prevents auto-fixer from making things worse.
+            project_root: Root directory of the project (for PYTHONPATH when validating fixes)
         """
         self.enable_test_validation = enable_test_validation
+        self.project_root = project_root
 
     def patch_test_function_with_feedback(
         self,
@@ -542,6 +544,16 @@ class ASTPatcher:
             with open(test_file_path, 'w') as f:
                 f.write(patched_content)
 
+            # Set up environment with PYTHONPATH for pytest
+            import copy
+            env = copy.deepcopy(os.environ)
+            if self.project_root:
+                pythonpath = env.get('PYTHONPATH', '')
+                if pythonpath:
+                    env['PYTHONPATH'] = f"{self.project_root}:{pythonpath}"
+                else:
+                    env['PYTHONPATH'] = self.project_root
+
             # Run pytest on this specific test
             # Use absolute path for reliability across different working directories
             test_nodeid = f"{test_file_path}::{base_test_name}"
@@ -550,7 +562,8 @@ class ASTPatcher:
                 capture_output=True,
                 text=True,
                 timeout=30,  # 30 second timeout
-                cwd=os.getcwd()  # Explicitly set working directory
+                cwd=os.getcwd(),  # Explicitly set working directory
+                env=env  # Pass environment with PYTHONPATH
             )
 
             # Restore original content IMMEDIATELY
