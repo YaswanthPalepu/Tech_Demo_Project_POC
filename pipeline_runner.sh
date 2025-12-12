@@ -358,6 +358,12 @@ PYCODE
   echo "=================================================================="
   echo ""
 
+  # Remove old AI-generated tests from target repo to prevent duplicates
+  if [ -d "$TARGET_DIR/tests/generated" ]; then
+    echo "Removing old AI-generated tests from target repo to prevent duplicates..."
+    rm -rf "$TARGET_DIR/tests/generated"
+  fi
+
   rm -rf "./tests/generated"
 
   if ! python multi_iteration_orchestrator.py \
@@ -462,7 +468,7 @@ PYCODE
 
         # Copy AI-generated tests to target repository and commit
         if [ -d "$CURRENT_DIR/tests/generated" ]; then
-          TARGET_TESTS_DIR="$TARGET_DIR/tests/generated"
+          TARGET_TESTS_DIR="$TARGET_DIR/tests/generated/"
           echo "Copying AI-generated tests to target repository: $TARGET_TESTS_DIR"
           mkdir -p "$TARGET_TESTS_DIR"
           rsync -av --exclude "__pycache__/" --exclude="*.pyc" "$CURRENT_DIR/tests/generated/" "$TARGET_TESTS_DIR/"
@@ -570,6 +576,12 @@ fi
 echo "No manual tests found. Proceeding with full AI Test Generation..."
 echo ""
 
+# Remove old AI-generated tests from target repo to prevent duplicates
+if [ -d "$TARGET_DIR/tests/generated" ]; then
+  echo "Removing old AI-generated tests from target repo to prevent duplicates..."
+  rm -rf "$TARGET_DIR/tests/generated"
+fi
+
 export TESTGEN_FORCE=true
 rm -rf "./tests/generated"
 
@@ -671,7 +683,7 @@ if [ "$TEST_COUNT" -gt 0 ]; then
 
       # Copy AI-generated tests to target repository and commit
       if [ -d "$CURRENT_DIR/tests/generated" ]; then
-        TARGET_TESTS_DIR="$TARGET_DIR/tests/generated"
+        TARGET_TESTS_DIR="$TARGET_DIR/tests/generated/"
         echo ""
         echo "Copying AI-generated tests to target repository: $TARGET_TESTS_DIR"
         mkdir -p "$TARGET_TESTS_DIR"
