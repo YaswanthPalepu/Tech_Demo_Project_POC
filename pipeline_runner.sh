@@ -358,6 +358,12 @@ PYCODE
   echo "=================================================================="
   echo ""
 
+  # Remove old AI-generated tests from target repo to prevent duplicates
+  if [ -d "$TARGET_DIR/tests/generated" ]; then
+    echo "Removing old AI-generated tests from target repo to prevent duplicates..."
+    rm -rf "$TARGET_DIR/tests/generated"
+  fi
+
   rm -rf "./tests/generated"
 
   if ! python multi_iteration_orchestrator.py \
@@ -569,6 +575,12 @@ fi
 # -------------------------------------------------------------------
 echo "No manual tests found. Proceeding with full AI Test Generation..."
 echo ""
+
+# Remove old AI-generated tests from target repo to prevent duplicates
+if [ -d "$TARGET_DIR/tests/generated" ]; then
+  echo "Removing old AI-generated tests from target repo to prevent duplicates..."
+  rm -rf "$TARGET_DIR/tests/generated"
+fi
 
 export TESTGEN_FORCE=true
 rm -rf "./tests/generated"
